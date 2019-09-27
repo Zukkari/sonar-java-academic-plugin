@@ -20,10 +20,11 @@ libraryDependencies ++= List(
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.typelevel" %% "cats-core" % "2.0.0",
+  "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
 )
 
 // Manifest attributes
-packageOptions in (Compile, packageBin) += Package.ManifestAttributes(
+packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
   PluginManifest.KEY -> "sonar-android-plugin",
   PluginManifest.NAME -> "Sonar Android Plugin",
   PluginManifest.DESCRIPTION -> description.value,
@@ -48,17 +49,17 @@ test in assembly := {}
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 assemblyMergeStrategy in assembly := {
   case "log4j.properties" => MergeStrategy.first
-  case "reference.conf"   => MergeStrategy.concat
+  case "reference.conf" => MergeStrategy.concat
   case "application.conf" => MergeStrategy.concat
-  case PathList("META-INF", xs @ _*) =>
+  case PathList("META-INF", xs@_*) =>
     xs match {
       case ("MANIFEST.MF" :: Nil) => MergeStrategy.discard
-      case _                      => MergeStrategy.first
+      case _ => MergeStrategy.first
     }
   case _ => MergeStrategy.first
 }
-artifact in (Compile, assembly) := {
-  val art = (artifact in (Compile, assembly)).value
+artifact in(Compile, assembly) := {
+  val art = (artifact in(Compile, assembly)).value
   art.withClassifier(Some("assembly"))
 }
-addArtifact(artifact in (Compile, assembly), assembly)
+addArtifact(artifact in(Compile, assembly), assembly)
