@@ -20,7 +20,7 @@ libraryDependencies ++= List(
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.typelevel" %% "cats-core" % "2.0.0",
-  "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
 )
 
 // Manifest attributes
