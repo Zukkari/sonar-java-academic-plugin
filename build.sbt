@@ -19,8 +19,11 @@ val sonarVersion = "7.9"
 libraryDependencies ++= List(
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
+  "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
   "org.typelevel" %% "cats-core" % "2.0.0",
-  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
+  "org.mockito" %% "mockito-scala" % "1.5.17" % Test,
+  "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test
 )
 
 // Manifest attributes
