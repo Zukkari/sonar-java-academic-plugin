@@ -2,13 +2,18 @@ package io.github.zukkari.definition
 
 import cats.syntax.either._
 import io.github.zukkari.config.Rules.JavaCheckClass
-import io.github.zukkari.config.{Language, Rules}
 import io.github.zukkari.config.RulesSyntax._
+import io.github.zukkari.config.metadata.MetadataGenInstances._
+import io.github.zukkari.config.metadata.MetadataGenSyntax._
+import io.github.zukkari.config.{Language, Rules}
 import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.api.server.rule.{RulesDefinition, RulesDefinitionAnnotationLoader}
+import org.sonar.api.utils.log.Loggers
 import org.sonar.check.Rule
 
 final class AndroidRulesDefinition extends RulesDefinition {
+  private val log = Loggers.get(classOf[AndroidRulesDefinition])
+
   val repoKey = "sonar-android-key"
   val repoName = "Sonar Android repository"
 
@@ -19,7 +24,12 @@ final class AndroidRulesDefinition extends RulesDefinition {
       .createRepository(repoKey, Language.Java)
       .setName(repoName)
 
-    Rules.get.foreach(addRule(_))
+    Rules.get
+      .map(addRule(_))
+      .foreach({
+        case Left(reason) => log.error(reason)
+        case Right(rule) => log.info(s"Successfully loaded rule: $rule")
+      })
   }
 
   def addRule(check: JavaCheckClass)(implicit repo: NewRepository): Either[String, NewRule] = {
@@ -29,7 +39,8 @@ final class AndroidRulesDefinition extends RulesDefinition {
       annotation <- getRuleAnnotation(check)
       key <- getAnnotationKey(annotation)
       rule <- getRule(key)
-    } yield rule
+      gen <- rule.genMeta
+    } yield gen._1
   }
 
   def getRuleAnnotation(check: JavaCheckClass): Either[String, Rule] =

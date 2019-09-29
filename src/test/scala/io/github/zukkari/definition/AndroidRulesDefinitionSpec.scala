@@ -20,9 +20,16 @@ class AndroidRulesDefinitionSpec extends AnyFlatSpec with ArgumentMatchersSugar 
     when(context.createRepository(definition.repoKey, Language.Java)).thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
 
-    val rule = mock[NewRule]
-    when(repo.createRule(any)).thenAnswer(rule)
-    when(rule.setName(any)).thenAnswer(rule)
+    val mockRule = mock[NewRule]
+    when(repo.createRule(any)).thenAnswer(mockRule)
+    when(repo.rule(any)).thenAnswer(mockRule)
+    when(mockRule.key).thenAnswer("testRule")
+
+    when(mockRule.setName(any)).thenCallRealMethod
+    when(mockRule.setSeverity(any)).thenCallRealMethod
+    when(mockRule.addTags(any)).thenAnswer(mockRule)
+    when(mockRule.setType(any)).thenCallRealMethod
+    when(mockRule.setStatus(any)).thenCallRealMethod
 
     definition.define(context)
 
@@ -31,7 +38,6 @@ class AndroidRulesDefinitionSpec extends AnyFlatSpec with ArgumentMatchersSugar 
 
   it should "create annotated rules successfully" in {
     val check: JavaCheckClass = classOf[TestCheck].asInstanceOf[JavaCheckClass]
-    when(repo.rule("testRule")).thenAnswer(mock[NewRule])
 
     assert(definition.addRule(check).isRight)
   }

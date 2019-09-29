@@ -1,0 +1,14 @@
+{
+  "title": "Test Rule",
+  "type": "CODE_SMELL",
+  "status": "READY",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "testpitfall1",
+    "testpitfall2"
+  ],
+  "defaultSeverity": "MINOR"
+}
