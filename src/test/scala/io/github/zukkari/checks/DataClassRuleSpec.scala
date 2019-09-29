@@ -1,11 +1,10 @@
 package io.github.zukkari.checks
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatestplus.mockito.MockitoSugar._
+import io.github.zukkari.BaseSpec
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.ClassTree
 
-class DataClassRuleSpec extends AnyFlatSpec {
+class DataClassRuleSpec extends BaseSpec {
   val context: JavaFileScannerContext = mock[JavaFileScannerContext]
   val classTree: ClassTree = mock[ClassTree]
 

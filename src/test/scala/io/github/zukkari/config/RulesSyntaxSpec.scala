@@ -1,12 +1,12 @@
 package io.github.zukkari.config
 
+import io.github.zukkari.BaseSpec
 import io.github.zukkari.config.RulesSyntax._
 import org.mockito.MockitoSugar._
-import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.server.rule.RulesDefinition.NewRepository
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader
 
-class RulesSyntaxSpec extends AnyFlatSpec {
+class RulesSyntaxSpec extends BaseSpec {
   implicit val loader: RulesDefinitionAnnotationLoader = spy(mock[RulesDefinitionAnnotationLoader])
   implicit val repo: NewRepository = mock[NewRepository]
 

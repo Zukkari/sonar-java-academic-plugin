@@ -1,16 +1,15 @@
 package io.github.zukkari.definition
 
+import io.github.zukkari.BaseSpec
+import io.github.zukkari.config.Language
 import io.github.zukkari.config.Rules.JavaCheckClass
-import io.github.zukkari.config.{Language, Rules}
-import org.mockito.ArgumentMatchersSugar
 import org.mockito.MockitoSugar._
-import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.server.rule.RulesDefinition
 import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
-class AndroidRulesDefinitionSpec extends AnyFlatSpec with ArgumentMatchersSugar {
+class AndroidRulesDefinitionSpec extends BaseSpec {
   val context: RulesDefinition.Context = spy(mock[RulesDefinition.Context])
   implicit val repo: NewRepository = mock[NewRepository]
 

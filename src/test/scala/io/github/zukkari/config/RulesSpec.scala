@@ -1,9 +1,9 @@
 package io.github.zukkari.config
 
+import io.github.zukkari.BaseSpec
 import io.github.zukkari.checks.DataClassRule
-import org.scalatest.flatspec.AnyFlatSpec
 
-class RulesSpec extends AnyFlatSpec {
+class RulesSpec extends BaseSpec {
 
   "Rules list" should "contain DataClass rule" in {
     val rules = Rules.get

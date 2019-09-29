@@ -1,12 +1,11 @@
 package io.github.zukkari
 
 import io.github.zukkari.definition.AndroidRulesDefinition
-import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.internal.SonarRuntimeImpl
 import org.sonar.api.utils.Version
 import org.sonar.api.{Plugin, SonarEdition, SonarQubeSide, SonarRuntime}
 
-class SonarAndroidPluginSpec extends AnyFlatSpec {
+class SonarAndroidPluginSpec extends BaseSpec {
   val runtime: SonarRuntime = SonarRuntimeImpl.forSonarQube(
     Version.create(7, 9),
     SonarQubeSide.SCANNER,

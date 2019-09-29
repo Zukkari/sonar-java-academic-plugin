@@ -1,8 +1,8 @@
 package io.github.zukkari.config
 
-import org.scalatest.flatspec.AnyFlatSpec
+import io.github.zukkari.BaseSpec
 
-class LanguageSpec extends AnyFlatSpec {
+class LanguageSpec extends BaseSpec {
   "Language" should "contain Java" in {
     assert(Language.Java == "java")
   }

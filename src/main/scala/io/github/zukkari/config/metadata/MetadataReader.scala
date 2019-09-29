@@ -2,11 +2,9 @@ package io.github.zukkari.config.metadata
 
 import io.circe.ParsingFailure
 import io.circe.parser._
-import io.github.zukkari.config.optics.OpticsInstances._
-import io.github.zukkari.config.optics.OpticsSyntax._
-import org.sonar.api.server.rule.RulesDefinition.NewRule
+import io.github.zukkari.config.metadata.implicits.Projector
 
-import scala.io.Source
+import scala.io.BufferedSource
 
 case class Metadata(title: String,
                     typeOfRule: String,
@@ -16,15 +14,15 @@ case class Metadata(title: String,
                    )
 
 object MetadataReader {
-  val metaBasePath = "metadata"
 
-  def read(rule: NewRule): Either[ParsingFailure, Metadata] = {
-    val res = resource(rule)
+  def read[A](lineGen: () => BufferedSource)(implicit projector: Projector[A]): Either[ParsingFailure, A] =
+    fromString(resource(lineGen))
+
+  def fromString[A](s: String)(implicit projector: Projector[A]): Either[ParsingFailure, A] =
     for {
-      json <- parse(res)
-    } yield json.project
-  }
+      json <- parse(s)
+    } yield projector.run(json)
 
-  def resource(rule: NewRule): String = Source.fromResource(s"${rule.key}_java.json").getLines.fold("")(_ ++ _)
+  def resource(fn: () => BufferedSource): String = fn().getLines.fold("")(_ ++ _)
 
 }

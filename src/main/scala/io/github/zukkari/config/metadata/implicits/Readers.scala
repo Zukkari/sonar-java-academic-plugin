@@ -1,12 +1,10 @@
-package io.github.zukkari.config.optics
+package io.github.zukkari.config.metadata.implicits
 
 import cats.data.Reader
 import io.circe.Json
 import io.github.zukkari.config.metadata.Metadata
 
-object OpticsInstances {
-  type ErrorOr[A] = Either[String, A]
-
+object Readers {
   val titleReader: Reader[Json, String] = fieldReader("title")
   val typeReader: Reader[Json, String] = fieldReader("type")
   val statusReader: Reader[Json, String] = fieldReader("status")
@@ -21,15 +19,15 @@ object OpticsInstances {
   val tagsReader: Reader[Json, List[String]] = Reader(
     json =>
       json.hcursor
-      .downField("tags")
-      .focus
-      .flatMap(_.asArray)
-      .getOrElse(Vector.empty)
-      .map(_.asString.getOrElse(""))
-      .toList
+        .downField("tags")
+        .focus
+        .flatMap(_.asArray)
+        .getOrElse(Vector.empty)
+        .map(_.asString.getOrElse(""))
+        .toList
   )
 
-  implicit val metaReader: Reader[Json, Metadata] = for {
+  implicit val metadataProjector: Projector[Metadata] = for {
     ruleTitle <- titleReader
     ruleType <- typeReader
     ruleStatus <- statusReader
@@ -42,12 +40,4 @@ object OpticsInstances {
     defaultSeverity = ruleSeverity,
     tags = ruleTags
   )
-}
-
-object OpticsSyntax {
-
-  implicit class OpticsOps(val json: Json) {
-    def project[A](implicit reader: Reader[Json, A]): A = reader.run(json)
-  }
-
 }
