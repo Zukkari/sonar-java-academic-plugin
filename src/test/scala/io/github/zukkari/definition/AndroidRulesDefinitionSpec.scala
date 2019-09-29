@@ -19,7 +19,10 @@ class AndroidRulesDefinitionSpec extends AnyFlatSpec with ArgumentMatchersSugar 
   it should "call create repository for context" in {
     when(context.createRepository(definition.repoKey, Language.Java)).thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
-    when(repo.createRule(any)).thenAnswer(mock[NewRule])
+
+    val rule = mock[NewRule]
+    when(repo.createRule(any)).thenAnswer(rule)
+    when(rule.setName(any)).thenAnswer(rule)
 
     definition.define(context)
 
@@ -32,9 +35,38 @@ class AndroidRulesDefinitionSpec extends AnyFlatSpec with ArgumentMatchersSugar 
 
     assert(definition.addRule(check).isRight)
   }
+
+  it should "not find annotation if it is not present" in {
+    val check: JavaCheckClass = classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
+    assert(definition.getRuleAnnotation(check).isLeft)
+  }
+
+  it should "find annotation if it is present" in {
+    val check: JavaCheckClass = classOf[TestCheck].asInstanceOf[JavaCheckClass]
+    assert(definition.getRuleAnnotation(check).isRight)
+  }
+
+  it should "not find key if it is not present in annotation" in {
+    val check: JavaCheckClass = classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
+    assert(definition.getRuleAnnotation(check).isLeft)
+  }
+
+  it should "find key if it is present in annotation" in {
+    val check: JavaCheckClass = classOf[TestCheck].asInstanceOf[JavaCheckClass]
+    assert(definition.getRuleAnnotation(check).isRight)
+  }
 }
 
 @Rule(key = "testRule")
 class TestCheck extends JavaFileScanner {
+  override def scanFile(context: JavaFileScannerContext): Unit = ???
+}
+
+class NoAnnotationCheck extends JavaFileScanner {
+  override def scanFile(context: JavaFileScannerContext): Unit = ???
+}
+
+@Rule
+class NoKeyWithAnnotation extends JavaFileScanner {
   override def scanFile(context: JavaFileScannerContext): Unit = ???
 }

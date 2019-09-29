@@ -20,9 +20,6 @@ class RulesSyntaxSpec extends AnyFlatSpec {
   }
 
   "Rule" should "be annotated with @Rule annotation" in {
-    assert(Rules.get
-      .map(_.annotation)
-      .forall(_.nonEmpty)
-    )
+    assert(!Rules.get.map(_.annotation).contains(null))
   }
 }
