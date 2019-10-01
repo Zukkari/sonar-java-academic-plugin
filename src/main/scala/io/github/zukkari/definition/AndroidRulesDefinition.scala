@@ -29,7 +29,7 @@ final class AndroidRulesDefinition extends RulesDefinition {
       .map(addRule(_))
       .foreach({
         case Left(reason) => log.error(reason)
-        case Right(rule) => log.info(s"Successfully loaded rule: $rule")
+        case Right(rule) => log.info(s"Successfully loaded rule: ${rule.key}")
       })
   }
 

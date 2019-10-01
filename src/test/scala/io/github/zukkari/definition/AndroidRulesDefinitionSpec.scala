@@ -29,6 +29,7 @@ class AndroidRulesDefinitionSpec extends BaseSpec {
     when(mockRule.addTags(any)).thenAnswer(mockRule)
     when(mockRule.setType(any)).thenCallRealMethod
     when(mockRule.setStatus(any)).thenCallRealMethod
+    when(mockRule.setHtmlDescription(any[String])).thenCallRealMethod
 
     definition.define(context)
 

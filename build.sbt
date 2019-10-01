@@ -10,7 +10,10 @@ version := "0.1"
 
 scalaVersion := "2.13.0"
 scalacOptions := Seq(
-  "-Xfatal-warnings"
+  "-encoding", "utf8",
+  "-Xfatal-warnings",
+  "-deprecation",
+  "-language:higherKinds",
 )
 
 
@@ -21,11 +24,13 @@ libraryDependencies ++= List(
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
   "org.typelevel" %% "cats-core" % "2.0.0",
+  "org.typelevel" %% "cats-effect" % "2.0.0",
   "io.circe" %% "circe-parser" % "0.12.1",
   "io.circe" %% "circe-core" % "0.12.1",
   "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
   "org.mockito" %% "mockito-scala" % "1.5.17" % Test,
   "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test,
+  "org.sonarsource.java" % "java-checks-testkit" % "5.14.0.18788" % Test,
 )
 
 // Manifest attributes
