@@ -1,6 +1,6 @@
 package io.github.zukkari.config.metadata
 
-import cats.Semigroupal
+import cats.{Eval, Semigroupal}
 import cats.instances.either._
 import cats.syntax.either._
 import io.github.zukkari.config.metadata.implicits.{Resource, _}
@@ -25,7 +25,7 @@ object MetadataGenInstances {
 
     override def addMetadata(elem: NewRule)
                             (implicit genFn: Resource[NewRule]): EitherOr[NewRule] = {
-      MetadataReader.read(() => genFn(elem))
+      MetadataReader.read(Eval.later(genFn(elem)))
         .bimap(_.message, apply(elem, _))
     }
 

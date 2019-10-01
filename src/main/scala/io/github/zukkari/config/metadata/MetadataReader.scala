@@ -1,5 +1,6 @@
 package io.github.zukkari.config.metadata
 
+import cats.Eval
 import io.circe.ParsingFailure
 import io.circe.parser._
 import io.github.zukkari.config.metadata.implicits.Projector
@@ -15,14 +16,14 @@ case class Metadata(title: String,
 
 object MetadataReader {
 
-  def read[A](lineGen: () => BufferedSource)(implicit projector: Projector[A]): Either[ParsingFailure, A] =
+  def read[A](lineGen: Eval[BufferedSource])(implicit projector: Projector[A]): Either[ParsingFailure, A] =
     fromString(resource(lineGen))
 
-  def fromString[A](s: String)(implicit projector: Projector[A]): Either[ParsingFailure, A] =
+  def fromString[A](context: Eval[String])(implicit projector: Projector[A]): Either[ParsingFailure, A] =
     for {
-      json <- parse(s)
+      json <- parse(context.value)
     } yield projector.run(json)
 
-  def resource(fn: () => BufferedSource): String = fn().getLines.fold("")(_ ++ _)
+  def resource(gen: Eval[BufferedSource]): Eval[String] = gen.map(_.getLines.fold("")(_ ++ _))
 
 }
