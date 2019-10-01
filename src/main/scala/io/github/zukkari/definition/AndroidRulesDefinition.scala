@@ -6,7 +6,7 @@ import io.github.zukkari.config.RulesSyntax._
 import io.github.zukkari.config.metadata.MetadataGenInstances._
 import io.github.zukkari.config.metadata.MetadataGenSyntax._
 import io.github.zukkari.config.metadata.implicits._
-import io.github.zukkari.config.{Language, Rules}
+import io.github.zukkari.config.{Java, LanguageKind, Rules}
 import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.api.server.rule.{RulesDefinition, RulesDefinitionAnnotationLoader}
 import org.sonar.api.utils.log.Loggers
@@ -22,7 +22,7 @@ final class AndroidRulesDefinition extends RulesDefinition {
 
   override def define(context: RulesDefinition.Context): Unit = {
     implicit val repo: NewRepository = context
-      .createRepository(repoKey, Language.Java)
+      .createRepository(repoKey, Java.key)
       .setName(repoName)
 
     Rules.get

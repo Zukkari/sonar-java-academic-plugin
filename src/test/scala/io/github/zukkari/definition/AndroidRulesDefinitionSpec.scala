@@ -1,7 +1,7 @@
 package io.github.zukkari.definition
 
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.config.Language
+import io.github.zukkari.config.{Java, LanguageKind}
 import io.github.zukkari.config.Rules.JavaCheckClass
 import org.mockito.MockitoSugar._
 import org.sonar.api.server.rule.RulesDefinition
@@ -16,7 +16,7 @@ class AndroidRulesDefinitionSpec extends BaseSpec {
   val definition = new AndroidRulesDefinition
 
   it should "call create repository for context" in {
-    when(context.createRepository(definition.repoKey, Language.Java)).thenAnswer(repo)
+    when(context.createRepository(definition.repoKey, Java.key)).thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
 
     val mockRule = mock[NewRule]
@@ -32,7 +32,7 @@ class AndroidRulesDefinitionSpec extends BaseSpec {
 
     definition.define(context)
 
-    verify(context, atLeastOnce).createRepository(definition.repoKey, Language.Java)
+    verify(context, atLeastOnce).createRepository(definition.repoKey, Java.key)
   }
 
   it should "create annotated rules successfully" in {
