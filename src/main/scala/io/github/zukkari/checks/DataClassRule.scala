@@ -69,8 +69,7 @@ object DataClassSyntax {
       methods
         .map(_.block.body)
         .filter(body => body.size == 1 && body.get(0).isInstanceOf[ReturnStatementTree])
-        .map(_.get(0).asInstanceOf[ReturnStatementTree])
-        .map(_.expression)
+        .map(_.get(0).asInstanceOf[ReturnStatementTree].expression)
         .filter(expr => expr.isInstanceOf[IdentifierTree] && (classVarNames contains expr.asInstanceOf[IdentifierTree].name))
 
     def setters(implicit classVarNames: List[String]): List[ExpressionTree] = {
