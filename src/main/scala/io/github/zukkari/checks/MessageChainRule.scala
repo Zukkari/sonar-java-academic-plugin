@@ -45,7 +45,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
   def depth(tree: MethodInvocationTree): Int = depth(tree, Traversal(depth = 1))
 
-  private def depth(tree: MethodInvocationTree, traversal: Traversal): Int = {
+  def depth(tree: MethodInvocationTree, traversal: Traversal): Int = {
     tree.symbol match {
       case javaSymbol: MethodJavaSymbol =>
         val methodName = nextMethodName(javaSymbol)
@@ -55,7 +55,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthSymbolTree(symbol: JavaSymbol.MethodJavaSymbol, traversal: Traversal): Int = {
+  def depthSymbolTree(symbol: JavaSymbol.MethodJavaSymbol, traversal: Traversal): Int = {
     val block = Option(symbol.declaration).map(_.block.body)
 
     val blockDepth = for {
@@ -71,7 +71,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthExpression(tree: ReturnStatementTree, traversal: Traversal): Int = {
+  def depthExpression(tree: ReturnStatementTree, traversal: Traversal): Int = {
     tree.expression match {
       case invocationTree: MethodInvocationTree =>
         depthMethodInvocationTree(invocationTree, traversal)
@@ -80,7 +80,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthMethodInvocationTree(tree: MethodInvocationTree, traversal: Traversal): Int = {
+  def depthMethodInvocationTree(tree: MethodInvocationTree, traversal: Traversal): Int = {
     tree.methodSelect match {
       case expressionTree: MemberSelectExpressionTree =>
         depthMemberSelectExpression(expressionTree, traversal)
@@ -93,7 +93,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthMemberSelectExpression(tree: MemberSelectExpressionTree, traversal: Traversal): Int = {
+  def depthMemberSelectExpression(tree: MemberSelectExpressionTree, traversal: Traversal): Int = {
     tree.expression match {
       case identifierTree: IdentifierTree =>
         depthIdentifier(identifierTree, Traversal(tree.identifier.name, traversal.depth))
@@ -102,7 +102,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthIdentifier(tree: IdentifierTree, traversal: Traversal): Int = {
+  def depthIdentifier(tree: IdentifierTree, traversal: Traversal): Int = {
     tree.symbol match {
       case variable: VariableJavaSymbol =>
         depthVariableSymbol(variable, traversal)
@@ -110,7 +110,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthVariableSymbol(symbol: VariableJavaSymbol, traversal: Traversal): Int = {
+  def depthVariableSymbol(symbol: VariableJavaSymbol, traversal: Traversal): Int = {
     symbol.getType match {
       case javaType: ClassJavaType =>
         depthType(javaType.getSymbol, traversal)
@@ -119,7 +119,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  private def depthType(symbol: TypeJavaSymbol, traversal: Traversal): Int = {
+  def depthType(symbol: TypeJavaSymbol, traversal: Traversal): Int = {
     val nextInvocationTree = symbol.declaration.members.asScala.toList
       .filter(method => method.isInstanceOf[MethodTree]
         && method.asInstanceOf[MethodTree].simpleName.name() == traversal.methodName)
