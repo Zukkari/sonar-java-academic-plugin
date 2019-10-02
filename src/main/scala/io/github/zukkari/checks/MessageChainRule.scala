@@ -3,9 +3,9 @@ package io.github.zukkari.checks
 import cats.effect.SyncIO
 import org.sonar.api.Property
 import org.sonar.check.Rule
-import org.sonar.java.resolve.{ClassJavaType, JavaSymbol}
 import org.sonar.java.resolve.JavaSymbol.{MethodJavaSymbol, TypeJavaSymbol, VariableJavaSymbol}
-import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, IdentifierTree, MemberSelectExpressionTree, MethodInvocationTree, MethodTree, ReturnStatementTree}
+import org.sonar.java.resolve.{ClassJavaType, JavaSymbol}
+import org.sonar.plugins.java.api.tree._
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 import scala.jdk.CollectionConverters._
@@ -39,6 +39,10 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     report.unsafeRunSync()
   }
 
+  private def nextMethodName(javaSymbol: MethodJavaSymbol): String =
+    Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse("")
+
+
   def depth(tree: MethodInvocationTree): Int = depth(tree, Traversal(depth = 1))
 
   private def depth(tree: MethodInvocationTree, traversal: Traversal): Int = {
@@ -49,10 +53,6 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
       case _ =>
         traversal.depth
     }
-  }
-
-  private def nextMethodName(javaSymbol: MethodJavaSymbol) = {
-    Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse("")
   }
 
   private def depthSymbolTree(symbol: JavaSymbol.MethodJavaSymbol, traversal: Traversal): Int = {
