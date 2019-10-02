@@ -7,6 +7,7 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.tree._
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 @Rule(key = "DataClassRule", name = "Data class")
@@ -50,13 +51,24 @@ class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
     log.debug(() => s"Found ${setters.size} setters:")
     setters.foreach(m => log.debug(() => m.toString))
 
-    val sideEffect = if (getters.size + setters.size == methods.size) {
+    val sideEffect = if (getters.size + setters.size == methods.size && classVarNames.nonEmpty) {
       SyncIO.pure("Refactor this class so it includes more than just data").flatMap(m => reportIssue(tree, m))
     } else {
       SyncIO(())
     }
 
     sideEffect.unsafeRunSync()
+
+    val childClasses = treeMembers.filter(_.isInstanceOf[ClassTree]).map(_.asInstanceOf[ClassTree])
+    runChildren(childClasses)
+  }
+
+  @tailrec
+  private final def runChildren(classes: List[ClassTree]): Unit = classes match {
+    case x :: xs =>
+      visitClass(x)
+      runChildren(xs)
+    case Nil =>
   }
 
   def reportIssue(tree: ClassTree, message: String) = SyncIO(context.reportIssue(this, tree, message))
@@ -73,20 +85,29 @@ object DataClassSyntax {
         .filter(expr => expr.isInstanceOf[IdentifierTree] && (classVarNames contains expr.asInstanceOf[IdentifierTree].name))
 
     def setters(implicit classVarNames: List[String]): List[ExpressionTree] = {
-      methods
+      val assignmentExpression = methods
         .filter(method =>
           method.block.body.size == 1
             && method.block.body.get(0).isInstanceOf[ExpressionStatementTree])
         .map(_.block.body.get(0).asInstanceOf[ExpressionStatementTree].expression)
         .filter(_.isInstanceOf[AssignmentExpressionTree])
         .map(_.asInstanceOf[AssignmentExpressionTree].variable)
+
+      assignmentExpression
         .filter(expr => expr.isInstanceOf[MemberSelectExpressionTree])
         .map(_.asInstanceOf[MemberSelectExpressionTree])
         .map(expr => (expr.expression.asInstanceOf[IdentifierTree], expr.identifier, expr))
         .filter { case (ident, member, _) =>
           (ident.name == "this") && (classVarNames contains member.name)
         }
-        .map(_._3)
+        .map(_._3) ++
+        assignmentExpression
+          .filter(_.isInstanceOf[IdentifierTree])
+          .map(expr => (expr.asInstanceOf[IdentifierTree].name, expr))
+          .filter{
+            case (varName, _) => classVarNames contains varName
+          }
+          .map(_._2)
     }
   }
 
