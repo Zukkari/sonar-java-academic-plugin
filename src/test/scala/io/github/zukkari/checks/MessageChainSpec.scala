@@ -79,6 +79,15 @@ class MessageChainSpec extends BaseSpec {
     assert(rule.depthType(javaSymbol, Traversal(depth = -1)) == -1)
   }
 
+  it should "return depth when member selection expression is not followed by identifier" in {
+    val tree = mock[MemberSelectExpressionTree]
+    val primitiveTree = mock[PrimitiveTypeTree]
+
+    when(tree.expression).thenReturn(primitiveTree)
+
+    assert(rule.depthMemberSelectExpression(tree, Traversal(depth = -1)) == -1)
+  }
+
   def verify(check: String): Unit = {
     JavaCheckVerifier.verify(s"src/test/resources/files/message_chains/${check}.java", rule)
   }
