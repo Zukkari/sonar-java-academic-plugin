@@ -1,7 +1,6 @@
 package io.github.zukkari.config.metadata
 
-import cats.instances.either._
-import cats.syntax.either._
+import cats.implicits._
 import cats.{Eval, Semigroupal}
 import io.github.zukkari.config.metadata.implicits.{Resource, _}
 import io.github.zukkari.config.{DirectoryKind, MetadataDirectory, Template}

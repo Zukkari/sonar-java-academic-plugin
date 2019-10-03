@@ -1,6 +1,8 @@
 package io.github.zukkari.checks
 
+import cats.Monoid
 import cats.effect.SyncIO
+import cats.implicits._
 import org.sonar.api.Property
 import org.sonar.check.Rule
 import org.sonar.java.resolve.JavaSymbol.{MethodJavaSymbol, TypeJavaSymbol, VariableJavaSymbol}
@@ -10,7 +12,7 @@ import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 import scala.jdk.CollectionConverters._
 
-case class Traversal(methodName: String = "", depth: Int)
+case class Traversal(methodName: String, depth: Int)
 
 @Rule(key = "MessageChainRule")
 class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
@@ -39,11 +41,12 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     report.unsafeRunSync()
   }
 
-  private def nextMethodName(javaSymbol: MethodJavaSymbol): String =
-    Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse("")
+  private def nextMethodName(javaSymbol: MethodJavaSymbol)(implicit m: Monoid[String]): String =
+    Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse(m.empty)
 
 
-  def depth(tree: MethodInvocationTree): Int = depth(tree, Traversal(depth = 1))
+  def depth(tree: MethodInvocationTree)
+           (implicit m: Monoid[String]): Int = depth(tree, Traversal(m.empty, 1))
 
   def depth(tree: MethodInvocationTree, traversal: Traversal): Int = {
     tree.symbol match {

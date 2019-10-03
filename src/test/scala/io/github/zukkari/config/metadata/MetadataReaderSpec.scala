@@ -2,6 +2,7 @@ package io.github.zukkari.config.metadata
 
 import cats.Eval
 import cats.data.Reader
+import cats.implicits._
 import io.github.zukkari.BaseSpec
 import io.github.zukkari.config.metadata.implicits.Projector
 import org.mockito.MockitoSugar._

@@ -1,6 +1,7 @@
 package io.github.zukkari.config.metadata
 
-import cats.Eval
+import cats.implicits._
+import cats.{Eval, Monoid}
 import io.circe.ParsingFailure
 import io.circe.parser._
 import io.github.zukkari.config.metadata.implicits.Projector
@@ -24,6 +25,7 @@ object MetadataReader {
       json <- parse(context.value)
     } yield projector.run(json)
 
-  def resource(gen: Eval[BufferedSource]): Eval[String] = gen.map(_.getLines.fold("")(_ ++ _))
+  def resource(gen: Eval[BufferedSource])
+              (implicit m: Monoid[String]): Eval[String] = gen.map(_.getLines.fold(m.empty)(_ ++ _))
 
 }
