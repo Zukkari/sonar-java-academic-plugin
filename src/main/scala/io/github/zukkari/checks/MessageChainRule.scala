@@ -13,9 +13,7 @@ import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 import scala.jdk.CollectionConverters._
 
-case class Traversal(methodName: String, depth: Int) {
-  def +(that: Traversal)(implicit m: Monoid[String]): Traversal = Traversal(m.empty, depth + that.depth)
-}
+case class Traversal(methodName: String, depth: Int)
 
 @Rule(key = "MessageChainRule")
 class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
@@ -138,7 +136,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
       .map(_.asInstanceOf[MethodInvocationTree])
 
     if (nextInvocationTree.nonEmpty) {
-      Monoid[Traversal].empty + traversal + depth(nextInvocationTree.head)
+      Monoid[Traversal].empty |+| traversal |+| depth(nextInvocationTree.head)
     } else {
       traversal
     }
