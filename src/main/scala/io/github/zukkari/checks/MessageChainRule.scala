@@ -133,9 +133,9 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
       .filter(_.size == 1)
       .map(_.get(0))
       .filter(_.isInstanceOf[ReturnStatementTree])
-      .map(st => st.asInstanceOf[ReturnStatementTree].expression)
+      .map(_.asInstanceOf[ReturnStatementTree].expression)
       .filter(_.isInstanceOf[MethodInvocationTree])
-      .map(tree => tree.asInstanceOf[MethodInvocationTree])
+      .map(_.asInstanceOf[MethodInvocationTree])
 
     if (nextInvocationTree.nonEmpty) {
       Monoid[Traversal].empty + traversal + depth(nextInvocationTree.head)
