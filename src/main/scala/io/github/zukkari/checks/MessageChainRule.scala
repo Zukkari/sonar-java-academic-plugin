@@ -66,8 +66,8 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
     val blockDepth = for {
       b <- block
-    } yield (b.size, b.get(0).isInstanceOf[ReturnStatementTree]) match {
-      case (1, true) => depthExpression(b.get(0).asInstanceOf[ReturnStatementTree], traversal)
+    } yield (b.size, b.get(0)) match {
+      case (1, returnStatement: ReturnStatementTree) => depthExpression(returnStatement, traversal)
       case _ => traversal
     }
 
