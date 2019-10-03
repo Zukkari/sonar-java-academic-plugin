@@ -5,4 +5,13 @@
 # sonar-android-plugin
 Sonar plugin that can detect code smells in Android applications
 
-README will be filled later
+Currently only Java language is supported.
+
+## Supported code smells
+
+Current list of supported code smells:
+
+| Code smell | Description | 
+| :---: | :---: |
+| Data class | Description can be found [here](https://refactoring.guru/smells/data-class) |
+| Method chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain lenghth. This can be configured with property `sonar.android.plugin.message.chain.length` |
