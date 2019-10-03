@@ -12,6 +12,7 @@ import scala.io.{BufferedSource, Source}
 
 package object implicits {
   type Resource[A, B] = (A, B) => BufferedSource
+
   implicit def ruleResource[A <: DirectoryKind]: Resource[A, NewRule] = (dir, rule) => Source.fromResource(s"${dir.name}/${rule.key}_java.${dir.ext}")
 
   type Projector[A] = Reader[Json, A]
@@ -20,6 +21,7 @@ package object implicits {
   implicit def traversalMonoid(implicit m: Monoid[String]): Monoid[Traversal] = new Monoid[Traversal] {
     override def empty: Traversal = Traversal(m.empty, 1)
 
-    override def combine(x: Traversal, y: Traversal): Traversal = Traversal(m.empty, x.depth + y.depth)
+    override def combine(x: Traversal, y: Traversal): Traversal =
+      Traversal(x.methodName ++ " -> " ++ y.methodName, x.depth + y.depth)
   }
 }

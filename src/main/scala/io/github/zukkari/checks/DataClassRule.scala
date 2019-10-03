@@ -2,7 +2,7 @@ package io.github.zukkari.checks
 
 import cats.effect.SyncIO
 import io.github.zukkari.checks.DataClassSyntax._
-import org.sonar.api.utils.log.{Logger, Loggers}
+import io.github.zukkari.util.{Log, Logger}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.tree._
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
@@ -12,7 +12,7 @@ import scala.jdk.CollectionConverters._
 
 @Rule(key = "DataClassRule", name = "Data class")
 class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
-  val log: Logger = Loggers.get(classOf[DataClassRule])
+  private val log: Logger = Log(classOf[DataClassRule])
 
   private var context: JavaFileScannerContext = _
 
