@@ -4,7 +4,7 @@ import cats.Eval
 import cats.data.Reader
 import cats.implicits._
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.config.metadata.implicits.Projector
+import io.github.zukkari.implicits.Projector
 import org.mockito.MockitoSugar._
 
 import scala.io.BufferedSource

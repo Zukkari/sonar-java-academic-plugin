@@ -2,7 +2,7 @@ package io.github.zukkari.config.metadata
 
 import cats.implicits._
 import cats.{Eval, Semigroupal}
-import io.github.zukkari.config.metadata.implicits.{Resource, _}
+import io.github.zukkari.implicits._
 import io.github.zukkari.config.{DirectoryKind, MetadataDirectory, Template}
 import org.sonar.api.rule.RuleStatus
 import org.sonar.api.rules.RuleType

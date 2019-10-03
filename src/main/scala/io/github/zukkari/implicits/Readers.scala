@@ -1,4 +1,4 @@
-package io.github.zukkari.config.metadata.implicits
+package io.github.zukkari.implicits
 
 import cats.data.Reader
 import io.circe.Json

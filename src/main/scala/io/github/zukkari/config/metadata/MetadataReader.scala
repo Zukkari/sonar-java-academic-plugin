@@ -4,7 +4,7 @@ import cats.implicits._
 import cats.{Eval, Monoid}
 import io.circe.ParsingFailure
 import io.circe.parser._
-import io.github.zukkari.config.metadata.implicits.Projector
+import io.github.zukkari.implicits.Projector
 
 import scala.io.BufferedSource
 

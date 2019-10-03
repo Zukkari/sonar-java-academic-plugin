@@ -28,8 +28,8 @@ class MessageChainSpec extends BaseSpec {
 
     when(tree.symbol).thenReturn(typeSymbol)
 
-    val depth = rule.depth(tree, Traversal(m.empty, -1))
-    assert(depth == -1)
+    val traversal = rule.depth(tree, Traversal(m.empty, -1))
+    assert(traversal.depth == -1)
   }
 
   it should "return depth when size of block > 1 or return is not first statement of block" in {
@@ -43,7 +43,7 @@ class MessageChainSpec extends BaseSpec {
     when(block.body).thenReturn(body)
     when(body.size()).thenReturn(2)
 
-    assert(rule.depthSymbolTree(methodJavaSymbol, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthSymbolTree(methodJavaSymbol, Traversal(m.empty, -1)).depth == -1)
   }
 
   it should "return depth if MethodInvocationTree is not followed by expressionTree or identifier tree" in {
@@ -51,7 +51,7 @@ class MessageChainSpec extends BaseSpec {
     val primitive = mock[PrimitiveTypeTree]
     when(tree.methodSelect).thenReturn(primitive)
 
-    assert(rule.depthMethodInvocationTree(tree, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthMethodInvocationTree(tree, Traversal(m.empty, -1)).depth == -1)
   }
 
   it should "return depth if identifier is not followed by variable" in {
@@ -60,7 +60,7 @@ class MessageChainSpec extends BaseSpec {
 
     when(ident.symbol).thenReturn(symbol)
 
-    assert(rule.depthIdentifier(ident, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthIdentifier(ident, Traversal(m.empty, -1)).depth == -1)
   }
 
   it should "return depth if variable does not have class" in {
@@ -69,7 +69,7 @@ class MessageChainSpec extends BaseSpec {
 
     when(variable.getType).thenReturn(varType)
 
-    assert(rule.depthVariableSymbol(variable, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthVariableSymbol(variable, Traversal(m.empty, -1)).depth == -1)
   }
 
   it should "return depth if class has no members" in {
@@ -79,7 +79,7 @@ class MessageChainSpec extends BaseSpec {
     when(javaSymbol.declaration).thenReturn(classTree)
     when(classTree.members).thenReturn(Nil.asJava)
 
-    assert(rule.depthType(javaSymbol, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthType(javaSymbol, Traversal(m.empty, -1)).depth == -1)
   }
 
   it should "return depth when member selection expression is not followed by identifier" in {
@@ -88,7 +88,7 @@ class MessageChainSpec extends BaseSpec {
 
     when(tree.expression).thenReturn(primitiveTree)
 
-    assert(rule.depthMemberSelectExpression(tree, Traversal(m.empty, -1)) == -1)
+    assert(rule.depthMemberSelectExpression(tree, Traversal(m.empty, -1)).depth == -1)
   }
 
   def verify(check: String): Unit = {
