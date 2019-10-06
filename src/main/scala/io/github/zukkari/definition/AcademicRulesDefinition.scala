@@ -1,6 +1,7 @@
 package io.github.zukkari.definition
 
 import cats.syntax.either._
+import io.github.zukkari.SonarJavaAcademicPlugin
 import io.github.zukkari.config.Rules.JavaCheckClass
 import io.github.zukkari.config.RulesSyntax._
 import io.github.zukkari.config.metadata.MetadataGenInstances._
@@ -12,15 +13,16 @@ import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.api.server.rule.{RulesDefinition, RulesDefinitionAnnotationLoader}
 import org.sonar.check.Rule
 
-final class AndroidRulesDefinition extends RulesDefinition {
-  private val log = Log(classOf[AndroidRulesDefinition])
+final class AcademicRulesDefinition extends RulesDefinition {
+  import AcademicRulesDefinition._
 
-  val repoKey = "sonar-android-key"
-  val repoName = "Sonar Android repository"
+  private val log = Log(classOf[AcademicRulesDefinition])
 
   implicit val rulesLoader: RulesDefinitionAnnotationLoader = new RulesDefinitionAnnotationLoader
 
   override def define(context: RulesDefinition.Context): Unit = {
+    log.info(() => s"Started ${classOf[SonarJavaAcademicPlugin]} rules initialization")
+
     implicit val repo: NewRepository = context
       .createRepository(repoKey, Java.key)
       .setName(repoName)
@@ -31,6 +33,9 @@ final class AndroidRulesDefinition extends RulesDefinition {
         case Left(reason) => log.error(() => reason)
         case Right(rule) => log.info(() => s"Successfully loaded rule: ${rule.key}")
       })
+
+    repo.done()
+    log.info(() => s"Finished ${classOf[SonarJavaAcademicPlugin]} rules initialization")
   }
 
   def addRule(check: JavaCheckClass)(implicit repo: NewRepository): Either[String, NewRule] = {
@@ -52,4 +57,9 @@ final class AndroidRulesDefinition extends RulesDefinition {
 
   def getRule(key: String)(implicit repo: NewRepository): Either[String, NewRule] =
     repo.rule(key).asRight.ensure(s"No rule was created for $key")(_ != null)
+}
+
+object AcademicRulesDefinition {
+  val repoKey = "sonar-academic-repository"
+  val repoName = "Sonar Academic Repository"
 }

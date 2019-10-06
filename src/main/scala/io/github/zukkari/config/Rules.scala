@@ -10,12 +10,12 @@ import org.sonar.plugins.java.api.JavaCheck
 
 
 object Rules {
-  type JavaCheckClass = Class[JavaCheck]
+  type JavaCheckClass = Class[_ <: JavaCheck]
 
   def get: List[JavaCheckClass] = List(
     classOf[DataClassRule],
     classOf[MessageChainRule]
-  ).map(_.asInstanceOf[JavaCheckClass])
+  )
 
 }
 

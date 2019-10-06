@@ -1,7 +1,7 @@
 {
   "title": "Data class",
   "type": "CODE_SMELL",
-  "status": "READY",
+  "status": "BETA",
   "remediation": {
     "func": "Constant\/Issue",
     "constantCost": "5min"

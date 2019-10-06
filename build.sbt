@@ -1,10 +1,10 @@
 import sbt._
 import org.sonar.updatecenter.common.PluginManifest
 
-name := "sonar-android"
+name := "sonar-java-academic-plugin"
 organization := "io.github.zukkari"
-homepage := Some(url("https://github.com/Zukkari/sonar-android-plugin"))
-description := "Implementation of Android code smells for Sonar"
+homepage := Some(url("https://github.com/Zukkari/sonar-java-academic-plugin"))
+description := "Implementation of Java academic code smells for Sonar"
 
 version := "0.1"
 
@@ -20,6 +20,7 @@ scalacOptions := Seq(
 // Dependencies
 val sonarVersion = "7.9"
 libraryDependencies ++= List(
+  "org.scala-lang" % "scala-library" % "2.13.0",
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
@@ -35,12 +36,12 @@ libraryDependencies ++= List(
 
 // Manifest attributes
 packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
-  PluginManifest.KEY -> "sonar-android-plugin",
-  PluginManifest.NAME -> "Sonar Android Plugin",
+  PluginManifest.KEY -> "sonar-java-academic-plugin",
+  PluginManifest.NAME -> "Sonar Java academic plugin",
   PluginManifest.DESCRIPTION -> description.value,
-  PluginManifest.HOMEPAGE -> "https://github.com/Zukkari/sonar-android-plugin",
-  PluginManifest.SOURCES_URL -> "https://github.com/Zukkari/sonar-android-plugin",
-  PluginManifest.ISSUE_TRACKER_URL -> "https://github.com/Zukkari/sonar-android-plugin/issues",
+  PluginManifest.HOMEPAGE -> "https://github.com/Zukkari/sonar-java-academic-plugin",
+  PluginManifest.SOURCES_URL -> "https://github.com/Zukkari/sonar-java-academic-plugin",
+  PluginManifest.ISSUE_TRACKER_URL -> "https://github.com/Zukkari/sonar-java-academic-plugin/issues",
   PluginManifest.ORGANIZATION -> "Stanislav Mõškovski",
   PluginManifest.ORGANIZATION_URL -> "https://github.com/Zukkari",
   PluginManifest.DEVELOPERS -> "Stanislav Mõškovski",
@@ -49,7 +50,7 @@ packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
   PluginManifest.SONAR_VERSION -> sonarVersion,
   PluginManifest.LICENSE -> "GNU LGPL 3",
   PluginManifest.SONARLINT_SUPPORTED -> "false",
-  PluginManifest.MAIN_CLASS -> "io.github.zukkari.SonarAndroidPlugin",
+  PluginManifest.MAIN_CLASS -> "io.github.zukkari.SonarJavaAcademicPlugin",
   PluginManifest.USE_CHILD_FIRST_CLASSLOADER -> "false"
 )
 

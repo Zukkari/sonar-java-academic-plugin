@@ -31,25 +31,26 @@ class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
    * @param tree to verify against Data class code smell
    */
   override def visitClass(tree: ClassTree): Unit = {
+    log.info(() => "Running data class rule...")
     val treeMembers = tree.members.asScala.toList
 
     implicit val classVarNames: List[String] = treeMembers
       .filter(_.isInstanceOf[VariableTree])
       .map(_.asInstanceOf[VariableTree].simpleName.name)
-    log.debug(() => s"Class variable names: $classVarNames")
+    log.info(() => s"Class variable names: $classVarNames")
 
     val methods = treeMembers
       .filter(_.isInstanceOf[MethodTree])
       .map(_.asInstanceOf[MethodTree])
-    log.debug(() => s"Class has the following methods: $methods")
+    log.info(() => s"Class has the following methods: $methods")
 
     val getters = methods.getters
-    log.debug(() => s"Found ${getters.size} getters:")
-    getters.foreach(m => log.debug(() => m.toString))
+    log.info(() => s"Found ${getters.size} getters:")
+    getters.foreach(m => log.info(() => m.toString))
 
     val setters = methods.setters
-    log.debug(() => s"Found ${setters.size} setters:")
-    setters.foreach(m => log.debug(() => m.toString))
+    log.info(() => s"Found ${setters.size} setters:")
+    setters.foreach(m => log.info(() => m.toString))
 
     val sideEffect = if (getters.size + setters.size == methods.size && classVarNames.nonEmpty) {
       SyncIO.pure("Refactor this class so it includes more than just data").flatMap(m => reportIssue(tree, m))

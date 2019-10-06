@@ -9,11 +9,11 @@ import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
-class AndroidRulesDefinitionSpec extends BaseSpec {
+class AcademicRulesDefinitionSpec extends BaseSpec {
   val context: RulesDefinition.Context = spy(mock[RulesDefinition.Context])
   implicit val repo: NewRepository = mock[NewRepository]
 
-  val definition = new AndroidRulesDefinition
+  val definition = new AcademicRulesDefinition
 
   it should "call create repository for context" in {
     when(context.createRepository(definition.repoKey, Java.key)).thenAnswer(repo)

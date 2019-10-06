@@ -13,7 +13,8 @@ import scala.io.{BufferedSource, Source}
 package object implicits {
   type Resource[A, B] = (A, B) => BufferedSource
 
-  implicit def ruleResource[A <: DirectoryKind]: Resource[A, NewRule] = (dir, rule) => Source.fromResource(s"${dir.name}/${rule.key}_java.${dir.ext}")
+  implicit def ruleResource[A <: DirectoryKind]: Resource[A, NewRule] =
+    (dir, rule) => Source.fromResource(s"${dir.name}/${rule.key}_java.${dir.ext}", classOf[SonarJavaAcademicPlugin].getClassLoader)
 
   type Projector[A] = Reader[Json, A]
   implicit val metaProjector: Projector[Metadata] = Readers.metadataProjector
