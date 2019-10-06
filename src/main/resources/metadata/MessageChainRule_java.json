@@ -1,0 +1,13 @@
+{
+  "title": "Message chain",
+  "type": "CODE_SMELL",
+  "status": "READY",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "MINOR"
+}
