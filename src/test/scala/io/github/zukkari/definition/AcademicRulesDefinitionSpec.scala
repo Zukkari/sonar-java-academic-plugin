@@ -16,7 +16,7 @@ class AcademicRulesDefinitionSpec extends BaseSpec {
   val definition = new AcademicRulesDefinition
 
   it should "call create repository for context" in {
-    when(context.createRepository(definition.repoKey, Java.key)).thenAnswer(repo)
+    when(context.createRepository(AcademicRulesDefinition.repoKey, Java.key)).thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
 
     val mockRule = mock[NewRule]
@@ -33,7 +33,7 @@ class AcademicRulesDefinitionSpec extends BaseSpec {
 
     definition.define(context)
 
-    verify(context, atLeastOnce).createRepository(definition.repoKey, Java.key)
+    verify(context, atLeastOnce).createRepository(AcademicRulesDefinition.repoKey, Java.key)
   }
 
   it should "create annotated rules successfully" in {
