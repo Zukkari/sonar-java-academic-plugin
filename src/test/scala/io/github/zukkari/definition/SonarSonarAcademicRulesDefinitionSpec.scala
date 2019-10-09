@@ -1,7 +1,7 @@
 package io.github.zukkari.definition
 
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.config.{Java, LanguageKind}
+import io.github.zukkari.config.Java
 import io.github.zukkari.config.Rules.JavaCheckClass
 import org.mockito.MockitoSugar._
 import org.sonar.api.server.rule.RulesDefinition
@@ -9,14 +9,14 @@ import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
-class AcademicRulesDefinitionSpec extends BaseSpec {
+class SonarSonarAcademicRulesDefinitionSpec extends BaseSpec {
   val context: RulesDefinition.Context = spy(mock[RulesDefinition.Context])
   implicit val repo: NewRepository = mock[NewRepository]
 
-  val definition = new AcademicRulesDefinition
+  val definition = new SonarAcademicRulesDefinition
 
   it should "call create repository for context" in {
-    when(context.createRepository(definition.repoKey, Java.key)).thenAnswer(repo)
+    when(context.createRepository(SonarAcademicRulesDefinition.repoKey, Java.key)).thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
 
     val mockRule = mock[NewRule]
@@ -33,7 +33,7 @@ class AcademicRulesDefinitionSpec extends BaseSpec {
 
     definition.define(context)
 
-    verify(context, atLeastOnce).createRepository(definition.repoKey, Java.key)
+    verify(context, atLeastOnce).createRepository(SonarAcademicRulesDefinition.repoKey, Java.key)
   }
 
   it should "create annotated rules successfully" in {

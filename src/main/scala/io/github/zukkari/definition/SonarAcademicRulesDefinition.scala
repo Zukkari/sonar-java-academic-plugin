@@ -13,10 +13,10 @@ import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.api.server.rule.{RulesDefinition, RulesDefinitionAnnotationLoader}
 import org.sonar.check.Rule
 
-final class AcademicRulesDefinition extends RulesDefinition {
-  import AcademicRulesDefinition._
+final class SonarAcademicRulesDefinition extends RulesDefinition {
+  import SonarAcademicRulesDefinition._
 
-  private val log = Log(classOf[AcademicRulesDefinition])
+  private val log = Log(classOf[SonarAcademicRulesDefinition])
 
   implicit val rulesLoader: RulesDefinitionAnnotationLoader = new RulesDefinitionAnnotationLoader
 
@@ -59,7 +59,7 @@ final class AcademicRulesDefinition extends RulesDefinition {
     repo.rule(key).asRight.ensure(s"No rule was created for $key")(_ != null)
 }
 
-object AcademicRulesDefinition {
+object SonarAcademicRulesDefinition {
   val repoKey = "sonar-academic-repository"
   val repoName = "Sonar Academic Repository"
 }

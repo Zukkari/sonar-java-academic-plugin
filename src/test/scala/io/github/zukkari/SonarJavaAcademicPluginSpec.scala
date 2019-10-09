@@ -1,6 +1,6 @@
 package io.github.zukkari
 
-import io.github.zukkari.definition.AcademicRulesDefinition
+import io.github.zukkari.definition.{SonarAcademicRulesDefinition, SonarAcademicRulesRegistrar}
 import org.sonar.api.internal.SonarRuntimeImpl
 import org.sonar.api.utils.Version
 import org.sonar.api.{Plugin, SonarEdition, SonarQubeSide, SonarRuntime}
@@ -17,9 +17,10 @@ class SonarJavaAcademicPluginSpec extends BaseSpec {
   "Android plugin" should "should add defined rules to context" in {
     new SonarJavaAcademicPlugin().define(context)
 
-    assert(context.getExtensions.size() == 1)
+    assert(context.getExtensions.size() == 2)
 
     // contains only extensions that were added
-    assert(context.getExtensions.contains(classOf[AcademicRulesDefinition]))
+    assert(context.getExtensions.contains(classOf[SonarAcademicRulesDefinition]))
+    assert(context.getExtensions.contains(classOf[SonarAcademicRulesRegistrar]))
   }
 }
