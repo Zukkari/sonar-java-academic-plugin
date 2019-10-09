@@ -9,7 +9,7 @@ import org.sonar.api.server.rule.RulesDefinition.{NewRepository, NewRule}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
-class SonarSonarAcademicRulesDefinitionSpec extends BaseSpec {
+class SonarAcademicRulesDefinitionSpec extends BaseSpec {
   val context: RulesDefinition.Context = spy(mock[RulesDefinition.Context])
   implicit val repo: NewRepository = mock[NewRepository]
 
