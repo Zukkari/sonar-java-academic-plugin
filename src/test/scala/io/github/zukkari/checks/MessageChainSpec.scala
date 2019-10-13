@@ -10,6 +10,7 @@ import org.sonar.java.checks.verifier.JavaCheckVerifier
 import org.sonar.java.resolve.JavaSymbol.{MethodJavaSymbol, TypeJavaSymbol, VariableJavaSymbol}
 import org.sonar.java.resolve.TypeVariableJavaType
 import org.sonar.plugins.java.api.semantic.Symbol.TypeSymbol
+import org.sonar.plugins.java.api.semantic.Type
 import org.sonar.plugins.java.api.tree._
 
 import scala.jdk.CollectionConverters._
@@ -65,9 +66,18 @@ class MessageChainSpec extends BaseSpec {
 
   it should "return depth if variable does not have class" in {
     val variable = mock[VariableJavaSymbol]
-    val varType = mock[TypeVariableJavaType]
+    val varTree = mock[VariableTree]
+    val typeTree = mock[TypeTree]
+    val symbolType = mock[Type]
+    val typeSymbol = mock[TypeSymbol]
+    val typeSymbolDeclaration = mock[ClassTree]
 
-    when(variable.getType).thenReturn(varType)
+    when(variable.declaration).thenReturn(varTree)
+    when(varTree.`type`).thenReturn(typeTree)
+    when(typeTree.symbolType).thenReturn(symbolType)
+    when(symbolType.symbol).thenReturn(typeSymbol)
+    when(typeSymbol.declaration).thenReturn(typeSymbolDeclaration)
+    when(typeSymbolDeclaration.members).thenReturn(Nil.asJava)
 
     assert(rule.depthVariableSymbol(variable, Traversal(m.empty, -1)).depth == -1)
   }
