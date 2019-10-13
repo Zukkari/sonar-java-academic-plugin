@@ -6,7 +6,6 @@ import cats.implicits._
 import io.github.zukkari.implicits._
 import org.sonar.api.Property
 import org.sonar.check.Rule
-import org.sonar.java.resolve.JavaSymbol
 import org.sonar.plugins.java.api.semantic.Symbol.{MethodSymbol, TypeSymbol, VariableSymbol}
 import org.sonar.plugins.java.api.semantic.Type
 import org.sonar.plugins.java.api.tree._
@@ -109,16 +108,16 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
   def depthIdentifier(tree: IdentifierTree, traversal: Traversal): Traversal = {
     tree.symbol match {
-      case variable: JavaSymbol with VariableSymbol =>
+      case variable: VariableSymbol =>
         depthVariableSymbol(variable, traversal)
       case _ => traversal
     }
   }
 
-  def depthVariableSymbol(symbol: JavaSymbol, traversal: Traversal): Traversal = {
-    symbol.getType match {
+  def depthVariableSymbol(symbol: VariableSymbol, traversal: Traversal): Traversal = {
+    symbol.declaration.`type`.symbolType match {
       case javaType: Type =>
-        depthType(javaType.getSymbol, traversal)
+        depthType(javaType.symbol, traversal)
       case _ =>
         traversal
     }
