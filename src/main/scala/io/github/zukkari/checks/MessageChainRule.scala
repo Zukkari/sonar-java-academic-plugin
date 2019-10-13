@@ -6,9 +6,9 @@ import cats.implicits._
 import io.github.zukkari.implicits._
 import org.sonar.api.Property
 import org.sonar.check.Rule
-import org.sonar.java.resolve.ClassJavaType
-import org.sonar.java.resolve.JavaSymbol.{MethodJavaSymbol, TypeJavaSymbol, VariableJavaSymbol}
-import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol
+import org.sonar.java.resolve.JavaSymbol
+import org.sonar.plugins.java.api.semantic.Symbol.{MethodSymbol, TypeSymbol, VariableSymbol}
+import org.sonar.plugins.java.api.semantic.Type
 import org.sonar.plugins.java.api.tree._
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
@@ -89,8 +89,8 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     tree.methodSelect match {
       case expressionTree: MemberSelectExpressionTree =>
         depthMemberSelectExpression(expressionTree, traversal)
-      case identifierTree: IdentifierTree if identifierTree.symbol.isInstanceOf[MethodJavaSymbol] =>
-        val javaSymbol = identifierTree.symbol.asInstanceOf[MethodJavaSymbol]
+      case identifierTree: IdentifierTree if identifierTree.symbol.isInstanceOf[MethodSymbol] =>
+        val javaSymbol = identifierTree.symbol.asInstanceOf[MethodSymbol]
         val methodName = nextMethodName(javaSymbol)
         depthSymbolTree(javaSymbol, Traversal(methodName, traversal.depth + 1))
       case _ =>
@@ -109,22 +109,22 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
   def depthIdentifier(tree: IdentifierTree, traversal: Traversal): Traversal = {
     tree.symbol match {
-      case variable: VariableJavaSymbol =>
+      case variable: JavaSymbol with VariableSymbol =>
         depthVariableSymbol(variable, traversal)
       case _ => traversal
     }
   }
 
-  def depthVariableSymbol(symbol: VariableJavaSymbol, traversal: Traversal): Traversal = {
+  def depthVariableSymbol(symbol: JavaSymbol, traversal: Traversal): Traversal = {
     symbol.getType match {
-      case javaType: ClassJavaType =>
+      case javaType: Type =>
         depthType(javaType.getSymbol, traversal)
       case _ =>
         traversal
     }
   }
 
-  def depthType(symbol: TypeJavaSymbol, traversal: Traversal): Traversal = {
+  def depthType(symbol: TypeSymbol, traversal: Traversal): Traversal = {
     val nextInvocationTree = symbol.declaration.members.asScala.toList
       .filter(method => method.isInstanceOf[MethodTree]
         && method.asInstanceOf[MethodTree].simpleName.name() == traversal.methodName)
