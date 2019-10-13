@@ -6,8 +6,9 @@ import cats.implicits._
 import io.github.zukkari.implicits._
 import org.sonar.api.Property
 import org.sonar.check.Rule
+import org.sonar.java.resolve.ClassJavaType
 import org.sonar.java.resolve.JavaSymbol.{MethodJavaSymbol, TypeJavaSymbol, VariableJavaSymbol}
-import org.sonar.java.resolve.{ClassJavaType, JavaSymbol}
+import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol
 import org.sonar.plugins.java.api.tree._
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
@@ -42,7 +43,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     report.unsafeRunSync()
   }
 
-  private def nextMethodName(javaSymbol: MethodJavaSymbol)(implicit m: Monoid[String]): String =
+  private def nextMethodName(javaSymbol: MethodSymbol)(implicit m: Monoid[String]): String =
     Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse(m.empty)
 
 
@@ -51,7 +52,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
   def depth(tree: MethodInvocationTree, traversal: Traversal): Traversal = {
     tree.symbol match {
-      case javaSymbol: MethodJavaSymbol =>
+      case javaSymbol: MethodSymbol =>
         val methodName = nextMethodName(javaSymbol)
         depthSymbolTree(javaSymbol, Traversal(methodName, traversal.depth))
       case _ =>
@@ -59,7 +60,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
     }
   }
 
-  def depthSymbolTree(symbol: JavaSymbol.MethodJavaSymbol, traversal: Traversal): Traversal = {
+  def depthSymbolTree(symbol: MethodSymbol, traversal: Traversal): Traversal = {
     val block = Option(symbol.declaration).map(_.block.body)
 
     val blockDepth = for {
