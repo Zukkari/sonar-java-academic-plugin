@@ -1,4 +1,12 @@
 public class MessageChain {
+    /**
+     * Commentary
+     */
+
+    // Commentary 2
+
+    /* Commentary 3 */
+
     public void exec() {
         A a = new A();
 
