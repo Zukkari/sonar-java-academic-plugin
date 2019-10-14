@@ -43,7 +43,7 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
   }
 
   private def nextMethodName(javaSymbol: MethodSymbol)(implicit m: Monoid[String]): String =
-    Option(javaSymbol.declaration).map(_.simpleName.name).getOrElse(m.empty)
+    Option(javaSymbol.owner.name).getOrElse(m.empty)
 
 
   def depth(tree: MethodInvocationTree)
