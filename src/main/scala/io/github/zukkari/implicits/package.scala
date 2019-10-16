@@ -3,7 +3,7 @@ package io.github.zukkari
 import cats.Monoid
 import cats.data.Reader
 import io.circe.Json
-import io.github.zukkari.checks.Traversal
+import io.github.zukkari.checks.Chain
 import io.github.zukkari.config.DirectoryKind
 import io.github.zukkari.config.metadata.Metadata
 import org.sonar.api.server.rule.RulesDefinition.NewRule
@@ -19,10 +19,10 @@ package object implicits {
   type Projector[A] = Reader[Json, A]
   implicit val metaProjector: Projector[Metadata] = Readers.metadataProjector
 
-  implicit def traversalMonoid(implicit m: Monoid[String]): Monoid[Traversal] = new Monoid[Traversal] {
-    override def empty: Traversal = Traversal(m.empty, 1)
+  implicit val traversalMonoid: Monoid[Chain] = new Monoid[Chain] {
+    override def empty: Chain = Chain(1)
 
-    override def combine(x: Traversal, y: Traversal): Traversal =
-      Traversal(x.methodName ++ " -> " ++ y.methodName, x.depth + y.depth)
+    override def combine(x: Chain, y: Chain): Chain =
+      Chain(x.depth + y.depth)
   }
 }

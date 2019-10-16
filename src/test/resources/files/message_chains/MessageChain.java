@@ -1,48 +1,78 @@
 public class MessageChain {
-    /**
-     * Commentary
-     */
-
-    // Commentary 2
-
-    /* Commentary 3 */
-
     public void exec() {
-        A a = new A();
+        Record record = Record.builder() // Noncompliant {{Message chain length is 7. Reduce chain length to at least: 2}}
+                .a("a")
+                .b("b")
+                .c("c")
+                .d("d")
+                .e("e")
+                .build();
 
-        String message = a.getMessage(); // Noncompliant
-        System.out.println(message);
+        System.out.println(record);
     }
 }
 
-public class A {
-    private B b;
+class Record {
+    private final String a;
+    private final String b;
+    private final String c;
+    private final String d;
+    private final String e;
 
-    public String getMessage() {
-        return b.getMessage(); // Noncompliant
+    Record(String a, String b, String c, String d, String e) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
+    }
+
+    public static RecordBuilder builder() {
+        return new RecordBuilder();
+    }
+
+    public static class RecordBuilder {
+        private String a;
+        private String b;
+        private String c;
+        private String d;
+        private String e;
+
+        RecordBuilder() {
+        }
+
+        public RecordBuilder a(String a) {
+            this.a = a;
+            return this;
+        }
+
+        public RecordBuilder b(String b) {
+            this.b = b;
+            return this;
+        }
+
+        public RecordBuilder c(String c) {
+            this.c = c;
+            return this;
+        }
+
+        public RecordBuilder d(String d) {
+            this.d = d;
+            return this;
+        }
+
+        public RecordBuilder e(String e) {
+            this.e = e;
+            return this;
+        }
+
+        public Record build() {
+            return new Record(a, b, c, d, e);
+        }
+
+        public String toString() {
+            return "Record.RecordBuilder(a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d + ", e=" + this.e + ")";
+        }
     }
 }
 
-public class B {
-    private C c;
-
-    public String getMessage() {
-        return c.getX(); // Noncompliant
-    }
-}
-
-public class C {
-    private String x;
-
-    public String getX() {
-        return loadX(); // Compliant
-    }
-
-    public String loadX() {
-        return loadZ(); // Compliant
-    }
-
-    public String loadZ() {
-        return x; // Compliant
-    }
-}
