@@ -11,7 +11,7 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 @Rule(key = "DataClassRule", name = "Data class")
-class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
+class DataClassRule extends JavaRule {
   private val log: Logger = Log(classOf[DataClassRule])
 
   private var context: JavaFileScannerContext = _
@@ -52,13 +52,11 @@ class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
     log.info(() => s"Found ${setters.size} setters:")
     setters.foreach(m => log.info(() => m.toString))
 
-    val sideEffect = if (getters.size + setters.size == methods.size && classVarNames.nonEmpty) {
-      SyncIO.pure("Refactor this class so it includes more than just data").flatMap(m => reportIssue(tree, m))
-    } else {
-      SyncIO(())
-    }
-
-    sideEffect.unsafeRunSync()
+    reportIssue(
+      "Refactor this class so it includes more than just data",
+      tree,
+      getters.size + setters.size == methods.size && classVarNames.nonEmpty
+    )
 
     val childClasses = treeMembers.filter(_.isInstanceOf[ClassTree]).map(_.asInstanceOf[ClassTree])
     runChildren(childClasses)
@@ -72,7 +70,7 @@ class DataClassRule extends BaseTreeVisitor with JavaFileScanner {
     case Nil =>
   }
 
-  def reportIssue(tree: ClassTree, message: String) = SyncIO(context.reportIssue(this, tree, message))
+  override def scannerContext: JavaFileScannerContext = context
 }
 
 object DataClassSyntax {
@@ -105,7 +103,7 @@ object DataClassSyntax {
         assignmentExpression
           .filter(_.isInstanceOf[IdentifierTree])
           .map(expr => (expr.asInstanceOf[IdentifierTree].name, expr))
-          .filter{
+          .filter {
             case (varName, _) => classVarNames contains varName
           }
           .map(_._2)

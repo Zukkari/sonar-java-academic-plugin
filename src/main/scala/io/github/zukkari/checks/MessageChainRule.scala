@@ -1,21 +1,20 @@
 package io.github.zukkari.checks
 
 import cats.Monoid
-import cats.effect.IO
 import cats.implicits._
 import io.github.zukkari.checks.ChainSyntax._
 import io.github.zukkari.implicits._
 import org.sonar.api.Property
 import org.sonar.check.Rule
+import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree._
-import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 import scala.annotation.tailrec
 
 case class Chain(depth: Int)
 
 @Rule(key = "MessageChainRule")
-class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
+class MessageChainRule extends JavaRule {
 
   @Property(key = "sonar.android.plugin.message.chain.length", name = "Maximum length of message chain", defaultValue = "2")
   val chainLength: Int = 2
@@ -31,14 +30,11 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
   override def visitMethodInvocation(tree: MethodInvocationTree): Unit = {
     val methodDepth = depth(tree).depth
 
-    val report = if (methodDepth > chainLength) {
-      IO.pure(s"Message chain length is $methodDepth. Reduce chain length to at least: $chainLength")
-        .map(m => context.reportIssue(this, tree, m))
-    } else {
-      IO(())
-    }
-
-    report.unsafeRunAsyncAndForget()
+    reportIssue(
+      s"Message chain length is $methodDepth. Reduce chain length to at least: $chainLength",
+      tree,
+      methodDepth > chainLength
+    )
   }
 
   def depth(tree: MethodInvocationTree)(implicit m: Monoid[Chain]): Chain = depth(tree, m.empty)
@@ -55,6 +51,8 @@ class MessageChainRule extends BaseTreeVisitor with JavaFileScanner {
 
     depth1(tree.methodSelect, chain)
   }
+
+  override def scannerContext: JavaFileScannerContext = context
 }
 
 object ChainSyntax {
