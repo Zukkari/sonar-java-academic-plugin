@@ -40,8 +40,6 @@ By definition message chain is a delegation of method calls.
 This can be described as a pattern `a -> b -> c -> d` etc.
 
 Plugin analyses method invocations and measures the depth of the calls. 
-This code smell detects direct call delegation, so if your method contains more logic than just delegation this code smell is not reported.
-If call depth is greater than configured depth, issue is reported to the context.
 
 # To implement
 
