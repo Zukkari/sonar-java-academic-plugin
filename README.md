@@ -14,7 +14,8 @@ Current list of supported code smells:
 | Code smell | Description | 
 | :---: | :---: |
 | Data class | Description can be found [here](https://refactoring.guru/smells/data-class) |
-| Method chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain lenghth. This can be configured with property `sonar.android.plugin.message.chain.length` |
+| Method chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain length. This can be configured with property `sonar.academic.plugin.message.chain.length` |
+| Long method | Detects methods that are longer than `X` lines (supports if statements, do while loops, for loops, synchronized blocks, try blocks (catch + finally), while loops). Configuratin property to configure method length is `sonar.academic.plugin.long.method.length`, with default value 8 | 
 
 ## How does it work?
 
@@ -41,18 +42,15 @@ This can be described as a pattern `a -> b -> c -> d` etc.
 
 Plugin analyses method invocations and measures the depth of the calls. 
 
-# To implement
-
 ## Long method
 
-**Implementable**: Yes
+Investage how many lines does the method have.
 
-**Difficulty**: Easy
+Since code follows tree-like structure, we traverse recursively into the tree and count the number of expressions in the tree recursively.
 
-Look for methods in classes that have more than `X` statements/expressions.
-`X` can be defined by the user from the UI.
+If number of expressions is larger than `X` we report an issue.
 
-Can be easily implemented since we can visit all method declarations in a single file.
+# To implement
 
 ## Large/blob class
 
