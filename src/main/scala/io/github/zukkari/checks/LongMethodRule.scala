@@ -9,10 +9,10 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 @Rule(key = "LongMethodRule")
-class LongMethodRule extends JavaRule {
-
-  @Property(key = "sonar.android.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
-  val methodLength: Int = 8
+class LongMethodRule(
+                      @Property(key = "sonar.android.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
+                      val methodLength: Int = 8
+                    ) extends JavaRule {
 
   private var context: JavaFileScannerContext = _
 
