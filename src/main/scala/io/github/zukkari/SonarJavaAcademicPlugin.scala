@@ -1,7 +1,6 @@
 package io.github.zukkari
 
 import io.github.zukkari.definition.{SonarAcademicRulesDefinition, SonarAcademicRulesRegistrar}
-import io.github.zukkari.sensor.SonarAcademicPluginSensor
 import io.github.zukkari.util.Log
 import org.sonar.api.Plugin
 import org.sonar.api.config.PropertyDefinition
