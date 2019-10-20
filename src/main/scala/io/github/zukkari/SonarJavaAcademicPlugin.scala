@@ -19,7 +19,7 @@ final class SonarJavaAcademicPlugin extends Plugin {
     context.addExtension(classOf[SonarAcademicRulesRegistrar])
 
     // Property definitions
-    PropertyDefinition.builder("sonar.android.plugin.message.chain.length")
+    PropertyDefinition.builder("sonar.academic.plugin.message.chain.length")
       .name("Message chain length")
       .description("Maximum length of message chain")
       .defaultValue("2")

@@ -16,7 +16,7 @@ case class Chain(depth: Int)
 @Rule(key = "MessageChainRule")
 class MessageChainRule extends JavaRule {
 
-  @Property(key = "sonar.android.plugin.message.chain.length", name = "Maximum length of message chain", defaultValue = "2")
+  @Property(key = "sonar.academic.plugin.message.chain.length", name = "Maximum length of message chain", defaultValue = "2")
   val chainLength: Int = 2
 
   private var context: JavaFileScannerContext = _

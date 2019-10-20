@@ -10,7 +10,7 @@ import scala.jdk.CollectionConverters._
 
 @Rule(key = "LongMethodRule")
 class LongMethodRule(
-                      @Property(key = "sonar.android.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
+                      @Property(key = "sonar.academic.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
                       val methodLength: Int = 8
                     ) extends JavaRule {
 
