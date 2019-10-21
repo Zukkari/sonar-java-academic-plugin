@@ -52,7 +52,7 @@ class DataClassRule extends JavaRule {
     log.info(() => s"Found ${setters.size} setters:")
     setters.foreach(m => log.info(() => m.toString))
 
-    reportIssue(
+    report(
       "Refactor this class so it includes more than just data",
       tree,
       getters.size + setters.size == methods.size && classVarNames.nonEmpty

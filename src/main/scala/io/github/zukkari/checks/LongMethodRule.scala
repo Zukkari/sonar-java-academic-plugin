@@ -27,7 +27,7 @@ class LongMethodRule(
   override def visitMethod(tree: MethodTree): Unit = {
     val expressions = countExpressions(tree)
 
-    reportIssue(
+    report(
       s"Reduce length of this method to at least $methodLength",
       tree,
       expressions > methodLength
