@@ -30,7 +30,7 @@ class MessageChainRule extends JavaRule {
   override def visitMethodInvocation(tree: MethodInvocationTree): Unit = {
     val methodDepth = depth(tree).depth
 
-    reportIssue(
+    report(
       s"Message chain length is $methodDepth. Reduce chain length to at least: $chainLength",
       tree,
       methodDepth > chainLength
