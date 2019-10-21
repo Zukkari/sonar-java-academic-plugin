@@ -16,6 +16,7 @@ Current list of supported code smells:
 | Data class | Description can be found [here](https://refactoring.guru/smells/data-class) |
 | Method chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain length. This can be configured with property `sonar.academic.plugin.message.chain.length` |
 | Long method | Detects methods that are longer than `X` lines (supports if statements, do while loops, for loops, synchronized blocks, try blocks (catch + finally), while loops). Configuratin property to configure method length is `sonar.academic.plugin.long.method.length`, with default value 8 | 
+| Switch statement | Detects usage of switch statements |
 
 ## How does it work?
 
@@ -50,6 +51,12 @@ Since code follows tree-like structure, we traverse recursively into the tree an
 
 If number of expressions is larger than `X` we report an issue.
 
+## Switch statement
+
+Find all usages of switch statements.
+
+Report all usages of switch statements as an issue.
+
 # To implement
 
 ## Large/blob class
@@ -78,16 +85,6 @@ This allows us to traverse classes only once and fill the gaps later as we perfo
 Perhaps maybe even investigate scanner for this.
 
 Stateful check.
-
-## Switch statement
-
-**Implementable**: Yes
-
-**Difficulty**: Easy
-
-Detect usage of switch statements and report a problem if collected count is higher than
-`X`. 
-Check if statement is instance of `SwitchExpressionTree`
 
 ## Lazy class
 
