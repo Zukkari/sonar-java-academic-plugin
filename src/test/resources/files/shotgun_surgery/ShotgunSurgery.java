@@ -1,5 +1,5 @@
 class ShotgunSurgery {
-    public static void utilMethod() {
+    public static void utilMethod() { // Noncompliant
         System.out.println("Hello, world!");
     }
 }
