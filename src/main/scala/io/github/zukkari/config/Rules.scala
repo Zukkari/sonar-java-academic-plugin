@@ -1,6 +1,6 @@
 package io.github.zukkari.config
 
-import io.github.zukkari.checks.{DataClassRule, LongMethodRule, MessageChainRule, SwitchStatementRule}
+import io.github.zukkari.checks.{DataClassRule, LongMethodRule, MessageChainRule, ShotgunSurgeryRule, SwitchStatementRule}
 import io.github.zukkari.config.Rules.JavaCheckClass
 import org.sonar.api.server.rule.RulesDefinition.NewRepository
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader
@@ -16,7 +16,8 @@ object Rules {
     classOf[DataClassRule],
     classOf[MessageChainRule],
     classOf[LongMethodRule],
-    classOf[SwitchStatementRule]
+    classOf[SwitchStatementRule],
+    classOf[ShotgunSurgeryRule]
   )
 
 }

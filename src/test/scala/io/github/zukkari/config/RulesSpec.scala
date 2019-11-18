@@ -1,7 +1,7 @@
 package io.github.zukkari.config
 
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.checks.{DataClassRule, LongMethodRule, MessageChainRule, SwitchStatementRule}
+import io.github.zukkari.checks.{DataClassRule, LongMethodRule, MessageChainRule, ShotgunSurgeryRule, SwitchStatementRule}
 
 class RulesSpec extends BaseSpec {
 
@@ -29,9 +29,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[SwitchStatementRule])
   }
 
+  it should "contain 'shotgun surgery' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[ShotgunSurgeryRule])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 4)
+    assert(rules.size == 5)
   }
 }
