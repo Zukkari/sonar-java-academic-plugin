@@ -14,9 +14,12 @@ Current list of supported code smells:
 | Code smell | Description | 
 | :---: | :---: |
 | Data class | Description can be found [here](https://refactoring.guru/smells/data-class) |
-| Method chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain length. This can be configured with property `sonar.academic.plugin.message.chain.length` |
+| Message chain | Description can be found [here](https://refactoring.guru/smells/message-chains). This rule has configurable method chain length. This can be configured with property `sonar.academic.plugin.message.chain.length` |
 | Long method | Detects methods that are longer than `X` lines (supports if statements, do while loops, for loops, synchronized blocks, try blocks (catch + finally), while loops). Configuratin property to configure method length is `sonar.academic.plugin.long.method.length`, with default value 8 | 
 | Switch statement | Detects usage of switch statements |
+| Shotgun surgery | Detect methods that are overused by other classes |
+| Lazy class | Detect classes with no methods, low complexity methods or with high coupling with other classes |
+| Long parameter list | Detect methods with more than `X` parameters |
 
 ## How does it work?
 
@@ -45,7 +48,7 @@ Plugin analyses method invocations and measures the depth of the calls.
 
 ## Long method
 
-Investage how many lines does the method have.
+Investigate how many lines does the method have.
 
 Since code follows tree-like structure, we traverse recursively into the tree and count the number of expressions in the tree recursively.
 
@@ -56,6 +59,21 @@ If number of expressions is larger than `X` we report an issue.
 Find all usages of switch statements.
 
 Report all usages of switch statements as an issue.
+
+## Shotgun surgery
+
+Detects methods of a class that are overused by external classes.
+
+## Lazy class
+
+Detects classes that have either:
+- 0 methods
+- high number of low complexity methods
+- tight coupling with external classes and deep inheritance tree
+
+## Long parameter list
+
+Detects all methods with more than `X` parameters
 
 # To implement
 
@@ -68,54 +86,6 @@ Report all usages of switch statements as an issue.
 Look for classes that have number of variables higher than `X` and number of methods higher than `Y`.
 Then calculate cohesion between methods.
 Cohesion be calculated by checking if methods have common variables in use.
-
-## Shotgun surgery
-
-**Implementable**: Yes
-
-**Difficulty**: Very hard
-
-Count the callers of method.
-If callers > `X` then it is a code smell.
-
-Why is this hard? Because we have context of a single file.
-Solution: for every class we analyze its methods and method invocations that are performed
-inside those methods.
-This allows us to traverse classes only once and fill the gaps later as we perform the check.
-Perhaps maybe even investigate scanner for this.
-
-Stateful check.
-
-## Lazy class
-
-**Implementable**: Yes
-
-**Difficulty**: Hard
-
-Need to check following items for class:
-
-```
-    n of methods == 0
-    OR
-    (n of instructions > A
-        AND
-    n of weighted methods / n of methods < B)
-    OR
-    (coupling between object classes < C
-        AND
-    depth of inheritance > D)
-```
-
-where:
-- `A` medium number of instructions
-- `B` low complexity method ratio
-- `C` medium coupling between objects
-- `D` depth of inheritance tree
-
-Sonar has already built in complexity calculation so I can look into that.
-Depth of inheritance should be trivial to calculate.
-Number of statements/expressions is not that hard to calculate also.
-Coupling calculation can be found in the source.
 
 ## Refused bequest / refused parent bequest
 
@@ -174,3 +144,39 @@ what project to build first.
 **Implementable**: ???
 
 **Difficulty**: ???
+
+## Divergent change
+
+## Feature envy
+
+## Data clumps
+
+## Primitive obsession
+
+## Parallel inheritance hierarchies
+
+## Speculative generality
+
+## Temporary field
+
+## Middle man
+
+## Inappropriate intimacy
+
+## Alternate classes with different interfaces
+
+## Incomplete library class
+
+## Refused bequest
+
+## Brain method
+
+## God class
+
+## Intensive coupling
+
+## SAPBreakers
+
+## Distorted Hierarchy
+
+## Unstable dependencies

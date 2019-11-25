@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, Tree}
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 trait ContextReporter {
-  def report(issue: String, tree: Tree, condition: Boolean): Unit = {
+  def report(issue: String, tree: Tree, condition: => Boolean): Unit = {
     val expr = if (condition) {
       IO.pure(issue).map(msg => scannerContext.reportIssue(check, tree, msg))
     } else {
