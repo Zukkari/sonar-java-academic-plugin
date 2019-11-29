@@ -1,5 +1,6 @@
 package io.github.zukkari.checks
 
+import io.github.zukkari.common.VariableUsageLocator
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, VariableTree}
@@ -48,8 +49,22 @@ class BlobClass extends JavaRule {
     }
 
     // Calculate cohesion between variables
+    val variableNames = variables.map(_.symbol.name)
 
+    val methodVariables = methods
+      .map(methodToVariables)
+      .map(_.filter(variableNames contains _))
+
+    val cohesion = (for {
+      v1 <- methodVariables
+      v2 <- methodVariables
+    } yield if (v1.intersect(v2).isEmpty) -1 else 1).sum
+
+    report(s"Blob class: cohesion is below threshold: $lackOfCohesion", tree, cohesion <= lackOfCohesion)
 
     super.visitClass(tree)
   }
+
+  private def methodToVariables(method: MethodTree): Set[String] = new VariableUsageLocator().variables(method)
 }
+
