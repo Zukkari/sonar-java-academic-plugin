@@ -58,7 +58,7 @@ class BlobClass extends JavaRule {
     val cohesion = (for {
       v1 <- methodVariables
       v2 <- methodVariables
-    } yield if (v1.intersect(v2).isEmpty) -1 else 1).sum
+    } yield if (v1.intersect(v2).isEmpty) -1 else 1).sum / 2
 
     report(s"Blob class: cohesion is below threshold: $lackOfCohesion", tree, cohesion <= lackOfCohesion)
 
