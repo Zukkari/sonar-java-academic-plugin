@@ -8,6 +8,24 @@ import scala.jdk.CollectionConverters._
 
 case class Method(methodName: String, returnType: String, parameters: List[String])
 
+object Method {
+  def apply(tree: MethodInvocationTree): Method = {
+    Method(
+      tree.symbol.name,
+      tree.symbolType.symbol.name,
+      tree.arguments.asScala.toList.map(arg => arg.symbolType.fullyQualifiedName)
+    )
+  }
+
+  def apply(tree: MethodTree): Method = {
+    Method(
+      tree.simpleName.name,
+      tree.returnType.symbolType.fullyQualifiedName,
+      tree.parameters.asScala.toList.map(varTree => varTree.`type`.symbolType.fullyQualifiedName)
+    )
+  }
+}
+
 /** Basic idea is that we will store state in the Map
  * State in this case is method declaration tree to number of times the method is invoked
  * For this we will visit all method declarations and invocations
@@ -38,11 +56,7 @@ class ShotgunSurgeryRule extends JavaRule {
   override def scannerContext: JavaFileScannerContext = context
 
   override def visitMethod(tree: MethodTree): Unit = {
-    val method = Method(
-      tree.simpleName.name,
-      tree.returnType.symbolType.fullyQualifiedName,
-      tree.parameters.asScala.toList.map(varTree => varTree.`type`.symbolType.fullyQualifiedName)
-    )
+    val method = Method(tree)
 
     methodMap += (method -> 0)
     contextMap += (method -> tree)
@@ -59,11 +73,7 @@ class ShotgunSurgeryRule extends JavaRule {
   }
 
   override def visitMethodInvocation(tree: MethodInvocationTree): Unit = {
-    val invocation = Method(
-      tree.symbol.name,
-      tree.symbolType.symbol.name,
-      tree.arguments.asScala.toList.map(arg => arg.symbolType.fullyQualifiedName)
-    )
+    val invocation = Method(tree)
 
     if (methodMap contains invocation) {
       methodMap = methodMap.updatedWith(invocation)(_.map(_ + 1))
