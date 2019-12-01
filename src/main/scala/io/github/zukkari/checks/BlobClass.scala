@@ -54,11 +54,15 @@ class BlobClass extends JavaRule {
     val methodVariables = methods
       .map(methodToVariables)
       .map(_.filter(variableNames contains _))
+      .toList
 
-    val cohesion = (for {
-      v1 <- methodVariables
-      v2 <- methodVariables
-    } yield if (v1.intersect(v2).isEmpty) -1 else 1).sum / 2
+    val cohesion = methodVariables
+      .combinations(2)
+      .map {
+        case x :: y :: _ => if (x.intersect(y).isEmpty) -1 else 1
+        case _ => 0
+      }
+      .sum
 
     report(s"Blob class: cohesion is below threshold: $lackOfCohesion", tree, cohesion <= lackOfCohesion)
 
