@@ -2,12 +2,22 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.common.{MethodInvocationLocator, MethodLocator}
 import org.sonar.check.Rule
+import org.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.plugins.java.api.JavaFileScannerContext
-import org.sonar.plugins.java.api.tree.ClassTree
+import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
+
+import scala.jdk.CollectionConverters._
 
 @Rule(key = "RefusedBequestRule")
 class RefusedBequest extends JavaRule {
   private var context: JavaFileScannerContext = _
+
+  private val numberOfProtectedMethods = 3
+  private val baseClassUsageRatio = 1.0 / 3.0
+  private val baseClassOverrideRatio = 1.0 / 3.0
+  private val averageMethodWeight = 2.0
+  private val weightedMethodCount = 14
+  private val numberOfMethods = 7
 
   private var classMap = Map.empty[String, Set[Method]]
   private var pendingClasses = Map.empty[String, List[String]]
@@ -31,12 +41,7 @@ class RefusedBequest extends JavaRule {
       // Found the class that other classes were waiting for
       val pending = pendingClasses.getOrElse(className, Set.empty)
       pending.foreach(c => {
-        val classInvocations = classMap.getOrElse(c, Set.empty)
-        val parentMethods = classMap.getOrElse(className, Set.empty)
-
-        classToTreeMap.get(c).foreach(classTree =>
-          report("Refused bequest: class does not use parents protected members", classTree, !classInvocations.exists(parentMethods.contains))
-        )
+        countComplexityAndReport(className, c)
       })
     }
 
@@ -50,10 +55,7 @@ class RefusedBequest extends JavaRule {
     val parentClass = tree.symbol.superClass.name
     if (classMap contains parentClass) {
       // We can check usage of the methods
-      val classMethods = methodInvocations(tree)
-      val parentClassMethods = classMap.getOrElse(parentClass, Set.empty)
-
-      report("Refused bequest: class does not use parents protected members", tree, !classMethods.exists(parentClassMethods.contains))
+      countComplexityAndReport(parentClass, className)
     } else {
       // Delay till we know something about the parent
       pendingClasses = pendingClasses.updatedWith(parentClass) {
@@ -72,5 +74,37 @@ class RefusedBequest extends JavaRule {
   def methods(tree: ClassTree): Set[Method] = {
     new MethodLocator(_.symbol.isProtected)
       .methods(tree)
+  }
+
+  def overriddenProtectedMembers(tree: ClassTree): Set[Method] = {
+    new MethodLocator(m => m.symbol.isProtected && m.isOverriding)
+      .methods(tree)
+  }
+
+  def complexity(method: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(method).complexity
+
+  private def countComplexityAndReport(parentClassName: String, thisClassName: String): Unit = {
+    val classInvocations = classMap.getOrElse(thisClassName, Set.empty)
+    val parentMethods = classMap.getOrElse(parentClassName, Set.empty)
+
+    val parentProtectedNumber = parentMethods.size
+    val baseClassUsageRatio = safeOp(classInvocations.intersect(parentMethods).size / parentProtectedNumber)(0)
+
+    val maybeClassTree = classToTreeMap.get(thisClassName)
+    for {
+      classTree <- maybeClassTree
+    } {
+      val classMethods = classTree.members.asScala.filter(_.isInstanceOf[MethodTree]).map(_.asInstanceOf[MethodTree]).toList
+      val baseClassOverrideRatio = safeOp(overriddenProtectedMembers(classTree).size / classMethods.size.doubleValue)(0)
+      val averageMethodWeight = classMethods.map(complexity).sum / classMethods.size.doubleValue
+
+      report("Refused bequest: class does not use parents protected members", classTree,
+        parentProtectedNumber > numberOfProtectedMethods &&
+          baseClassUsageRatio < this.baseClassUsageRatio ||
+          baseClassOverrideRatio < this.baseClassOverrideRatio &&
+            ((averageMethodWeight > this.averageMethodWeight || weightedMethodCount > this.weightedMethodCount)
+              && classMethods.size > numberOfMethods)
+      )
+    }
   }
 }
