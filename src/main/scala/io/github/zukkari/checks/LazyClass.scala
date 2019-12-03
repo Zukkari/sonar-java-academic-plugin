@@ -94,9 +94,6 @@ class LazyClass extends JavaRule {
 
   def complexity(tree: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(tree).complexity
 
-  def safeOp[A](op: => A)(recover: A): A = Try(op).getOrElse(recover)
-
-
   def hierarchyDepth(c: ClassTree): Int = {
     @tailrec
     def _hierarchyDepth(c: Type, depth: Int): Int =

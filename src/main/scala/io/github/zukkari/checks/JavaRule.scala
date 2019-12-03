@@ -4,6 +4,8 @@ import cats.effect.IO
 import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, Tree}
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
+import scala.util.Try
+
 trait ContextReporter {
   def report(issue: String, tree: Tree, condition: => Boolean): Unit = {
     val expr = if (condition) {
@@ -24,4 +26,6 @@ trait ContextReporter {
 
 trait JavaRule extends BaseTreeVisitor with JavaFileScanner with ContextReporter {
   override def check: JavaFileScanner = this
+
+  def safeOp[A](op: => A)(recover: A): A = Try(op).getOrElse(recover)
 }
