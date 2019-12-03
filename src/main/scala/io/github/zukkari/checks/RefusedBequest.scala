@@ -84,18 +84,19 @@ class RefusedBequest extends JavaRule {
   def complexity(method: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(method).complexity
 
   private def countComplexityAndReport(parentClassName: String, thisClassName: String): Unit = {
-    val classInvocations = classMap.getOrElse(thisClassName, Set.empty)
+    val classInvocations = classToTreeMap.get(thisClassName).map(methodInvocations)
     val parentMethods = classMap.getOrElse(parentClassName, Set.empty)
 
     val parentProtectedNumber = parentMethods.size
-    val baseClassUsageRatio = safeOp(classInvocations.intersect(parentMethods).size / parentProtectedNumber.doubleValue)(0)
 
     val maybeClassTree = classToTreeMap.get(thisClassName)
     for {
       classTree <- maybeClassTree
+      invocations <- classInvocations
     } {
+      val baseClassUsageRatio = safeOp(invocations.intersect(parentMethods).size / parentProtectedNumber.doubleValue)(0)
       val classMethods = classTree.members.asScala.filter(_.isInstanceOf[MethodTree]).map(_.asInstanceOf[MethodTree]).toList
-      val baseClassOverrideRatio = safeOp(overriddenProtectedMembers(classTree).size / classMethods.size.doubleValue)(0)
+      val baseClassOverrideRatio = safeOp(overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue)(0)
       val weightedMethodCount = classMethods.map(complexity).sum
       val averageMethodWeight = weightedMethodCount / classMethods.size.doubleValue
 
