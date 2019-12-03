@@ -88,7 +88,7 @@ class RefusedBequest extends JavaRule {
     val parentMethods = classMap.getOrElse(parentClassName, Set.empty)
 
     val parentProtectedNumber = parentMethods.size
-    val baseClassUsageRatio = safeOp(classInvocations.intersect(parentMethods).size / parentProtectedNumber)(0)
+    val baseClassUsageRatio = safeOp(classInvocations.intersect(parentMethods).size / parentProtectedNumber.doubleValue)(0)
 
     val maybeClassTree = classToTreeMap.get(thisClassName)
     for {
@@ -96,7 +96,8 @@ class RefusedBequest extends JavaRule {
     } {
       val classMethods = classTree.members.asScala.filter(_.isInstanceOf[MethodTree]).map(_.asInstanceOf[MethodTree]).toList
       val baseClassOverrideRatio = safeOp(overriddenProtectedMembers(classTree).size / classMethods.size.doubleValue)(0)
-      val averageMethodWeight = classMethods.map(complexity).sum / classMethods.size.doubleValue
+      val weightedMethodCount = classMethods.map(complexity).sum
+      val averageMethodWeight = weightedMethodCount / classMethods.size.doubleValue
 
       report("Refused bequest: class does not use parents protected members", classTree,
         parentProtectedNumber > numberOfProtectedMethods &&
