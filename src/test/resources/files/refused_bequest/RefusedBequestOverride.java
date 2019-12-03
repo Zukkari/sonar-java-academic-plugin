@@ -108,16 +108,20 @@ public class RefusedBequestOverride extends ParentClass { // Noncompliant
             } else {
                 if (1 > 2) {
                     m2();
+                    m2();
                 } else {
                     m3();
+                    m4();
                 }
             }
         } else {
             if (1 > 2) {
                 if (1 > 2) {
                     m2();
+                    m3();
                 } else {
                     m3();
+                    m4();
                 }
             } else {
                 if (1 > 2) {
@@ -194,6 +198,38 @@ public class RefusedBequestOverride extends ParentClass { // Noncompliant
     }
 
     public void m9() {
+        if (1 > 2) {
+            if (1 > 2) {
+                if (1 > 2) {
+                    m2();
+                } else {
+                    m3();
+                }
+            } else {
+                if (1 > 2) {
+                    m2();
+                } else {
+                    m3();
+                }
+            }
+        } else {
+            if (1 > 2) {
+                if (1 > 2) {
+                    m2();
+                } else {
+                    m3();
+                }
+            } else {
+                if (1 > 2) {
+                    m2();
+                } else {
+                    m3();
+                }
+            }
+        }
+    }
+
+    public void m10() {
         if (1 > 2) {
             if (1 > 2) {
                 if (1 > 2) {
