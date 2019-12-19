@@ -8,10 +8,10 @@ import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree._
 
 @Rule(key = "LongMethodRule")
-class LongMethodRule(
-                      @Property(key = "sonar.academic.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
-                      val methodLength: Int = 8
-                    ) extends JavaRule {
+class LongMethodRule extends JavaRule {
+
+  @Property(key = "sonar.academic.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
+  var methodLength: Int = 26
 
   private var context: JavaFileScannerContext = _
 

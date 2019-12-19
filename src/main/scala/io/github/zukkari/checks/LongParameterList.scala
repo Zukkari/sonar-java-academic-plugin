@@ -3,7 +3,7 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.MethodTree
 
-@Rule(key = "LongParameterRule")
+@Rule(key = "LongParameterList")
 class LongParameterList extends JavaRule {
   private val threshold = 9
 
