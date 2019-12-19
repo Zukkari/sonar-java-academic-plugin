@@ -10,7 +10,6 @@ import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, VariableTree}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
-import scala.util.Try
 
 @Rule(key = "LazyClass")
 class LazyClass extends JavaRule {
