@@ -12,7 +12,7 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-@Rule(key = "LazyClassRule")
+@Rule(key = "LazyClass")
 class LazyClass extends JavaRule {
   private var context: JavaFileScannerContext = _
 

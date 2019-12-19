@@ -8,7 +8,7 @@ import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 
 import scala.jdk.CollectionConverters._
 
-@Rule(key = "RefusedBequestRule")
+@Rule(key = "RefusedBequest")
 class RefusedBequest extends JavaRule {
   private var context: JavaFileScannerContext = _
 

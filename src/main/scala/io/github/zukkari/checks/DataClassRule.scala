@@ -1,11 +1,10 @@
 package io.github.zukkari.checks
 
-import cats.effect.SyncIO
 import io.github.zukkari.checks.DataClassSyntax._
 import io.github.zukkari.util.{Log, Logger}
 import org.sonar.check.Rule
+import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree._
-import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
