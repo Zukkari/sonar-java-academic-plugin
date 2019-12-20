@@ -22,6 +22,8 @@ Current list of supported code smells:
 | Long parameter list | Detect methods with more than `X` parameters |
 | Blob class | |
 | Refused Bequest | |
+| Comments | |
+| Cyclic dependencies |
 
 ## How does it work?
 
@@ -83,19 +85,9 @@ Detects all methods with more than `X` parameters
 
 ## Comments
 
+## Cyclic dependencies
+
 # To implement
-
-## Cyclic dependencies (classes)
-
-**Implementable**: Yes
-
-**Difficulty**: Hard
-
-Detect cycle between classes.
-Sounds not that hard, check class fields and see if classes have similar
-fields.
-On the other hand this is another stateful check.
-Look into sensor for this one as well.
 
 ## Distorted hierarchy
 
