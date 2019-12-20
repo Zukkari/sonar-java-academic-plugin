@@ -68,6 +68,6 @@ class RulesSpec extends BaseSpec {
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 9)
+    assert(rules.size == 11)
   }
 }
