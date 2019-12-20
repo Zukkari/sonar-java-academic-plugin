@@ -20,6 +20,8 @@ Current list of supported code smells:
 | Shotgun surgery | Detect methods that are overused by other classes |
 | Lazy class | Detect classes with no methods, low complexity methods or with high coupling with other classes |
 | Long parameter list | Detect methods with more than `X` parameters |
+| Blob class | |
+| Refused Bequest | |
 
 ## How does it work?
 
@@ -75,29 +77,11 @@ Detects classes that have either:
 
 Detects all methods with more than `X` parameters
 
+## Blob class
+ 
+## Refused bequest
+
 # To implement
-
-## Large/blob class
-
-**Implementable**: Yes
-
-**Difficulty**: Medium
-
-Look for classes that have number of variables higher than `X` and number of methods higher than `Y`.
-Then calculate cohesion between methods.
-Cohesion be calculated by checking if methods have common variables in use.
-
-## Refused bequest / refused parent bequest
-
-**Implementable**: Yes
-
-**Difficulty**: Very hard
-
-Detect classes that do not use protected methods of its parent.
-
-Link for this definition can be found here [here](https://www.simpleorientedarchitecture.com/how-to-identify-refused-parent-bequest-using-ndepend/).
-
-It is possible to access parent context, implement this as just all other checks.
 
 ## Comments
 
@@ -122,16 +106,6 @@ Sounds not that hard, check class fields and see if classes have similar
 fields.
 On the other hand this is another stateful check.
 Look into sensor for this one as well.
-
-## Cyclic dependencies (modules)
-
-**Implementable**: No
-
-**Difficulty**: ???
-
-Module dependencies are not possible in Java.
-Maven refuses to build such projects, I assume Gradle too since its not clear
-what project to build first.
 
 ## Distorted hierarchy
 
