@@ -11,10 +11,20 @@ trait ContextReporter {
     val expr = if (condition) {
       IO.pure(issue).map(msg => scannerContext.reportIssue(check, tree, msg))
     } else {
-      IO(())
+      IO.unit
     }
 
-    expr.unsafeRunAsyncAndForget()
+    expr.unsafeRunSync()
+  }
+
+  def report(issue: String, line: Int, condition: => Boolean): Unit = {
+    val expr = if (condition) {
+      IO.pure(issue).map(msg => scannerContext.addIssue(line, check, msg))
+    } else {
+      IO.unit
+    }
+
+    expr.unsafeRunSync()
   }
 
   def report(issue: String, tree: Tree): Unit = report(issue, tree, condition = true)
