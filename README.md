@@ -81,19 +81,9 @@ Detects all methods with more than `X` parameters
  
 ## Refused bequest
 
-# To implement
-
 ## Comments
 
-**Implementable**: Yes
-
-**Difficulty**: Easy
-
-Should be pretty easy to implement.
-Sonar can already detect comments in some cases.
-Check how that is implemented.
-Worst case scenario - implement via regex/grepping.
-Report issues when number of comments > `X`
+# To implement
 
 ## Cyclic dependencies (classes)
 
