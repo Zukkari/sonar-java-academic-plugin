@@ -1,7 +1,7 @@
 package io.github.zukkari.config
 
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.checks.{BlobClass, DataClassRule, LazyClass, LongMethodRule, MessageChainRule, RefusedBequest, ShotgunSurgeryRule, SwitchStatementRule}
+import io.github.zukkari.checks.{BlobClass, CommentDetectionRule, CyclicDependenciesRule, DataClassRule, LazyClass, LongMethodRule, MessageChainRule, RefusedBequest, ShotgunSurgeryRule, SwitchStatementRule}
 
 class RulesSpec extends BaseSpec {
 
@@ -53,9 +53,21 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[RefusedBequest])
   }
 
+  it should "contain 'comments detection' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[CommentDetectionRule])
+  }
+
+  it should "contain 'cyclic dependencies' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[CyclicDependenciesRule])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 9)
+    assert(rules.size == 11)
   }
 }
