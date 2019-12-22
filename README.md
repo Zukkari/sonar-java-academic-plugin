@@ -89,11 +89,7 @@ Detects all methods with more than `X` parameters
 
 # To implement
 
-## Distorted hierarchy
-
-**Implementable**: ???
-
-**Difficulty**: ???
+~## Distorted hierarchy~
 
 ## Tradition breaker
 
