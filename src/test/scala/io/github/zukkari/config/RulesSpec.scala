@@ -2,7 +2,6 @@ package io.github.zukkari.config
 
 import io.github.zukkari.BaseSpec
 import io.github.zukkari.checks._
-import io.github.zukkari.config.Rules.JavaCheckClass
 
 class RulesSpec extends BaseSpec {
 

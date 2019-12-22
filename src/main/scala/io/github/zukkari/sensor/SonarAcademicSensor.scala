@@ -1,7 +1,7 @@
 package io.github.zukkari.sensor
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.CyclicDependenciesRule
+import io.github.zukkari.checks.{CyclicDependenciesRule, TraditionBreakerRule}
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
@@ -27,7 +27,8 @@ class SonarAcademicSensor extends Sensor {
     val parser = JavaParser.createParser()
 
     val checks: List[SensorRule] = List(
-      new CyclicDependenciesRule
+      new CyclicDependenciesRule,
+      new TraditionBreakerRule
     )
 
     javaFiles.asScala
@@ -37,7 +38,7 @@ class SonarAcademicSensor extends Sensor {
         (javaFile, parser.parse(javaFile.contents()))
       }
       .foreach {
-        case (f, tree) => checks.foreach(_.run(f, tree))
+        case (f, tree) => checks.foreach(_.scan(f, tree))
       }
 
     checks.foreach(_.afterAllScanned(context))

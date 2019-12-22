@@ -25,9 +25,9 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
 
   private var fileMapContext: Map[String, InputFile] = Map.empty
   private var classDeclarationContext: Map[String, Int] = Map.empty
-  private var classDependeciesContext: Map[String, Set[String]] = Map.empty
+  private var classDependenciesContext: Map[String, Set[String]] = Map.empty
 
-  override def run(f: InputFile, t: Tree): Unit = {
+  override def scan(f: InputFile, t: Tree): Unit = {
     val visitor = new ClassDependenciesVisitor
 
     // Fully classified class name to dependencies
@@ -35,14 +35,14 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
     val dependencies = visitor.dependencies(t)
 
     fileMapContext ++= declarations.map { case (a, _) => (a, f) }
-    classDependeciesContext ++= dependencies
+    classDependenciesContext ++= dependencies
     classDeclarationContext ++= declarations
   }
 
   override def afterAllScanned(sensorContext: SensorContext): Unit = {
-    val nodes = classDependeciesContext.keySet
+    val nodes = classDependenciesContext.keySet
     val edges = for {
-      (k, v) <- classDependeciesContext
+      (k, v) <- classDependenciesContext
       dep <- v
     } yield DiEdge(k, dep)
 

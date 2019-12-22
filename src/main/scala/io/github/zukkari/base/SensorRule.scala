@@ -6,7 +6,7 @@ import org.sonar.plugins.java.api.tree.Tree
 
 trait SensorRule {
 
-  def run(f: InputFile, t: Tree): Unit
+  def scan(f: InputFile, t: Tree): Unit
 
   def afterAllScanned(sensorContext: SensorContext): Unit
 }
