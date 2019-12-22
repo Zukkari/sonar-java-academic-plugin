@@ -1,4 +1,5 @@
 package io.github.zukkari.checks
+import io.github.zukkari.base.JavaRule
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.MethodTree

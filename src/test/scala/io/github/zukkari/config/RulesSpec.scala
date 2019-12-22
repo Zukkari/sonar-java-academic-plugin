@@ -1,7 +1,7 @@
 package io.github.zukkari.config
 
 import io.github.zukkari.BaseSpec
-import io.github.zukkari.checks.{BlobClass, CommentDetectionRule, CyclicDependenciesRule, DataClassRule, LazyClass, LongMethodRule, MessageChainRule, RefusedBequest, ShotgunSurgeryRule, SwitchStatementRule}
+import io.github.zukkari.checks._
 
 class RulesSpec extends BaseSpec {
 
@@ -65,9 +65,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[CyclicDependenciesRule])
   }
 
+  it should "contain 'tradition breaker' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[TraditionBreakerRule])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 11)
+    assert(rules.size == 12)
   }
 }

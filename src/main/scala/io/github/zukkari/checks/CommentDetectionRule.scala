@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import java.util
 
+import io.github.zukkari.base.ContextReporter
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{SyntaxTrivia, Tree}

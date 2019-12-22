@@ -1,7 +1,7 @@
 package io.github.zukkari
 
 import io.github.zukkari.definition.{SonarAcademicRulesDefinition, SonarAcademicRulesRegistrar}
-import io.github.zukkari.sensor.CyclicDependencies
+import io.github.zukkari.sensor.SonarAcademicSensor
 import org.sonar.api.internal.SonarRuntimeImpl
 import org.sonar.api.utils.Version
 import org.sonar.api.{Plugin, SonarEdition, SonarQubeSide, SonarRuntime}
@@ -23,6 +23,6 @@ class SonarJavaAcademicPluginSpec extends BaseSpec {
     // contains only extensions that were added
     assert(context.getExtensions.contains(classOf[SonarAcademicRulesDefinition]))
     assert(context.getExtensions.contains(classOf[SonarAcademicRulesRegistrar]))
-    assert(context.getExtensions.contains(classOf[CyclicDependencies]))
+    assert(context.getExtensions.contains(classOf[SonarAcademicSensor]))
   }
 }

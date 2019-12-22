@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import cats.Monoid
 import cats.implicits._
+import io.github.zukkari.base.JavaRule
 import io.github.zukkari.checks.ChainSyntax._
 import io.github.zukkari.implicits._
 import org.sonar.api.Property

@@ -1,7 +1,7 @@
 package io.github.zukkari
 
 import io.github.zukkari.definition.{SonarAcademicRulesDefinition, SonarAcademicRulesRegistrar}
-import io.github.zukkari.sensor.CyclicDependencies
+import io.github.zukkari.sensor.SonarAcademicSensor
 import io.github.zukkari.util.Log
 import org.sonar.api.Plugin
 import org.sonar.api.config.PropertyDefinition
@@ -18,7 +18,7 @@ final class SonarJavaAcademicPlugin extends Plugin {
     // registrar
     context.addExtension(classOf[SonarAcademicRulesRegistrar])
 
-    context.addExtension(classOf[CyclicDependencies])
+    context.addExtension(classOf[SonarAcademicSensor])
 
     // Property definitions
     PropertyDefinition.builder("sonar.academic.plugin.message.chain.length")
