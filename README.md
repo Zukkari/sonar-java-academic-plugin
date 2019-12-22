@@ -23,7 +23,8 @@ Current list of supported code smells:
 | Blob class | |
 | Refused Bequest | |
 | Comments | |
-| Cyclic dependencies |
+| Cyclic dependencies | |
+| Tradition breaker | |
 
 ## How does it work?
 
@@ -87,15 +88,11 @@ Detects all methods with more than `X` parameters
 
 ## Cyclic dependencies
 
-# To implement
-
-~## Distorted hierarchy~
-
 ## Tradition breaker
 
-**Implementable**: ???
+# To implement
 
-**Difficulty**: ???
+~Distorted hierarchy~
 
 ## Divergent change
 
