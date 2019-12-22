@@ -11,8 +11,8 @@ import org.sonar.api.batch.sensor.issue.Issue
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
-class CyclicDependenciesSpec extends AnyFlatSpec {
-  val sensor = new CyclicDependencies
+class SonarAcademicSensorSpec extends AnyFlatSpec {
+  val sensor = new SonarAcademicSensor
 
   it should "detect cyclic dependencies" in {
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))

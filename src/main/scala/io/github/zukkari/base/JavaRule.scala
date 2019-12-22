@@ -1,4 +1,4 @@
-package io.github.zukkari.checks
+package io.github.zukkari.base
 
 import cats.effect.IO
 import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, Tree}

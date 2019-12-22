@@ -1,6 +1,6 @@
 package io.github.zukkari.config
 
-import io.github.zukkari.checks.{BlobClass, CommentDetectionRule, CyclicDependenciesRule, DataClassRule, LazyClass, LongMethodRule, LongParameterList, MessageChainRule, RefusedBequest, ShotgunSurgeryRule, SwitchStatementRule}
+import io.github.zukkari.checks._
 import io.github.zukkari.config.Rules.JavaCheckClass
 import org.sonar.api.server.rule.RulesDefinition.NewRepository
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader
@@ -23,7 +23,8 @@ object Rules {
     classOf[BlobClass],
     classOf[RefusedBequest],
     classOf[CommentDetectionRule],
-    classOf[CyclicDependenciesRule]
+    classOf[CyclicDependenciesRule],
+    classOf[TraditionBreakerRule]
   )
 
 }

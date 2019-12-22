@@ -1,5 +1,6 @@
 package io.github.zukkari.checks
 
+import io.github.zukkari.base.JavaRule
 import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.implicits._
 import org.sonar.check.Rule
