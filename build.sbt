@@ -28,6 +28,7 @@ libraryDependencies ++= List(
   "org.typelevel" %% "cats-effect" % "2.0.0",
   "io.circe" %% "circe-parser" % "0.12.1",
   "io.circe" %% "circe-core" % "0.12.1",
+  "org.scala-graph" %% "graph-core" % "1.13.1",
   "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
   "org.mockito" %% "mockito-scala" % "1.5.17" % Test,
   "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test,

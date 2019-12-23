@@ -21,7 +21,7 @@ final class SonarAcademicRulesDefinition extends RulesDefinition {
   implicit val rulesLoader: RulesDefinitionAnnotationLoader = new RulesDefinitionAnnotationLoader
 
   override def define(context: RulesDefinition.Context): Unit = {
-    log.info(() => s"Started ${classOf[SonarJavaAcademicPlugin]} rules initialization")
+    log.info(s"Started ${classOf[SonarJavaAcademicPlugin]} rules initialization")
 
     implicit val repo: NewRepository = context
       .createRepository(repoKey, Java.key)
@@ -30,12 +30,12 @@ final class SonarAcademicRulesDefinition extends RulesDefinition {
     Rules.get
       .map(addRule(_))
       .foreach({
-        case Left(reason) => log.error(() => reason)
-        case Right(rule) => log.info(() => s"Successfully loaded rule: ${rule.key}")
+        case Left(reason) => log.error(reason)
+        case Right(rule) => log.info(s"Successfully loaded rule: ${rule.key}")
       })
 
     repo.done()
-    log.info(() => s"Finished ${classOf[SonarJavaAcademicPlugin]} rules initialization")
+    log.info(s"Finished ${classOf[SonarJavaAcademicPlugin]} rules initialization")
   }
 
   def addRule(check: JavaCheckClass)(implicit repo: NewRepository): Either[String, NewRule] = {

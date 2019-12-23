@@ -4,7 +4,8 @@ import io.github.zukkari.RuleSpec
 
 class LongMethodRuleSpec extends RuleSpec {
 
-  val rule = new LongMethodRule(2)
+  val rule = new LongMethodRule
+  rule.methodLength = 2
 
   it should "detect method with maximum number of statements or expressions exceeded" in {
     verifyRule(rule, "Base")

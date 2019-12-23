@@ -1,5 +1,6 @@
 package io.github.zukkari.checks
 
+import io.github.zukkari.base.JavaRule
 import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.implicits._
 import org.sonar.check.Rule
@@ -10,9 +11,8 @@ import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, VariableTree}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
-import scala.util.Try
 
-@Rule(key = "LazyClassRule")
+@Rule(key = "LazyClass")
 class LazyClass extends JavaRule {
   private var context: JavaFileScannerContext = _
 
@@ -81,7 +81,7 @@ class LazyClass extends JavaRule {
 
     classAssociations = right
 
-    left.filter(key => !reported.contains(key._1.simpleName.name))
+    left.filter { case (key, _) => !reported.contains(key.simpleName.name) }
       .foreachEntry((key, _) => {
         report(s"Lazy class: depth of hierarchy is greater than $depthOfInheritance and coupling is higher than $couplingBetweenObjects", key)
       })
@@ -93,9 +93,6 @@ class LazyClass extends JavaRule {
   def depth(tree: MethodTree)(implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
 
   def complexity(tree: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(tree).complexity
-
-  def safeOp[A](op: => A)(recover: A): A = Try(op).getOrElse(recover)
-
 
   def hierarchyDepth(c: ClassTree): Int = {
     @tailrec
