@@ -2,8 +2,8 @@ package io.github.zukkari.visitor
 
 import java.util
 
+import org.sonar.plugins.java.api.tree.Tree
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{SyntaxToken, SyntaxTrivia, Tree}
 
 import scala.jdk.CollectionConverters._
 
@@ -20,12 +20,6 @@ trait SonarAcademicSubscriptionVisitor {
   def leaveNode(tree: Tree): Unit = {
   }
 
-  def visitToken(syntaxToken: SyntaxToken): Unit = {
-  }
-
-  def visitTrivia(syntaxTrivia: SyntaxTrivia): Unit = {
-  }
-
   final def scanTree(tree: Tree): Unit = {
     if (_nodesToVisit == Nil) {
       _nodesToVisit = nodesToVisit
@@ -40,16 +34,7 @@ trait SonarAcademicSubscriptionVisitor {
     val subscribed = isSubscribed(tree)
     val shouldVisitSyntaxToken = (visitToken || visitTrivia) && tree.is(Kind.TOKEN)
 
-    if (shouldVisitSyntaxToken) {
-      val syntaxToken = tree.asInstanceOf[SyntaxToken]
-      if (visitToken) {
-        visitToken(syntaxToken)
-      }
-
-      if (visitTrivia) {
-        syntaxToken.trivias.forEach(visitTrivia(_))
-      }
-    } else if (subscribed) {
+    if (subscribed) {
       visitNode(tree)
     }
 

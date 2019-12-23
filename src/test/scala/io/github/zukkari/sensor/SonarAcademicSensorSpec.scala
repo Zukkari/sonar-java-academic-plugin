@@ -3,9 +3,11 @@ package io.github.zukkari.sensor
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
+import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
-import org.sonar.api.batch.sensor.internal.SensorContextTester
+import org.sonar.api.batch.sensor.SensorDescriptor
+import org.sonar.api.batch.sensor.internal.{DefaultSensorDescriptor, SensorContextTester}
 import org.sonar.api.batch.sensor.issue.Issue
 
 import scala.annotation.tailrec
@@ -13,6 +15,15 @@ import scala.jdk.CollectionConverters._
 
 class SonarAcademicSensorSpec extends AnyFlatSpec {
   val sensor = new SonarAcademicSensor
+
+  it should "contain proper sensor description" in {
+    val descriptor = new DefaultSensorDescriptor
+    sensor.describe(descriptor)
+
+    assert(descriptor.name != null && descriptor.name.length > 0)
+    assert(descriptor.languages contains "java")
+    assert(descriptor.ruleRepositories contains SonarAcademicRulesDefinition.repoKey)
+  }
 
   it should "detect cyclic dependencies" in {
     @tailrec
