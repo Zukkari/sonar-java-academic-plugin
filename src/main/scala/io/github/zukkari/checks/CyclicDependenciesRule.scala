@@ -85,28 +85,32 @@ class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    val parent = classTree.simpleName.name
-    log.info(s"Visiting class: $parent")
+    val parent = Option(classTree.simpleName).map(_.name)
+    parent match {
+      case None => super.visitNode(tree)
+      case Some(p) =>
+        log.info(s"Visiting class: $p")
 
-    // To remember where to report the issue
-    declarationMap += parent -> classTree.firstToken.line
+        // To remember where to report the issue
+        declarationMap += p -> classTree.firstToken.line
 
-    // Get dependencies here
-    val deps = classTree.members
-      .asScala
-      .toSeq
-      .filter(_.is(Kind.VARIABLE))
-      .map(_.asInstanceOf[VariableTree])
-      .map(_.`type`)
-      .filter(_.isInstanceOf[IdentifierTree])
-      .map(_.asInstanceOf[IdentifierTree])
-      .map(_.name)
-      .toSet
+        // Get dependencies here
+        val deps = classTree.members
+          .asScala
+          .toSeq
+          .filter(_.is(Kind.VARIABLE))
+          .map(_.asInstanceOf[VariableTree])
+          .map(_.`type`)
+          .filter(_.isInstanceOf[IdentifierTree])
+          .map(_.asInstanceOf[IdentifierTree])
+          .map(_.name)
+          .toSet
 
-    log.info(s"Class $parent has following dependencies: $deps")
-    dependencies += parent -> deps
+        log.info(s"Class $p has following dependencies: $deps")
+        dependencies += p -> deps
 
-    super.visitNode(tree)
+        super.visitNode(tree)
+    }
   }
 
   def dependencies(tree: Tree): Map[String, Set[String]] = {
