@@ -81,7 +81,7 @@ class LazyClass extends JavaRule {
 
     classAssociations = right
 
-    left.filter(key => !reported.contains(key._1.simpleName.name))
+    left.filter { case (key, _) => !reported.contains(key.simpleName.name) }
       .foreachEntry((key, _) => {
         report(s"Lazy class: depth of hierarchy is greater than $depthOfInheritance and coupling is higher than $couplingBetweenObjects", key)
       })

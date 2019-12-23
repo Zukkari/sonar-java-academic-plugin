@@ -86,9 +86,10 @@ class ShotgunSurgeryRule extends JavaRule {
   }
 
   private def checkForIssues(): Unit = {
-    methodMap.foreach(ctx => contextMap.get(ctx._1) match {
-      case Some(m) => report("Shotgun surgery detected", m, ctx._2 >= issueThreshold)
+    methodMap.foreach { case (method, count) => contextMap.get(method) match {
+      case Some(m) => report("Shotgun surgery detected", m, count >= issueThreshold)
       case _ => ()
-    })
+    }
+    }
   }
 }
