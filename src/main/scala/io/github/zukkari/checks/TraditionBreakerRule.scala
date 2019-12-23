@@ -28,6 +28,8 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
   private var classToLineContext: Map[String, Int] = Map.empty
   private var classToMembersContext: Map[String, Int] = Map.empty
 
+  private def hasSubclasses(parent: String): Boolean = classToParentContext.exists { case (_, p) => p == parent }
+
   override def scan(f: InputFile, t: Tree): Unit = {
     val visitor = new ParentAndMemberVisitor
     visitor.scan(t)
@@ -45,7 +47,7 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
         for {
           parent <- classToParentContext.get(c)
           parentMembers <- classToMembersContext.get(parent)
-          if parentMembers >= highNumberOfMembers && members <= lowNumberOfMembers
+          if parentMembers >= highNumberOfMembers && members <= lowNumberOfMembers && !hasSubclasses(c)
           file <- classToFileContext.get(c)
           line <- classToLineContext.get(c)
         } yield IO {
