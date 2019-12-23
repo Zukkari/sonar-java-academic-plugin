@@ -25,6 +25,7 @@ Current list of supported code smells:
 | Comments | |
 | Cyclic dependencies | |
 | Tradition breaker | |
+| Divergent change | |
 
 ## How does it work?
 
@@ -90,11 +91,11 @@ Detects all methods with more than `X` parameters
 
 ## Tradition breaker
 
+## Divergent change
+
 # To implement
 
 ~Distorted hierarchy~
-
-## Divergent change
 
 ## Feature envy
 
