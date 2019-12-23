@@ -71,9 +71,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[TraditionBreakerRule])
   }
 
+  it should "contain 'divergent change' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[DivergentChange])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 12)
+    assert(rules.size == 13)
   }
 }

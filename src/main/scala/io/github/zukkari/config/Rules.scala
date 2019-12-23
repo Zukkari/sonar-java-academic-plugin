@@ -24,7 +24,8 @@ object Rules {
     classOf[RefusedBequest],
     classOf[CommentDetectionRule],
     classOf[CyclicDependenciesRule],
-    classOf[TraditionBreakerRule]
+    classOf[TraditionBreakerRule],
+    classOf[DivergentChange]
   )
 
 }

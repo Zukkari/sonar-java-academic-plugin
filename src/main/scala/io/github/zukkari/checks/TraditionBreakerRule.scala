@@ -1,16 +1,14 @@
 package io.github.zukkari.checks
 
-import java.util
-
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
+import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.api.rule.RuleKey
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.SubscriptionVisitor
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
@@ -66,39 +64,41 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
   }
 }
 
-class ParentAndMemberVisitor extends SubscriptionVisitor {
+class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
   private val log = Log(classOf[ParentAndMemberVisitor])
 
   var nameToParent: Map[String, String] = Map.empty
   var nameToMembers: Map[String, Int] = Map.empty
   var declarations: Map[String, Int] = Map.empty
 
-  override def nodesToVisit(): util.List[Tree.Kind] = List(Kind.CLASS).asJava
+  override def nodesToVisit: List[Tree.Kind] = List(Kind.CLASS)
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
-    val className = classTree.simpleName.name
+    Option(classTree.simpleName).map(_.name) match {
+      case None => super.visitNode(tree)
+      case Some(className) =>
+        // Add declaration so we can report an issue later if needed
+        declarations += className -> classTree.firstToken.line
 
-    // Add declaration so we can report an issue later if needed
-    declarations += className -> classTree.firstToken.line
+        // Find how many non-private methods does the class have
+        val memberCount = classTree.members
+          .asScala
+          .toList.count {
+          case v: VariableTree if !hasPrivateMember(v.modifiers) => true
+          case m: MethodTree if !hasPrivateMember(m.modifiers) => true
+          case _ => false
+        }
+        log.info(s"Class $className has $memberCount non-private members")
+        nameToMembers += className -> memberCount
 
-    // Find how many non-private methods does the class have
-    val memberCount = classTree.members
-      .asScala
-      .toList.count {
-      case v: VariableTree if !hasPrivateMember(v.modifiers) => true
-      case m: MethodTree if !hasPrivateMember(m.modifiers) => true
-      case _ => false
+        nameToParent = Option(classTree.superClass).filter(_.isInstanceOf[IdentifierTree]).map(_.asInstanceOf[IdentifierTree].name) match {
+          case Some(parent) => nameToParent + (className -> parent)
+          case _ => nameToParent
+        }
+
+        super.visitNode(tree)
     }
-    log.info(s"Class $className has $memberCount non-private members")
-    nameToMembers += className -> memberCount
-
-    nameToParent = Option(classTree.superClass).filter(_.isInstanceOf[IdentifierTree]).map(_.asInstanceOf[IdentifierTree].name) match {
-      case Some(parent) => nameToParent + (className -> parent)
-      case _ => nameToParent
-    }
-
-    super.visitNode(tree)
   }
 
   def scan(tree: Tree): Unit = scanTree(tree)

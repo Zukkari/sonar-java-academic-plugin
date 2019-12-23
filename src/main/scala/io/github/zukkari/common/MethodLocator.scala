@@ -1,16 +1,12 @@
 package io.github.zukkari.common
 
-import java.util
-
 import io.github.zukkari.checks.Method
-import org.sonar.java.ast.visitors.SubscriptionVisitor
-import org.sonar.plugins.java.api.tree.{MethodTree, Tree}
+import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.plugins.java.api.tree.Tree.Kind
+import org.sonar.plugins.java.api.tree.{MethodTree, Tree}
 
-import scala.jdk.CollectionConverters._
-
-class MethodLocator(val filter: MethodTree => Boolean = _ => true) extends SubscriptionVisitor {
-  override def nodesToVisit(): util.List[Tree.Kind] = List(Kind.METHOD).asJava
+class MethodLocator(val filter: MethodTree => Boolean = _ => true) extends SonarAcademicSubscriptionVisitor {
+  override def nodesToVisit: List[Tree.Kind] = List(Kind.METHOD)
 
   private var methods = Set.empty[Method]
 
