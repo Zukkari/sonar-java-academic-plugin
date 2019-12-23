@@ -9,11 +9,13 @@ class MethodInvocationLocator extends SonarAcademicSubscriptionVisitor {
   override def nodesToVisit: List[Tree.Kind] = List(Kind.METHOD_INVOCATION)
 
   private var methodInvocations = Set.empty[Method]
+  var totalInvocations = 0
 
   override def visitNode(tree: Tree): Unit = {
     val invocation = tree.asInstanceOf[MethodInvocationTree]
 
     methodInvocations += Method(invocation)
+    totalInvocations += 1
 
     super.visitNode(tree)
   }
