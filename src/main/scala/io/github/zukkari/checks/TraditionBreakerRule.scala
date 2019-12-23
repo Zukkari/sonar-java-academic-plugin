@@ -1,16 +1,14 @@
 package io.github.zukkari.checks
 
-import java.util
-
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
+import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.api.rule.RuleKey
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.SubscriptionVisitor
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
@@ -66,14 +64,14 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
   }
 }
 
-class ParentAndMemberVisitor extends SubscriptionVisitor {
+class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
   private val log = Log(classOf[ParentAndMemberVisitor])
 
   var nameToParent: Map[String, String] = Map.empty
   var nameToMembers: Map[String, Int] = Map.empty
   var declarations: Map[String, Int] = Map.empty
 
-  override def nodesToVisit(): util.List[Tree.Kind] = List(Kind.CLASS).asJava
+  override def nodesToVisit: List[Tree.Kind] = List(Kind.CLASS)
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]

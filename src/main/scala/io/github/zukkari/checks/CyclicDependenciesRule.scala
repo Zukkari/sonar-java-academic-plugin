@@ -1,15 +1,13 @@
 package io.github.zukkari.checks
 
-import java.util
-
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
+import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.api.rule.RuleKey
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.SubscriptionVisitor
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{ClassTree, IdentifierTree, Tree, VariableTree}
@@ -74,10 +72,10 @@ object CyclicDependenciesRule {
   val ruleKey = "CyclicDependencies"
 }
 
-class ClassDependenciesVisitor extends SubscriptionVisitor {
+class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
   private val log = Log(this.getClass)
 
-  override def nodesToVisit(): util.List[Tree.Kind] = List(Kind.CLASS).asJava
+  override def nodesToVisit: List[Tree.Kind] = List(Kind.CLASS)
 
   // Fully qualified class names of dependencies
   private var dependencies = Map.empty[String, Set[String]]

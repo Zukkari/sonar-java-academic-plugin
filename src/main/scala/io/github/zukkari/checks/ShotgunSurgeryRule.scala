@@ -13,16 +13,16 @@ object Method {
   def apply(tree: MethodInvocationTree): Method = {
     Method(
       tree.symbol.name,
-      tree.symbolType.symbol.name,
-      tree.arguments.asScala.toList.map(arg => arg.symbolType.fullyQualifiedName)
+      Option(tree.symbolType).map(_.symbol).map(_.name).getOrElse(""),
+      tree.arguments.asScala.toList.map(arg => Option(arg.symbolType).map(_.fullyQualifiedName).getOrElse(""))
     )
   }
 
   def apply(tree: MethodTree): Method = {
     Method(
       tree.simpleName.name,
-      tree.returnType.symbolType.fullyQualifiedName,
-      tree.parameters.asScala.toList.map(varTree => varTree.`type`.symbolType.fullyQualifiedName)
+      Option(tree.returnType.symbolType).map(_.fullyQualifiedName).getOrElse(""),
+      tree.parameters.asScala.toList.map(varTree => Option(varTree.`type`).map(_.symbolType).map(_.fullyQualifiedName).getOrElse(""))
     )
   }
 }

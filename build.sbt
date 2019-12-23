@@ -24,6 +24,7 @@ libraryDependencies ++= List(
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788",
+  "org.sonarsource.sslr" % "sslr-core" % "1.23",
   "org.typelevel" %% "cats-core" % "2.0.0",
   "org.typelevel" %% "cats-effect" % "2.0.0",
   "io.circe" %% "circe-parser" % "0.12.1",
@@ -65,7 +66,7 @@ assemblyMergeStrategy in assembly := {
   case "application.conf" => MergeStrategy.concat
   case PathList("META-INF", xs@_*) =>
     xs match {
-      case ("MANIFEST.MF" :: Nil) => MergeStrategy.discard
+      case "MANIFEST.MF" :: Nil => MergeStrategy.discard
       case _ => MergeStrategy.first
     }
   case _ => MergeStrategy.first
