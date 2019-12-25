@@ -25,7 +25,8 @@ object Rules {
     classOf[CommentDetectionRule],
     classOf[CyclicDependenciesRule],
     classOf[TraditionBreakerRule],
-    classOf[DivergentChange]
+    classOf[DivergentChange],
+    classOf[FeatureEnvy]
   )
 
 }
