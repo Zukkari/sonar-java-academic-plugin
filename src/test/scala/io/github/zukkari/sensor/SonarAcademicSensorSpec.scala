@@ -94,4 +94,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
     assert(issue.primaryLocation.textRange.start.line == 1)
     assert(issue.primaryLocation.message == "Tradition breaker")
   }
+
+  it should "detect data clumps" in {
+    fail("Not implemented")
+  }
 }

@@ -26,7 +26,8 @@ object Rules {
     classOf[CyclicDependenciesRule],
     classOf[TraditionBreakerRule],
     classOf[DivergentChange],
-    classOf[FeatureEnvy]
+    classOf[FeatureEnvy],
+    classOf[DataClump]
   )
 
 }
