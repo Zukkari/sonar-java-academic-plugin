@@ -90,7 +90,7 @@ class ForeignVariableUsageLocator(val owner: String, val known: Set[String]) ext
     case select: MemberSelectExpressionTree =>
       val (classes, variables) = Option(select)
         .filter(sel => Option(sel.expression).map(_.toString).getOrElse("") != "this")
-        .flatMap(sel => Option(sel.expression).map(_.symbolType()).map(_.toString)) match {
+        .flatMap(sel => Option(sel.expression).map(_.symbolType).map(_.toString)) match {
         case Some(exprOwner) if !known.contains(exprOwner) => (foreignClasses + exprOwner, foreignVariableUsage + 1)
         case _ => (foreignClasses, foreignVariableUsage)
       }

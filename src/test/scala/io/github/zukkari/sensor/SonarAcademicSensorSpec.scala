@@ -6,7 +6,6 @@ import java.nio.file.Paths
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
-import org.sonar.api.batch.sensor.SensorDescriptor
 import org.sonar.api.batch.sensor.internal.{DefaultSensorDescriptor, SensorContextTester}
 import org.sonar.api.batch.sensor.issue.Issue
 
@@ -93,5 +92,39 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
 
     assert(issue.primaryLocation.textRange.start.line == 1)
     assert(issue.primaryLocation.message == "Tradition breaker")
+  }
+
+  it should "detect data clumps" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val inputFile = TestInputFileBuilder
+      .create("", "./src/test/resources/files/data_clump/DataClump.java")
+      .setLines(25)
+      .setOriginalLineEndOffsets(Array.fill(25)(0))
+      .setOriginalLineStartOffsets(Array.fill(25)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues()
+        .asScala
+        .toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.message == "Data clump: similar to class: 'Service'")
+
+        assert(second.primaryLocation.textRange.start.line == 7)
+        assert(second.primaryLocation.message == "Data clump: similar to class: 'DataClump'")
+      case _ =>
+        fail("Hello Mr compiler")
+    }
   }
 }
