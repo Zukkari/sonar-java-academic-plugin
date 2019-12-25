@@ -1,12 +1,11 @@
 package io.github.zukkari.checks
 
+import cats.effect.IO
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
-import org.sonar.api.rule.RuleKey
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -49,19 +48,16 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
     nodes.foreach { node =>
       (graph.findCycleContaining(graph get node), classDeclarationContext.get(node), fileMapContext.get(node)) match {
         case (Some(cycle), Some(line), Some(javaFile)) =>
-          val newIssue = sensorContext.newIssue
-            .forRule(RuleKey.of(SonarAcademicRulesDefinition.repoKey, CyclicDependenciesRule.ruleKey))
-
-          val location = newIssue.newLocation()
-            .on(javaFile)
-            .at(javaFile.selectLine(line))
-            .message(s"Cycle detected: $cycle")
-
-          newIssue.at(location)
-          newIssue.save()
-
+          IO {
+            report(
+              sensorContext,
+              s"Cycle detected: $cycle",
+              javaFile,
+              line,
+              CyclicDependenciesRule.ruleKey
+            )
+          }.unsafeRunSync()
           log.info(s"Cycle detected: $cycle")
-
         case _ =>
       }
     }

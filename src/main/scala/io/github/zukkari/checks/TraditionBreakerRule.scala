@@ -2,12 +2,10 @@ package io.github.zukkari.checks
 
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
-import org.sonar.api.rule.RuleKey
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -49,16 +47,13 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
           file <- classToFileContext.get(c)
           line <- classToLineContext.get(c)
         } yield IO {
-          val issue = sensorContext.newIssue
-            .forRule(RuleKey.of(SonarAcademicRulesDefinition.repoKey, TraditionBreakerRule.key))
-
-          val location = issue.newLocation()
-            .on(file)
-            .at(file.selectLine(line))
-            .message("Tradition breaker")
-
-          issue.at(location)
-          issue.save()
+          report(
+            sensorContext,
+            "Tradition breaker",
+            file,
+            line,
+            TraditionBreakerRule.key
+          )
         }.unsafeRunSync()
     }
   }
