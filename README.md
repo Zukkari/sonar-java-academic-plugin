@@ -27,6 +27,7 @@ Current list of supported code smells:
 | Tradition breaker | |
 | Divergent change | |
 | Feature envy | |
+| Data clumps | |
 
 ## How does it work?
 
@@ -96,11 +97,11 @@ Detects all methods with more than `X` parameters
 
 ## Feature envy
 
+## Data clumps
+
 # To implement
 
 ~Distorted hierarchy~
-
-## Data clumps
 
 ## Primitive obsession
 
