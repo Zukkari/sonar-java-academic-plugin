@@ -118,8 +118,6 @@ Detects all methods with more than `X` parameters
 
 ## Incomplete library class
 
-## Refused bequest
-
 ## Brain method
 
 ## God class
