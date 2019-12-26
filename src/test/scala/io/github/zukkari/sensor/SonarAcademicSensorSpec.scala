@@ -127,4 +127,38 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
         fail("Hello Mr compiler")
     }
   }
+
+  it should "detect parallel inheritance hierarchies" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val inputFile = TestInputFileBuilder
+      .create("", "./src/test/resources/files/parallel_inheritance_hierarchies/ParallelHierarchy.java")
+      .setLines(25)
+      .setOriginalLineEndOffsets(Array.fill(25)(0))
+      .setOriginalLineStartOffsets(Array.fill(25)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues()
+      .asScala
+      .toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.message == "Parallel hierarchy with class: 'ParallelAlternative'")
+
+        assert(second.primaryLocation.textRange.start.line == 5)
+        assert(second.primaryLocation.message == "Parallel hierarchy with class: 'ParallelHierarchy'")
+      case _ =>
+        fail("Hello Mr compiler")
+    }
+  }
 }

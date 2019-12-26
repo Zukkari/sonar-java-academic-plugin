@@ -27,7 +27,8 @@ object Rules {
     classOf[TraditionBreakerRule],
     classOf[DivergentChange],
     classOf[FeatureEnvy],
-    classOf[DataClump]
+    classOf[DataClump],
+    classOf[ParallelInheritanceHierarchies]
   )
 
 }
