@@ -100,6 +100,8 @@ Detects all methods with more than `X` parameters
 
 ## Data clumps
 
+## Parallel inheritance hierarchies
+
 # To implement
 
 ~Distorted hierarchy~
