@@ -28,6 +28,7 @@ Current list of supported code smells:
 | Divergent change | |
 | Feature envy | |
 | Data clumps | |
+| Parallel inheritance hierarchies | |
 
 ## How does it work?
 
@@ -104,8 +105,6 @@ Detects all methods with more than `X` parameters
 ~Distorted hierarchy~
 
 ## Primitive obsession
-
-## Parallel inheritance hierarchies
 
 ## Speculative generality
 
