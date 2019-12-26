@@ -6,6 +6,7 @@ import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
 import org.sonar.java.ast.parser.JavaParser
+import org.sonar.java.model.VisitorsBridge
 
 import scala.jdk.CollectionConverters._
 

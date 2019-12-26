@@ -1,50 +1,41 @@
-public class ParallelHierarchy extends A1 {
+public class ParallelHierarchy extends D1 { // Noncompliant {{Parallel hierarchy with class: 'ParallelAlternative'}}
 
 }
 
-class ParallelAlternative implements A {
+class ParallelAlternative extends D { // Noncompliant {{Parallel hierarchy with class: 'ParallelHierarchy'}}
 
 }
 
-interface A1 {
-
-}
-
-
-interface B1 extends A1 {
-
-}
-
-interface C1 extends B1 {
-
-}
-
-interface D1 extends C1 {
-
-}
-
-interface E1 extends D1 {
+abstract class A1 {
 
 }
 
 
-interface A {
+abstract class B1 extends A1 {
 
 }
 
-interface B extends A {
+abstract class C1 extends B1 {
 
 }
 
-interface C extends B {
+abstract class D1 extends C1 {
 
 }
 
-interface D extends C {
+
+abstract class A {
 
 }
 
-interface E extends D {
+abstract class B extends A {
 
 }
 
+abstract class C extends B {
+
+}
+
+abstract class D extends C {
+
+}

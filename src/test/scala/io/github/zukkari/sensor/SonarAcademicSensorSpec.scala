@@ -142,5 +142,23 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
     context.fileSystem().add(inputFile)
     sensor.execute(context)
 
+    val issues = context.allIssues()
+      .asScala
+      .toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.message == "Parallel hierarchy with class: 'ParallelAlternative'")
+
+        assert(second.primaryLocation.textRange.start.line == 5)
+        assert(second.primaryLocation.message == "Parallel hierarchy with class: 'ParallelHierarchy'")
+      case _ =>
+        fail("Hello Mr compiler")
+    }
   }
 }
