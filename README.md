@@ -110,8 +110,6 @@ Detects all methods with more than `X` parameters
 
 # To implement
 
-~Distorted hierarchy~
-
 ## Primitive obsession
 
 ## Middle man
@@ -127,8 +125,6 @@ Detects all methods with more than `X` parameters
 ## Intensive coupling
 
 ## SAPBreakers
-
-## Distorted Hierarchy
 
 ## Unstable dependencies
 
