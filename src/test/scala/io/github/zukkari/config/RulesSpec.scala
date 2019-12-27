@@ -107,9 +107,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[SpeculativeGeneralityMethods])
   }
 
+  it should "contain 'middle man' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[MiddleMan])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 18)
+    assert(rules.size == 19)
   }
 }
