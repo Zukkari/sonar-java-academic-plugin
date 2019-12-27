@@ -131,3 +131,5 @@ Detects all methods with more than `X` parameters
 ## Distorted Hierarchy
 
 ## Unstable dependencies
+
+## Missing template method
