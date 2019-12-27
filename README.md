@@ -114,15 +114,11 @@ Detects all methods with more than `X` parameters
 
 ## Primitive obsession
 
-## Temporary field
-
 ## Middle man
 
 ## Inappropriate intimacy
 
 ## Alternate classes with different interfaces
-
-## Incomplete library class
 
 ## Brain method
 
