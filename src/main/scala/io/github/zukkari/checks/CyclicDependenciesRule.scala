@@ -52,8 +52,7 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
             report(
               sensorContext,
               s"Cycle detected: $cycle",
-              javaFile,
-              line,
+              Declaration(javaFile, line),
               CyclicDependenciesRule.ruleKey
             )
           }.unsafeRunSync()

@@ -1,7 +1,7 @@
 package io.github.zukkari.sensor
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.{CyclicDependenciesRule, DataClump, ParallelInheritanceHierarchies, TraditionBreakerRule}
+import io.github.zukkari.checks.{CyclicDependenciesRule, DataClump, ParallelInheritanceHierarchies, SpeculativeGeneralityInterfaces, TraditionBreakerRule}
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
@@ -16,7 +16,8 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
     new CyclicDependenciesRule,
     new TraditionBreakerRule,
     new DataClump,
-    new ParallelInheritanceHierarchies
+    new ParallelInheritanceHierarchies,
+    new SpeculativeGeneralityInterfaces
   ))
 
   override def describe(descriptor: SensorDescriptor): Unit = {

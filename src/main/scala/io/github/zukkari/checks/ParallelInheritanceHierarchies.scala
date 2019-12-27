@@ -93,8 +93,7 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
               report(
                 sensorContext,
                 s"Parallel hierarchy with class: '$className'",
-                declaration.f,
-                declaration.line,
+                declaration,
                 ParallelInheritanceHierarchies.key
               )
             case _ =>

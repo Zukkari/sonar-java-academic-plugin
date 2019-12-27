@@ -50,8 +50,7 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
           report(
             sensorContext,
             "Tradition breaker",
-            file,
-            line,
+            Declaration(file, line),
             TraditionBreakerRule.key
           )
         }.unsafeRunSync()

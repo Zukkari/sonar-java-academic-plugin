@@ -175,7 +175,7 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
   it should "detect speculative generality in interface implementations" in {
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
     val inputFile = TestInputFileBuilder
-      .create("", "./src/test/resources/files/parallel_inheritance_hierarchies/ParallelHierarchy.java")
+      .create("", "./src/test/resources/files/speculative_generality_interfaces/SpeculativeGeneralityInterfaces.java")
       .setLines(25)
       .setOriginalLineEndOffsets(Array.fill(25)(0))
       .setOriginalLineStartOffsets(Array.fill(25)(0))
@@ -192,14 +192,17 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .asScala
       .toList
 
-    assertResult(1) {
+    assertResult(2) {
       issues.size
     }
 
     issues match {
-      case first :: _ =>
+      case first :: second :: _ =>
         assert(first.primaryLocation.textRange.start.line == 1)
         assert(first.primaryLocation.message == "Speculative generality: provide at least one implementation for this interface")
+
+        assert(second.primaryLocation.textRange.start.line == 17)
+        assert(second.primaryLocation.message == "Speculative generality: provide at least one implementation for this interface")
       case _ =>
         fail("Hello Mr compiler")
     }
