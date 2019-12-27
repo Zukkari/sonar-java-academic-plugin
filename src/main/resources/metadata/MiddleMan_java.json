@@ -1,0 +1,13 @@
+{
+  "title": "Middle man",
+  "type": "CODE_SMELL",
+  "status": "BETA",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "MINOR"
+}

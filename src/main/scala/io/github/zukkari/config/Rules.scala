@@ -30,7 +30,8 @@ object Rules {
     classOf[DataClump],
     classOf[ParallelInheritanceHierarchies],
     classOf[SpeculativeGeneralityInterfaces],
-    classOf[SpeculativeGeneralityMethods]
+    classOf[SpeculativeGeneralityMethods],
+    classOf[MiddleMan]
   )
 
 }
