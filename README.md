@@ -29,6 +29,8 @@ Current list of supported code smells:
 | Feature envy | |
 | Data clumps | |
 | Parallel inheritance hierarchies | |
+| Speculative generality (interfaces) | |
+| Speculative generality (methods) | |
 
 ## How does it work?
 
@@ -102,13 +104,15 @@ Detects all methods with more than `X` parameters
 
 ## Parallel inheritance hierarchies
 
+## Speculative generality (interfaces)
+
+## Speculative generality (methods)
+
 # To implement
 
 ~Distorted hierarchy~
 
 ## Primitive obsession
-
-## Speculative generality
 
 ## Temporary field
 
