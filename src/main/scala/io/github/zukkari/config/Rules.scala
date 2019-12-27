@@ -28,7 +28,8 @@ object Rules {
     classOf[DivergentChange],
     classOf[FeatureEnvy],
     classOf[DataClump],
-    classOf[ParallelInheritanceHierarchies]
+    classOf[ParallelInheritanceHierarchies],
+    classOf[SpeculativeGeneralityInterfaces]
   )
 
 }

@@ -3,6 +3,7 @@ package io.github.zukkari.sensor
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
+import io.github.zukkari.checks._
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.scalatest.flatspec.AnyFlatSpec
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
@@ -13,9 +14,10 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 class SonarAcademicSensorSpec extends AnyFlatSpec {
-  val sensor = new SonarAcademicSensor
 
   it should "contain proper sensor description" in {
+    val sensor = new SonarAcademicSensor
+
     val descriptor = new DefaultSensorDescriptor
     sensor.describe(descriptor)
 
@@ -43,6 +45,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
         case _ =>
       }
     }
+
+    val sensor = new SonarAcademicSensor(List(new CyclicDependenciesRule))
 
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
     val inputFile = TestInputFileBuilder
@@ -77,6 +81,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
+    val sensor = new SonarAcademicSensor(List(new TraditionBreakerRule))
+
     context.fileSystem().add(inputFile)
     sensor.execute(context)
 
@@ -105,12 +111,14 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
+    val sensor = new SonarAcademicSensor(List(new DataClump))
+
     context.fileSystem().add(inputFile)
     sensor.execute(context)
 
     val issues = context.allIssues()
-        .asScala
-        .toList
+      .asScala
+      .toList
 
     assertResult(2) {
       issues.size
@@ -139,6 +147,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
+    val sensor = new SonarAcademicSensor(List(new ParallelInheritanceHierarchies))
+
     context.fileSystem().add(inputFile)
     sensor.execute(context)
 
@@ -157,6 +167,39 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
 
         assert(second.primaryLocation.textRange.start.line == 5)
         assert(second.primaryLocation.message == "Parallel hierarchy with class: 'ParallelHierarchy'")
+      case _ =>
+        fail("Hello Mr compiler")
+    }
+  }
+
+  it should "detect speculative generality in interface implementations" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val inputFile = TestInputFileBuilder
+      .create("", "./src/test/resources/files/parallel_inheritance_hierarchies/ParallelHierarchy.java")
+      .setLines(25)
+      .setOriginalLineEndOffsets(Array.fill(25)(0))
+      .setOriginalLineStartOffsets(Array.fill(25)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor = new SonarAcademicSensor(List(new SpeculativeGeneralityInterfaces))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues()
+      .asScala
+      .toList
+
+    assertResult(1) {
+      issues.size
+    }
+
+    issues match {
+      case first :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.message == "Speculative generality: provide at least one implementation for this interface")
       case _ =>
         fail("Hello Mr compiler")
     }
