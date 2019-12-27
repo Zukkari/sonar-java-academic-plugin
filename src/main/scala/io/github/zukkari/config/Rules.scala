@@ -29,7 +29,8 @@ object Rules {
     classOf[FeatureEnvy],
     classOf[DataClump],
     classOf[ParallelInheritanceHierarchies],
-    classOf[SpeculativeGeneralityInterfaces]
+    classOf[SpeculativeGeneralityInterfaces],
+    classOf[SpeculativeGeneralityMethods]
   )
 
 }

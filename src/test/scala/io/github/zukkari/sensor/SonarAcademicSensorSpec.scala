@@ -207,4 +207,41 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
         fail("Hello Mr compiler")
     }
   }
+
+
+  it should "detect speculative generality in method implementations" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val inputFile = TestInputFileBuilder
+      .create("", "./src/test/resources/files/speculative_generality_methods/SpeculativeGeneralityMethods.java")
+      .setLines(25)
+      .setOriginalLineEndOffsets(Array.fill(25)(0))
+      .setOriginalLineStartOffsets(Array.fill(25)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor = new SonarAcademicSensor(List(new SpeculativeGeneralityInterfaces))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues()
+      .asScala
+      .toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.message == "Speculative generality: unused method parameter: 'name'")
+
+        assert(second.primaryLocation.textRange.start.line == 17)
+        assert(second.primaryLocation.message == "Speculative generality: unused method parameter: 'p1', 'p4'")
+      case _ =>
+        fail("Hello Mr compiler")
+    }
+  }
 }
