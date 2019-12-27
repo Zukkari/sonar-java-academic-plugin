@@ -1,4 +1,4 @@
-public class MiddleMan { // Noncompliant {{Middle man: delegation ratio is 0.66 with limit set to 0.5}}
+public class MiddleMan { // Noncompliant {{Middle man: delegation ratio is 0.67 with limit set to 0.5}}
     private Service service;
 
     public void m1() {
