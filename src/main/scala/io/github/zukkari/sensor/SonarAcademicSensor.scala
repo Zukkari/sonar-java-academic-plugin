@@ -1,17 +1,24 @@
 package io.github.zukkari.sensor
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.{CyclicDependenciesRule, DataClump, ParallelInheritanceHierarchies, TraditionBreakerRule}
+import io.github.zukkari.checks.{CyclicDependenciesRule, DataClump, ParallelInheritanceHierarchies, SpeculativeGeneralityInterfaces, TraditionBreakerRule}
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
 import org.sonar.java.ast.parser.JavaParser
-import org.sonar.java.model.VisitorsBridge
 
 import scala.jdk.CollectionConverters._
 
-class SonarAcademicSensor extends Sensor {
+class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
   private val log = Log(this.getClass)
+
+  def this() = this(List(
+    new CyclicDependenciesRule,
+    new TraditionBreakerRule,
+    new DataClump,
+    new ParallelInheritanceHierarchies,
+    new SpeculativeGeneralityInterfaces
+  ))
 
   override def describe(descriptor: SensorDescriptor): Unit = {
     descriptor.name("Sensor Sonar Academic Plugin")
@@ -27,13 +34,6 @@ class SonarAcademicSensor extends Sensor {
 
     val parser = JavaParser.createParser()
 
-    val checks: List[SensorRule] = List(
-      new CyclicDependenciesRule,
-      new TraditionBreakerRule,
-      new DataClump,
-      new ParallelInheritanceHierarchies
-    )
-
     javaFiles.asScala
       .toSeq
       .map { javaFile =>
@@ -41,9 +41,9 @@ class SonarAcademicSensor extends Sensor {
         (javaFile, parser.parse(javaFile.contents()))
       }
       .foreach {
-        case (f, tree) => checks.foreach(_.scan(f, tree))
+        case (f, tree) => rules.foreach(_.scan(f, tree))
       }
 
-    checks.foreach(_.afterAllScanned(context))
+    rules.foreach(_.afterAllScanned(context))
   }
 }

@@ -53,16 +53,14 @@ class DataClump extends JavaCheck with SensorRule {
             report(
               sensorContext,
               s"Data clump: similar to class: '$second'",
-              firstDeclaration.f,
-              firstDeclaration.line,
+              firstDeclaration,
               DataClump.key
             )
 
             report(
               sensorContext,
               s"Data clump: similar to class: '$first'",
-              secondDecladation.f,
-              secondDecladation.line,
+              secondDecladation,
               DataClump.key
             )
 
