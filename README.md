@@ -33,6 +33,7 @@ Current list of supported code smells:
 | Speculative generality (methods) | |
 | Middle man | |
 | Primitive obsession | |
+| Brain method | |
 
 ## How does it work?
 
@@ -114,13 +115,13 @@ Detects all methods with more than `X` parameters
 
 ## Primitive obsession
 
+## Brain method
+
 # To implement
 
 ## Inappropriate intimacy
 
 ## Alternate classes with different interfaces
-
-## Brain method
 
 ## God class
 
