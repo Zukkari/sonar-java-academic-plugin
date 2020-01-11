@@ -14,11 +14,9 @@ trait SonarAcademicSubscriptionVisitor {
 
   def nodesToVisit: List[Tree.Kind]
 
-  def visitNode(tree: Tree): Unit = {
-  }
+  def visitNode(tree: Tree): Unit = {}
 
-  def leaveNode(tree: Tree): Unit = {
-  }
+  def leaveNode(tree: Tree): Unit = {}
 
   final def scanTree(tree: Tree): Unit = {
     if (_nodesToVisit == Nil) {
@@ -31,8 +29,11 @@ trait SonarAcademicSubscriptionVisitor {
   }
 
   final def visit(tree: Tree): Unit = {
+    if (tree == null) return
+
     val subscribed = isSubscribed(tree)
-    val shouldVisitSyntaxToken = (visitToken || visitTrivia) && tree.is(Kind.TOKEN)
+    val shouldVisitSyntaxToken = (visitToken || visitTrivia) && tree.is(
+      Kind.TOKEN)
 
     if (subscribed) {
       visitNode(tree)
@@ -48,14 +49,17 @@ trait SonarAcademicSubscriptionVisitor {
     val isLeaf = tree.getClass.getMethod("isLeaf")
     if (!isLeaf.invoke(tree).asInstanceOf[Boolean]) {
       val children = tree.getClass.getMethod("getChildren")
-      children.invoke(tree).asInstanceOf[util.List[Tree]]
+      children
+        .invoke(tree)
+        .asInstanceOf[util.List[Tree]]
         .asScala
         .filter(_ != null)
         .foreach(visit)
     }
   }
 
-  private def isSubscribed(tree: Tree): Boolean = nodesToVisit contains tree.kind()
+  private def isSubscribed(tree: Tree): Boolean =
+    nodesToVisit contains tree.kind()
 
   private def isVisitingTrivia: Boolean = nodesToVisit contains Kind.TRIVIA
 
