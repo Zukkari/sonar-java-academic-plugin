@@ -2,6 +2,7 @@ package io.github.zukkari.sensor
 
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks.{
+  BrainMethod,
   CyclicDependenciesRule,
   DataClump,
   ParallelInheritanceHierarchies,
@@ -12,9 +13,11 @@ import io.github.zukkari.checks.{
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
+import org.sonar.api.utils.log.Loggers
 import org.sonar.java.ast.parser.JavaParser
 
 import scala.jdk.CollectionConverters._
+import scala.util.{Failure, Success, Try}
 
 class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
   private val log = Log(this.getClass)
@@ -27,7 +30,8 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
         new DataClump,
         new ParallelInheritanceHierarchies,
         new SpeculativeGeneralityInterfaces,
-        new PrimitiveObsession
+        new PrimitiveObsession,
+        new BrainMethod
       ))
 
   override def describe(descriptor: SensorDescriptor): Unit = {
@@ -51,7 +55,14 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
         (javaFile, parser.parse(javaFile.contents()))
       }
       .foreach {
-        case (f, tree) => rules.foreach(_.scan(f, tree))
+        case (f, tree) =>
+          Try(rules.foreach(_.scan(f, tree))) match {
+            case Failure(ex) =>
+              Loggers
+                .get(classOf[SonarAcademicSensor])
+                .error("Failed to scan file", ex)
+            case _ =>
+          }
       }
 
     rules.foreach(_.afterAllScanned(context))

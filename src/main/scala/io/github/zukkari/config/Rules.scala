@@ -31,7 +31,8 @@ object Rules {
     classOf[SpeculativeGeneralityInterfaces],
     classOf[SpeculativeGeneralityMethods],
     classOf[MiddleMan],
-    classOf[PrimitiveObsession]
+    classOf[PrimitiveObsession],
+    classOf[BrainMethod]
   )
 
 }
