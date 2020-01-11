@@ -1,7 +1,14 @@
 package io.github.zukkari.sensor
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.{CyclicDependenciesRule, DataClump, ParallelInheritanceHierarchies, SpeculativeGeneralityInterfaces, TraditionBreakerRule}
+import io.github.zukkari.checks.{
+  CyclicDependenciesRule,
+  DataClump,
+  ParallelInheritanceHierarchies,
+  PrimitiveObsession,
+  SpeculativeGeneralityInterfaces,
+  TraditionBreakerRule
+}
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
@@ -12,18 +19,22 @@ import scala.jdk.CollectionConverters._
 class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
   private val log = Log(this.getClass)
 
-  def this() = this(List(
-    new CyclicDependenciesRule,
-    new TraditionBreakerRule,
-    new DataClump,
-    new ParallelInheritanceHierarchies,
-    new SpeculativeGeneralityInterfaces
-  ))
+  def this() =
+    this(
+      List(
+        new CyclicDependenciesRule,
+        new TraditionBreakerRule,
+        new DataClump,
+        new ParallelInheritanceHierarchies,
+        new SpeculativeGeneralityInterfaces,
+        new PrimitiveObsession
+      ))
 
   override def describe(descriptor: SensorDescriptor): Unit = {
     descriptor.name("Sensor Sonar Academic Plugin")
     descriptor.onlyOnLanguage("java")
-    descriptor.createIssuesForRuleRepository(SonarAcademicRulesDefinition.repoKey)
+    descriptor.createIssuesForRuleRepository(
+      SonarAcademicRulesDefinition.repoKey)
   }
 
   override def execute(context: SensorContext): Unit = {
@@ -34,8 +45,7 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
 
     val parser = JavaParser.createParser()
 
-    javaFiles.asScala
-      .toSeq
+    javaFiles.asScala.toSeq
       .map { javaFile =>
         log.info(s"Parsing Java file: ${javaFile.toString}")
         (javaFile, parser.parse(javaFile.contents()))
