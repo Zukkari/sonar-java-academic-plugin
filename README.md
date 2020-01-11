@@ -32,6 +32,7 @@ Current list of supported code smells:
 | Speculative generality (interfaces) | |
 | Speculative generality (methods) | |
 | Middle man | |
+| Primitive obsession | |
 
 ## How does it work?
 
@@ -111,9 +112,9 @@ Detects all methods with more than `X` parameters
 
 ## Middle man
 
-# To implement
-
 ## Primitive obsession
+
+# To implement
 
 ## Inappropriate intimacy
 
