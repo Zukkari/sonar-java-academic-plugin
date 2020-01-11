@@ -1,7 +1,6 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.common.VariableUsageLocator
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
