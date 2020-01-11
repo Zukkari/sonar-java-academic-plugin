@@ -2,7 +2,11 @@ package io.github.zukkari.common
 
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{IdentifierTree, MemberSelectExpressionTree, Tree}
+import org.sonar.plugins.java.api.tree.{
+  IdentifierTree,
+  MemberSelectExpressionTree,
+  Tree
+}
 
 class VariableUsageLocator extends SonarAcademicSubscriptionVisitor {
 
@@ -15,10 +19,9 @@ class VariableUsageLocator extends SonarAcademicSubscriptionVisitor {
 
     variableState = Option(memberSelect.expression)
       .filter(_.isInstanceOf[IdentifierTree])
-      .map(_.asInstanceOf[IdentifierTree])
-      .map(_.name) match {
+      .map(_.toString) match {
       case Some(variable) => variableState + variable
-      case None => variableState
+      case None           => variableState
     }
 
     super.visitNode(tree)

@@ -249,4 +249,31 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
     assert(
       issue.primaryLocation.message == "Primitive obsession: externally declared class used 4 times with max allowed 3")
   }
+
+  it should "detect brain methods" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val inputFile = TestInputFileBuilder
+      .create("", "./src/test/resources/files/brain_method/BrainMethod.java")
+      .setLines(25)
+      .setOriginalLineEndOffsets(Array.fill(25)(0))
+      .setOriginalLineStartOffsets(Array.fill(25)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor = new SonarAcademicSensor(List(new BrainMethod(5, 5, 2, 2)))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(1) {
+      issues.size
+    }
+
+    val issue = issues.head
+    assert(issue.primaryLocation.textRange.start.line == 7)
+    assert(issue.primaryLocation.message == "Brain method")
+  }
 }
