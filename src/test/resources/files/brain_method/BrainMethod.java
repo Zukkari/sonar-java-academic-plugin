@@ -1,4 +1,4 @@
-public class BrainMethod {
+class BrainMethod {
     private boolean b1;
     private boolean b2;
     private boolean b3;
@@ -40,17 +40,15 @@ public class BrainMethod {
 
     public void m4() { // Noncompliant: {{Brain method}}
         try {
-            try {
-                try {
-                    if (b1) {
-                        if (b2) {
-                            if (b3) {
-                                System.out.println(b4);
-                            }
-                        }
+            if (b1) {
+                if (b2) {
+                    if (b3) {
+                        System.out.println(b4);
                     }
                 }
             }
+        } finally {
+            System.out.println("OK!");
         }
     }
 }

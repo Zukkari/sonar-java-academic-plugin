@@ -12,8 +12,6 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
 
 import scala.jdk.CollectionConverters._
-
-
 @Rule(key = "TraditionBreakerRule")
 class TraditionBreakerRule extends JavaCheck with SensorRule {
   private val highNumberOfMembers = 20
@@ -24,9 +22,10 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
   private var classToLineContext: Map[String, Int] = Map.empty
   private var classToMembersContext: Map[String, Int] = Map.empty
 
-  private def hasSubclasses(parent: String): Boolean = classToParentContext.exists { case (_, p) => p == parent }
+  private def hasSubclasses(parent: String): Boolean =
+    classToParentContext.exists { case (_, p) => p == parent }
 
-  override def scan(f: InputFile, t: Tree): Unit = {
+  override def scan(t: Tree): Unit = {
     val visitor = new ParentAndMemberVisitor
     visitor.scan(t)
 
@@ -34,7 +33,9 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
     classToLineContext ++= visitor.declarations
     classToMembersContext ++= visitor.nameToMembers
 
-    classToFileContext ++= visitor.nameToParent.map { case (name, _) => (name, f) }
+    classToFileContext ++= visitor.nameToParent.map {
+      case (name, _) => (name, inputFile)
+    }
   }
 
   override def afterAllScanned(sensorContext: SensorContext): Unit = {
@@ -43,17 +44,19 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
         for {
           parent <- classToParentContext.get(c)
           parentMembers <- classToMembersContext.get(parent)
-          if parentMembers >= highNumberOfMembers && members <= lowNumberOfMembers && !hasSubclasses(c)
+          if parentMembers >= highNumberOfMembers && members <= lowNumberOfMembers && !hasSubclasses(
+            c)
           file <- classToFileContext.get(c)
           line <- classToLineContext.get(c)
-        } yield IO {
-          report(
-            sensorContext,
-            "Tradition breaker",
-            Declaration(file, line),
-            TraditionBreakerRule.key
-          )
-        }.unsafeRunSync()
+        } yield
+          IO {
+            report(
+              sensorContext,
+              "Tradition breaker",
+              Declaration(file, line),
+              TraditionBreakerRule.key
+            )
+          }.unsafeRunSync()
     }
   }
 }
@@ -70,25 +73,25 @@ class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
     Option(classTree.simpleName).map(_.name) match {
-      case None => super.visitNode(tree)
+      case None            => super.visitNode(tree)
       case Some(className) =>
         // Add declaration so we can report an issue later if needed
         declarations += className -> classTree.firstToken.line
 
         // Find how many non-private methods does the class have
-        val memberCount = classTree.members
-          .asScala
-          .toList.count {
+        val memberCount = classTree.members.asScala.toList.count {
           case v: VariableTree if !hasPrivateMember(v.modifiers) => true
-          case m: MethodTree if !hasPrivateMember(m.modifiers) => true
-          case _ => false
+          case m: MethodTree if !hasPrivateMember(m.modifiers)   => true
+          case _                                                 => false
         }
         log.info(s"Class $className has $memberCount non-private members")
         nameToMembers += className -> memberCount
 
-        nameToParent = Option(classTree.superClass).filter(_.isInstanceOf[IdentifierTree]).map(_.asInstanceOf[IdentifierTree].name) match {
+        nameToParent = Option(classTree.superClass)
+          .filter(_.isInstanceOf[IdentifierTree])
+          .map(_.asInstanceOf[IdentifierTree].name) match {
           case Some(parent) => nameToParent + (className -> parent)
-          case _ => nameToParent
+          case _            => nameToParent
         }
 
         super.visitNode(tree)
@@ -97,7 +100,8 @@ class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
 
   def scan(tree: Tree): Unit = scanTree(tree)
 
-  private def hasPrivateMember(m: ModifiersTree): Boolean = m.modifiers.asScala.exists(_.modifier == Modifier.PRIVATE)
+  private def hasPrivateMember(m: ModifiersTree): Boolean =
+    m.modifiers.asScala.exists(_.modifier == Modifier.PRIVATE)
 }
 
 object TraditionBreakerRule {

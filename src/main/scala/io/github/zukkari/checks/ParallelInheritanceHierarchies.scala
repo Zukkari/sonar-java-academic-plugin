@@ -27,7 +27,7 @@ object HierarchySyntax {
       def _len(hierarchy: Hierarchy, acc: Int): Int = {
         hierarchy match {
           case Implementation(_) => acc + 1
-          case Parent(_, child) => _len(child, acc + 1)
+          case Parent(_, child)  => _len(child, acc + 1)
         }
       }
 
@@ -39,7 +39,7 @@ object HierarchySyntax {
       def _impl(hierarchy: Hierarchy): String = {
         hierarchy match {
           case Implementation(impl) => impl
-          case Parent(_, child) => _impl(child)
+          case Parent(_, child)     => _impl(child)
         }
       }
 
@@ -63,8 +63,8 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
   private var classToParentMap: Map[String, String] = Map.empty
   private var declarationMap: Map[String, Declaration] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
-    val visitor = new HierarchyVisitor(f)
+  override def scan(t: Tree): Unit = {
+    val visitor = new HierarchyVisitor(inputFile)
     visitor.scanTree(tree = t)
 
     classToParentMap ++= visitor.classToParentMap
@@ -82,13 +82,15 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
         case (key, hierarchy) =>
           val prefix = key.substring(0, prefixLength)
           val matchingClass = hierarchyMap.find {
-            case (matchingName, matchingHierarchy) => key != matchingName && matchingName.startsWith(prefix) && hierarchy.length == matchingHierarchy.length
+            case (matchingName, matchingHierarchy) =>
+              key != matchingName && matchingName.startsWith(prefix) && hierarchy.length == matchingHierarchy.length
           }
 
           val implementation = hierarchy.implementation
           (matchingClass, declarationMap.get(implementation)) match {
             case (Some((className, matchingHierarchy)), Some(declaration)) =>
-              log.info(s"Class $implementation and ${matchingHierarchy.implementation} have parallel hierarchies of depth ${matchingHierarchy.length}")
+              log.info(
+                s"Class $implementation and ${matchingHierarchy.implementation} have parallel hierarchies of depth ${matchingHierarchy.length}")
 
               report(
                 sensorContext,
@@ -112,7 +114,8 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
     @tailrec
     def hierarchy(clazz: Option[String], acc: Hierarchy): Hierarchy = {
       clazz match {
-        case Some(name) => hierarchy(classToParentMap.get(name), Parent(name, acc))
+        case Some(name) =>
+          hierarchy(classToParentMap.get(name), Parent(name, acc))
         case None => acc
       }
     }
@@ -121,7 +124,8 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
   }
 }
 
-class HierarchyVisitor(val javaFile: InputFile) extends SonarAcademicSubscriptionVisitor {
+class HierarchyVisitor(val javaFile: InputFile)
+    extends SonarAcademicSubscriptionVisitor {
   override def nodesToVisit: List[Tree.Kind] = List(Kind.CLASS, Kind.INTERFACE)
 
   var classToParentMap: Map[String, String] = Map.empty
@@ -130,12 +134,12 @@ class HierarchyVisitor(val javaFile: InputFile) extends SonarAcademicSubscriptio
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
     (Option(classTree.simpleName)
-      .map(_.toString),
-      Option(classTree.superClass).map(_.toString))
-    match {
+       .map(_.toString),
+     Option(classTree.superClass).map(_.toString)) match {
       case (Some(name), Some(superClass)) =>
         classToParentMap += name -> superClass
-        declarationMap += name -> Declaration(javaFile, classTree.firstToken.line)
+        declarationMap += name -> Declaration(javaFile,
+                                              classTree.firstToken.line)
         super.visitNode(tree)
       case _ => super.visitNode(tree)
     }

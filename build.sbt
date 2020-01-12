@@ -16,7 +16,6 @@ scalacOptions := Seq(
   "-language:higherKinds",
 )
 
-
 // Dependencies
 val sonarVersion = "7.9"
 libraryDependencies ++= List(
@@ -56,6 +55,11 @@ packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
   PluginManifest.USE_CHILD_FIRST_CLASSLOADER -> "false"
 )
 
+def isSignatureFile(f: String): Boolean = {
+  f.endsWith("DSA") ||
+    f.endsWith("SF") ||
+    f.endsWith("RSA")
+}
 
 // Assembly
 test in assembly := {}
@@ -64,6 +68,7 @@ assemblyMergeStrategy in assembly := {
   case "log4j.properties" => MergeStrategy.first
   case "reference.conf" => MergeStrategy.concat
   case "application.conf" => MergeStrategy.concat
+  case signed if isSignatureFile(signed)=> MergeStrategy.discard
   case PathList("META-INF", xs@_*) =>
     xs match {
       case "MANIFEST.MF" :: Nil => MergeStrategy.discard

@@ -23,8 +23,8 @@ class SpeculativeGeneralityInterfaces extends JavaCheck with SensorRule {
   private var interfaceMap: Map[String, Declaration] = Map.empty
   private var implementationMap: Map[Class, Interfaces] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
-    val interfaceVisitor = new InterfaceVisitor(f)
+  override def scan(t: Tree): Unit = {
+    val interfaceVisitor = new InterfaceVisitor(inputFile)
     interfaceVisitor.scanTree(tree = t)
 
     interfaceMap ++= interfaceVisitor.declarationMap
@@ -36,10 +36,12 @@ class SpeculativeGeneralityInterfaces extends JavaCheck with SensorRule {
   }
 
   override def afterAllScanned(sensorContext: SensorContext): Unit = {
-    val allImplementations = implementationMap.values.toSet.foldLeft(Set.empty[String])(_ ++ _)
+    val allImplementations =
+      implementationMap.values.toSet.foldLeft(Set.empty[String])(_ ++ _)
 
     interfaceMap.foreach {
-      case (interface, declaration) if !(allImplementations contains interface) =>
+      case (interface, declaration)
+          if !(allImplementations contains interface) =>
         report(
           sensorContext,
           "Speculative generality: provide at least one implementation for this interface",
@@ -52,7 +54,8 @@ class SpeculativeGeneralityInterfaces extends JavaCheck with SensorRule {
 
 }
 
-class InterfaceVisitor(val javaFile: InputFile) extends SonarAcademicSubscriptionVisitor {
+class InterfaceVisitor(val javaFile: InputFile)
+    extends SonarAcademicSubscriptionVisitor {
   override def nodesToVisit: List[Tree.Kind] = List(Kind.INTERFACE)
 
   var declarationMap: Map[String, Declaration] = Map.empty
@@ -63,7 +66,9 @@ class InterfaceVisitor(val javaFile: InputFile) extends SonarAcademicSubscriptio
     declarationMap = {
       Option(classTree.simpleName)
         .map(_.name) match {
-        case Some(name) => declarationMap + (name -> Declaration(javaFile, classTree.firstToken.line))
+        case Some(name) =>
+          declarationMap + (name -> Declaration(javaFile,
+                                                classTree.firstToken.line))
         case None => declarationMap
       }
     }
@@ -84,8 +89,10 @@ class InterfaceImplementationVisitor extends SonarAcademicSubscriptionVisitor {
     val classTree = tree.asInstanceOf[ClassTree]
 
     implementationMap = (Option(classTree.simpleName).map(_.name),
-      Option(classTree.superInterfaces).map(interfaces => interfaces.asScala.toList.map(_.toString))) match {
-      case (Some(name), Some(interfaces)) if interfaces.nonEmpty => implementationMap + (name -> interfaces)
+                         Option(classTree.superInterfaces).map(interfaces =>
+                           interfaces.asScala.toList.map(_.toString))) match {
+      case (Some(name), Some(interfaces)) if interfaces.nonEmpty =>
+        implementationMap + (name -> interfaces)
       case _ => implementationMap
     }
 

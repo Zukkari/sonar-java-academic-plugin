@@ -9,13 +9,16 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{ClassTree, IdentifierTree, Tree, VariableTree}
+import org.sonar.plugins.java.api.tree.{
+  ClassTree,
+  IdentifierTree,
+  Tree,
+  VariableTree
+}
 import scalax.collection.GraphEdge.DiEdge
 import scalax.collection.immutable.Graph
 
 import scala.jdk.CollectionConverters._
-
-
 @Rule(key = "CyclicDependencies")
 class CyclicDependenciesRule extends JavaCheck with SensorRule {
   private val log = Log(this.getClass)
@@ -24,14 +27,14 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
   private var classDeclarationContext: Map[String, Int] = Map.empty
   private var classDependenciesContext: Map[String, Set[String]] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
+  override def scan(t: Tree): Unit = {
     val visitor = new ClassDependenciesVisitor
 
     // Fully classified class name to dependencies
     val declarations = visitor.declarations(t)
     val dependencies = visitor.dependencies(t)
 
-    fileMapContext ++= declarations.map { case (a, _) => (a, f) }
+    fileMapContext ++= declarations.map { case (a, _) => (a, inputFile) }
     classDependenciesContext ++= dependencies
     classDeclarationContext ++= declarations
   }
@@ -46,7 +49,9 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
     val graph = Graph.from(nodes, edges)
 
     nodes.foreach { node =>
-      (graph.findCycleContaining(graph get node), classDeclarationContext.get(node), fileMapContext.get(node)) match {
+      (graph.findCycleContaining(graph get node),
+       classDeclarationContext.get(node),
+       fileMapContext.get(node)) match {
         case (Some(cycle), Some(line), Some(javaFile)) =>
           IO {
             report(
@@ -90,9 +95,7 @@ class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
         declarationMap += p -> classTree.firstToken.line
 
         // Get dependencies here
-        val deps = classTree.members
-          .asScala
-          .toSeq
+        val deps = classTree.members.asScala.toSeq
           .filter(_.is(Kind.VARIABLE))
           .map(_.asInstanceOf[VariableTree])
           .map(_.`type`)

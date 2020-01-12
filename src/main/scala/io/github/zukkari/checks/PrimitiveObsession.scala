@@ -31,8 +31,8 @@ class PrimitiveObsession extends JavaCheck with SensorRule {
 
   var declarationMap: Map[VariableTree, Declaration] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
-    val visitor = new PrimitiveObsessionVisitor(f)
+  override def scan(t: Tree): Unit = {
+    val visitor = new PrimitiveObsessionVisitor(inputFile)
     visitor.visit(tree = t)
 
     classDeclarations ++= visitor.classDeclarations
