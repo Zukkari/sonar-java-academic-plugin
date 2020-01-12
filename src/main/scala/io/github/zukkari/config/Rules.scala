@@ -32,7 +32,8 @@ object Rules {
     classOf[SpeculativeGeneralityMethods],
     classOf[MiddleMan],
     classOf[PrimitiveObsession],
-    classOf[BrainMethod]
+    classOf[BrainMethod],
+    classOf[InappropriateIntimacy]
   )
 
 }

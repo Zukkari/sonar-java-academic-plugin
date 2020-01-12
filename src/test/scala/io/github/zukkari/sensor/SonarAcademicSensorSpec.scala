@@ -295,4 +295,44 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
         fail("Hello, Mr Compiler!")
     }
   }
+
+  it should "detect inappropriate intimacy" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val lines = 31
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/inappropriate_intimacy/InappropriateIntimacy.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor =
+      new SonarAcademicSensor(List(new InappropriateIntimacy))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(
+          first.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class B is greater than configured 4")
+
+        assert(second.primaryLocation.textRange.start.line == 18)
+        assert(
+          second.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class A is greater than configured 4")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
+  }
 }

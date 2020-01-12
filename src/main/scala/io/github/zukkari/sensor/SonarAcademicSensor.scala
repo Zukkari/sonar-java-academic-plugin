@@ -5,6 +5,7 @@ import io.github.zukkari.checks.{
   BrainMethod,
   CyclicDependenciesRule,
   DataClump,
+  InappropriateIntimacy,
   ParallelInheritanceHierarchies,
   PrimitiveObsession,
   SpeculativeGeneralityInterfaces,
@@ -31,7 +32,8 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
         new ParallelInheritanceHierarchies,
         new SpeculativeGeneralityInterfaces,
         new PrimitiveObsession,
-        new BrainMethod
+        new BrainMethod,
+        new InappropriateIntimacy
       ))
 
   override def describe(descriptor: SensorDescriptor): Unit = {
