@@ -34,6 +34,7 @@ Current list of supported code smells:
 | Middle man | |
 | Primitive obsession | |
 | Brain method | |
+| Inappropriate intimacy | |
 
 ## How does it work?
 
@@ -117,9 +118,9 @@ Detects all methods with more than `X` parameters
 
 ## Brain method
 
-# To implement
-
 ## Inappropriate intimacy
+
+# To implement
 
 ## Alternate classes with different interfaces
 
