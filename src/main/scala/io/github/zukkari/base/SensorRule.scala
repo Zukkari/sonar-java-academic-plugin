@@ -8,16 +8,21 @@ import org.sonar.api.rule.RuleKey
 import org.sonar.plugins.java.api.tree.Tree
 
 trait SensorRule {
+  var inputFile: InputFile = _
 
-  def scan(f: InputFile, t: Tree): Unit
+  def scan(t: Tree): Unit
 
   def afterAllScanned(sensorContext: SensorContext): Unit
 
-  def report(sensorContext: SensorContext, issue: String, declaration: Declaration, rule: String): Unit = {
+  def report(sensorContext: SensorContext,
+             issue: String,
+             declaration: Declaration,
+             rule: String): Unit = {
     val newIssue = sensorContext.newIssue
       .forRule(RuleKey.of(SonarAcademicRulesDefinition.repoKey, rule))
 
-    val location = newIssue.newLocation()
+    val location = newIssue
+      .newLocation()
       .on(declaration.f)
       .at(declaration.f.selectLine(declaration.line))
       .message(issue)

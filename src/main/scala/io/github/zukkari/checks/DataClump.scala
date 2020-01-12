@@ -9,7 +9,12 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{ClassTree, PrimitiveTypeTree, Tree, VariableTree}
+import org.sonar.plugins.java.api.tree.{
+  ClassTree,
+  PrimitiveTypeTree,
+  Tree,
+  VariableTree
+}
 
 import scala.jdk.CollectionConverters._
 
@@ -30,8 +35,8 @@ class DataClump extends JavaCheck with SensorRule {
   private var classMap: Map[String, Set[Variable]] = Map.empty
   private var declarationMap: Map[String, Declaration] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
-    val visitor = new DataClumpClassVisitor(f)
+  override def scan(t: Tree): Unit = {
+    val visitor = new DataClumpClassVisitor(inputFile)
     visitor.scanTree(t)
 
     classMap ++= visitor.classVariableMap
@@ -46,32 +51,38 @@ class DataClump extends JavaCheck with SensorRule {
           for {
             firstVariables <- classMap.get(first)
             secondVariables <- classMap.get(second)
-            if firstVariables.intersect(secondVariables).size >= commonVariableThreshold
+            if firstVariables
+              .intersect(secondVariables)
+              .size >= commonVariableThreshold
             firstDeclaration <- declarationMap.get(first)
             secondDecladation <- declarationMap.get(second)
-          } yield IO {
-            report(
-              sensorContext,
-              s"Data clump: similar to class: '$second'",
-              firstDeclaration,
-              DataClump.key
-            )
+          } yield
+            IO {
+              report(
+                sensorContext,
+                s"Data clump: similar to class: '$second'",
+                firstDeclaration,
+                DataClump.key
+              )
 
-            report(
-              sensorContext,
-              s"Data clump: similar to class: '$first'",
-              secondDecladation,
-              DataClump.key
-            )
+              report(
+                sensorContext,
+                s"Data clump: similar to class: '$first'",
+                secondDecladation,
+                DataClump.key
+              )
 
-            log.info(s"Class '$first' and '$second' have following variables in common: ${firstVariables.intersect(secondVariables)}")
-          }.unsafeRunSync()
+              log.info(
+                s"Class '$first' and '$second' have following variables in common: ${firstVariables
+                  .intersect(secondVariables)}")
+            }.unsafeRunSync()
         case _ =>
       }
   }
 }
 
-class DataClumpClassVisitor(val f: InputFile) extends SonarAcademicSubscriptionVisitor {
+class DataClumpClassVisitor(val f: InputFile)
+    extends SonarAcademicSubscriptionVisitor {
   private val log = Log(classOf[DataClumpClassVisitor])
 
   override def nodesToVisit: List[Tree.Kind] = List(Kind.CLASS)
@@ -90,14 +101,15 @@ class DataClumpClassVisitor(val f: InputFile) extends SonarAcademicSubscriptionV
       case Some(className) =>
         declarationMap += className -> Declaration(f, classTree.firstToken.line)
 
-        val variables = classTree.members
-          .asScala
-          .toSet
+        val variables = classTree.members.asScala.toSet
           .filter(_.is(Kind.VARIABLE))
           .map(_.asInstanceOf[VariableTree])
-          .map(variable => variable.`type`() match {
-            case primitive: PrimitiveTypeTree => Variable(primitive.keyword.text, variable.simpleName.name)
-            case _ => Variable(variable.`type`.toString, variable.simpleName.name)
+          .map(variable =>
+            variable.`type`() match {
+              case primitive: PrimitiveTypeTree =>
+                Variable(primitive.keyword.text, variable.simpleName.name)
+              case _ =>
+                Variable(variable.`type`.toString, variable.simpleName.name)
           })
 
         classVariableMap += className -> variables

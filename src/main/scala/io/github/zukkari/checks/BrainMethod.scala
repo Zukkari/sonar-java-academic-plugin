@@ -35,8 +35,8 @@ class BrainMethod(
 
   var declarationMap: Map[MethodTree, Declaration] = Map.empty
 
-  override def scan(f: InputFile, t: Tree): Unit = {
-    val visitor = new BrainMethodVisitor(f)
+  override def scan(t: Tree): Unit = {
+    val visitor = new BrainMethodVisitor(inputFile)
     visitor.visit(t)
 
     complexityMap ++= visitor.complexityMap

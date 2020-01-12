@@ -1,38 +1,48 @@
 package io.github.zukkari.sensor
 
+import java.io.File
+import java.util
+
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.{
-  BrainMethod,
-  CyclicDependenciesRule,
-  DataClump,
-  ParallelInheritanceHierarchies,
-  PrimitiveObsession,
-  SpeculativeGeneralityInterfaces,
-  TraditionBreakerRule
-}
+import io.github.zukkari.checks._
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
+import org.sonar.api.batch.fs.FileSystem
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
+import org.sonar.api.config.Configuration
+import org.sonar.api.issue.NoSonarFilter
 import org.sonar.api.utils.log.Loggers
+import org.sonar.java.SonarComponents
 import org.sonar.java.ast.parser.JavaParser
+import org.sonar.java.bytecode.ClassLoaderBuilder
+import org.sonar.java.model.{JavaVersionImpl, VisitorsBridge}
+import org.sonar.java.resolve.SemanticModel
+import org.sonar.java.se.SymbolicExecutionMode
+import org.sonar.plugins.java.api.{JavaCheck, JavaResourceLocator, JavaVersion}
+import org.sonar.plugins.java.api.tree.CompilationUnitTree
 
 import scala.jdk.CollectionConverters._
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
+import scala.jdk.CollectionConverters._
 
-class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
+class SonarAcademicSensor(val sonarComponents: SonarComponents,
+                          val fs: FileSystem,
+                          val javaResourceLocator: JavaResourceLocator,
+                          val settings: Configuration,
+                          val noSonarFilter: NoSonarFilter)
+    extends Sensor {
   private val log = Log(this.getClass)
 
-  def this() =
-    this(
-      List(
-        new CyclicDependenciesRule,
-        new TraditionBreakerRule,
-        new DataClump,
-        new ParallelInheritanceHierarchies,
-        new SpeculativeGeneralityInterfaces,
-        new PrimitiveObsession,
-        new BrainMethod
-      ))
+  var rules: List[SensorRule] = List(
+    new CyclicDependenciesRule,
+    new TraditionBreakerRule,
+    new DataClump,
+    new ParallelInheritanceHierarchies,
+    new SpeculativeGeneralityInterfaces,
+    new PrimitiveObsession,
+    new BrainMethod,
+    new InappropriateIntimacy
+  )
 
   override def describe(descriptor: SensorDescriptor): Unit = {
     descriptor.name("Sensor Sonar Academic Plugin")
@@ -49,14 +59,33 @@ class SonarAcademicSensor(val rules: List[SensorRule]) extends Sensor {
 
     val parser = JavaParser.createParser()
 
+    val classPath = Option(sonarComponents)
+      .map(_.getJavaClasspath)
+      .getOrElse(new util.ArrayList[File]())
+
+    val visitor = new VisitorsBridge(
+      rules.map(_.asInstanceOf[JavaCheck]).asJavaCollection,
+      classPath,
+      sonarComponents,
+      SymbolicExecutionMode.DISABLED)
+
+    visitor.setJavaVersion(JavaVersionImpl.fromString("8"))
+
     javaFiles.asScala.toSeq
       .map { javaFile =>
         log.info(s"Parsing Java file: ${javaFile.toString}")
-        (javaFile, parser.parse(javaFile.contents()))
+        val tree = parser.parse(javaFile.contents())
+
+        (javaFile, tree)
       }
       .foreach {
         case (f, tree) =>
-          Try(rules.foreach(_.scan(f, tree))) match {
+          Try({
+            visitor.setCurrentFile(f)
+            rules.foreach(_.inputFile = f)
+            visitor.visitFile(tree)
+            rules.foreach(_.scan(tree))
+          }) match {
             case Failure(ex) =>
               Loggers
                 .get(classOf[SonarAcademicSensor])

@@ -3,23 +3,44 @@ package io.github.zukkari.sensor
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
+import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks._
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
+import org.mockito.ArgumentMatchersSugar
 import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
 import org.sonar.api.batch.sensor.internal.{
   DefaultSensorDescriptor,
   SensorContextTester
 }
 import org.sonar.api.batch.sensor.issue.Issue
+import org.sonar.api.measures.{FileLinesContext, FileLinesContextFactory}
+import org.sonar.java.{JavaClasspath, JavaTestClasspath, SonarComponents}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
+import org.mockito.MockitoSugar._
+import org.sonar.api.batch.fs.InputFile
+import org.sonar.api.batch.rule.CheckFactory
+import org.sonar.api.internal.SonarRuntimeImpl
+import org.sonar.api.utils.Version
 
-class SonarAcademicSensorSpec extends AnyFlatSpec {
+class SonarAcademicSensorSpec
+    extends AnyFlatSpec
+    with MockitoSugar
+    with ArgumentMatchersSugar {
+
+  private def create(sonarComponents: SonarComponents,
+                     rules: List[SensorRule]): SonarAcademicSensor = {
+    val sensor =
+      new SonarAcademicSensor(sonarComponents, null, null, null, null)
+    sensor.rules = rules
+    sensor
+  }
 
   it should "contain proper sensor description" in {
-    val sensor = new SonarAcademicSensor
+    val sensor = create(null, List())
 
     val descriptor = new DefaultSensorDescriptor
     sensor.describe(descriptor)
@@ -50,9 +71,10 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       }
     }
 
-    val sensor = new SonarAcademicSensor(List(new CyclicDependenciesRule))
-
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val sensor =
+      create(createSensorComponents(context), List(new CyclicDependenciesRule))
+
     val inputFile = TestInputFileBuilder
       .create(
         "",
@@ -90,7 +112,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
-    val sensor = new SonarAcademicSensor(List(new TraditionBreakerRule))
+    val sensor =
+      create(createSensorComponents(context), List(new TraditionBreakerRule))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -119,7 +142,7 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
-    val sensor = new SonarAcademicSensor(List(new DataClump))
+    val sensor = create(createSensorComponents(context), List(new DataClump))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -159,7 +182,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .build()
 
     val sensor =
-      new SonarAcademicSensor(List(new ParallelInheritanceHierarchies))
+      create(createSensorComponents(context),
+             List(new ParallelInheritanceHierarchies))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -199,7 +223,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .build()
 
     val sensor =
-      new SonarAcademicSensor(List(new SpeculativeGeneralityInterfaces))
+      create(createSensorComponents(context),
+             List(new SpeculativeGeneralityInterfaces))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -238,7 +263,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
-    val sensor = new SonarAcademicSensor(List(new PrimitiveObsession))
+    val sensor =
+      create(createSensorComponents(context), List(new PrimitiveObsession))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -267,7 +293,8 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       .setLanguage("java")
       .build()
 
-    val sensor = new SonarAcademicSensor(List(new BrainMethod(5, 5, 2, 2)))
+    val sensor =
+      create(createSensorComponents(context), List(new BrainMethod(5, 5, 2, 2)))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)
@@ -294,5 +321,68 @@ class SonarAcademicSensorSpec extends AnyFlatSpec {
       case _ =>
         fail("Hello, Mr Compiler!")
     }
+  }
+
+  it should "detect inappropriate intimacy" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+
+    val lines = 31
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/inappropriate_intimacy/InappropriateIntimacy.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensorComponents: SonarComponents = createSensorComponents(context)
+    val sensor =
+      create(sensorComponents, List(new InappropriateIntimacy))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(
+          first.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class B is greater than configured 4")
+
+        assert(second.primaryLocation.textRange.start.line == 18)
+        assert(
+          second.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class A is greater than configured 4")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
+  }
+
+  private def createSensorComponents(context: SensorContextTester) = {
+    // Set sonarLint runtime
+    context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))
+
+    val filesLinesContext = mock[FileLinesContext]
+    val fileLinesContextFactory = mock[FileLinesContextFactory]
+    when(fileLinesContextFactory.createFor(any[InputFile]))
+      .thenAnswer(filesLinesContext)
+
+    val javaClassPath = mock[JavaClasspath]
+    val javaTestClasspath = mock[JavaTestClasspath]
+
+    val sensorComponents = new SonarComponents(fileLinesContextFactory,
+                                               context.fileSystem(),
+                                               javaClassPath,
+                                               javaTestClasspath,
+                                               mock[CheckFactory])
+    sensorComponents.setSensorContext(context)
+    sensorComponents
   }
 }

@@ -125,9 +125,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[BrainMethod])
   }
 
+  it should "contain 'inappropriate intimacy' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[InappropriateIntimacy])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 21)
+    assert(rules.size == 22)
   }
 }
