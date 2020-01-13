@@ -33,7 +33,8 @@ object Rules {
     classOf[MiddleMan],
     classOf[PrimitiveObsession],
     classOf[BrainMethod],
-    classOf[InappropriateIntimacy]
+    classOf[InappropriateIntimacy],
+    classOf[AlternativeClassesWithDifferentInterfaces]
   )
 
 }

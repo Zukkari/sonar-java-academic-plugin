@@ -14,16 +14,12 @@ import org.sonar.api.issue.NoSonarFilter
 import org.sonar.api.utils.log.Loggers
 import org.sonar.java.SonarComponents
 import org.sonar.java.ast.parser.JavaParser
-import org.sonar.java.bytecode.ClassLoaderBuilder
 import org.sonar.java.model.{JavaVersionImpl, VisitorsBridge}
-import org.sonar.java.resolve.SemanticModel
 import org.sonar.java.se.SymbolicExecutionMode
-import org.sonar.plugins.java.api.{JavaCheck, JavaResourceLocator, JavaVersion}
-import org.sonar.plugins.java.api.tree.CompilationUnitTree
+import org.sonar.plugins.java.api.{JavaCheck, JavaResourceLocator}
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Try}
-import scala.jdk.CollectionConverters._
 
 class SonarAcademicSensor(val sonarComponents: SonarComponents,
                           val fs: FileSystem,
@@ -41,7 +37,8 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
     new SpeculativeGeneralityInterfaces,
     new PrimitiveObsession,
     new BrainMethod,
-    new InappropriateIntimacy
+    new InappropriateIntimacy,
+    new AlternativeClassesWithDifferentInterfaces
   )
 
   override def describe(descriptor: SensorDescriptor): Unit = {

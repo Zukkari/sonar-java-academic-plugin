@@ -365,6 +365,49 @@ class SonarAcademicSensorSpec
     }
   }
 
+  it should "detect alternative classes with different interfaces" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+
+    val lines = 32
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/alternative_classes/AlternativeClasses.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensorComponents: SonarComponents = createSensorComponents(context)
+    val sensor =
+      create(sensorComponents,
+             List(new AlternativeClassesWithDifferentInterfaces))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 3)
+        assert(
+          first.primaryLocation.message == "Alternative classes with different classes: similar class 'B'")
+
+        assert(second.primaryLocation.textRange.start.line == 13)
+        assert(
+          second.primaryLocation.message == "Alternative classes with different classes: similar class 'A'")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
+  }
+
   private def createSensorComponents(context: SensorContextTester) = {
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))

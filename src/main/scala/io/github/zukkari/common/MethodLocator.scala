@@ -5,7 +5,8 @@ import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{MethodTree, Tree}
 
-class MethodLocator(val filter: MethodTree => Boolean = _ => true) extends SonarAcademicSubscriptionVisitor {
+class MethodLocator(val filter: MethodTree => Boolean = _ => true)
+    extends SonarAcademicSubscriptionVisitor {
   override def nodesToVisit: List[Tree.Kind] = List(Kind.METHOD)
 
   private var methods = Set.empty[Method]
