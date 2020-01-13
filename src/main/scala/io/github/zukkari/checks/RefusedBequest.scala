@@ -26,7 +26,8 @@ class RefusedBequest extends JavaRule {
 
   override def scannerContext: JavaFileScannerContext = context
 
-  override def scanFile(javaFileScannerContext: JavaFileScannerContext): Unit = {
+  override def scanFile(
+      javaFileScannerContext: JavaFileScannerContext): Unit = {
     this.context = javaFileScannerContext
 
     scan(context.getTree)
@@ -61,7 +62,7 @@ class RefusedBequest extends JavaRule {
       // Delay till we know something about the parent
       pendingClasses = pendingClasses.updatedWith(parentClass) {
         case Some(existing) => Some(className :: existing)
-        case None => Some(className :: Nil)
+        case None           => Some(className :: Nil)
       }
     }
 
@@ -82,10 +83,13 @@ class RefusedBequest extends JavaRule {
       .methods(tree)
   }
 
-  def complexity(method: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(method).complexity
+  def complexity(method: MethodTree): Int =
+    CognitiveComplexityVisitor.methodComplexity(method).complexity
 
-  private def countComplexityAndReport(parentClassName: String, thisClassName: String): Unit = {
-    val classInvocations = classToTreeMap.get(thisClassName).map(methodInvocations)
+  private def countComplexityAndReport(parentClassName: String,
+                                       thisClassName: String): Unit = {
+    val classInvocations =
+      classToTreeMap.get(thisClassName).map(methodInvocations)
     val parentMethods = classMap.getOrElse(parentClassName, Set.empty)
 
     val parentProtectedNumber = parentMethods.size
@@ -95,18 +99,28 @@ class RefusedBequest extends JavaRule {
       classTree <- maybeClassTree
       invocations <- classInvocations
     } {
-      val baseClassUsageRatio = safeOp(invocations.intersect(parentMethods).size / parentProtectedNumber.doubleValue)(0)
-      val classMethods = classTree.members.asScala.filter(_.isInstanceOf[MethodTree]).map(_.asInstanceOf[MethodTree]).toList
-      val baseClassOverrideRatio = safeOp(overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue)(0)
-      val weightedMethodCount = classMethods.map(complexity).sum
-      val averageMethodWeight = weightedMethodCount / classMethods.size.doubleValue
+      val baseClassUsageRatio = safeOp(
+        invocations
+          .intersect(parentMethods)
+          .size / parentProtectedNumber.doubleValue)(0)
+      val Methods = classTree.members.asScala
+        .filter(_.isInstanceOf[MethodTree])
+        .map(_.asInstanceOf[MethodTree])
+        .toList
+      val baseClassOverrideRatio = safeOp(
+        overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue)(
+        0)
+      val weightedMethodCount = Methods.map(complexity).sum
+      val averageMethodWeight = weightedMethodCount / Methods.size.doubleValue
 
-      report("Refused bequest: class does not use parents protected members", classTree,
+      report(
+        "Refused bequest: class does not use parents protected members",
+        classTree,
         parentProtectedNumber > numberOfProtectedMethods &&
           baseClassUsageRatio < this.baseClassUsageRatio ||
           baseClassOverrideRatio < this.baseClassOverrideRatio &&
             ((averageMethodWeight > this.averageMethodWeight || weightedMethodCount > this.weightedMethodCount)
-              && classMethods.size > numberOfMethods)
+              && Methods.size > numberOfMethods)
       )
     }
   }
