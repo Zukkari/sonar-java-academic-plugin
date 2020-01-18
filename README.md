@@ -37,6 +37,7 @@ Current list of supported code smells:
 | Inappropriate intimacy | |
 | Alternate classes with different interfaces | |
 | God class | |
+| Intensive coupling | |
 
 ## How does it work?
 
@@ -126,9 +127,9 @@ Detects all methods with more than `X` parameters
 
 ## Alternate classes with different interfaces
 
-# To implement
-
 ## Intensive coupling
+
+# To implement
 
 ## SAPBreakers
 
