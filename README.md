@@ -36,6 +36,7 @@ Current list of supported code smells:
 | Brain method | |
 | Inappropriate intimacy | |
 | Alternate classes with different interfaces | |
+| God class | |
 
 ## How does it work?
 
@@ -121,11 +122,11 @@ Detects all methods with more than `X` parameters
 
 ## Inappropriate intimacy
 
+## God class
+
 ## Alternate classes with different interfaces
 
 # To implement
-
-## God class
 
 ## Intensive coupling
 
