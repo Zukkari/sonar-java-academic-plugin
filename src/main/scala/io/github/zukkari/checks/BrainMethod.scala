@@ -1,20 +1,17 @@
 package io.github.zukkari.checks
 
-import io.github.zukkari.base.SensorRule
+import io.github.zukkari.base.{ComplexityAccessor, SensorRule}
+import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.{
-  CognitiveComplexityVisitor,
-  LinesOfCodeVisitor
-}
+import org.sonar.java.ast.visitors.LinesOfCodeVisitor
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
 
 import scala.collection.mutable
-import scala.jdk.CollectionConverters._
 
 @Rule(key = "BrainMethod")
 class BrainMethod(
@@ -78,7 +75,8 @@ class BrainMethod(
 }
 
 class BrainMethodVisitor(inputFile: InputFile)
-    extends SonarAcademicSubscriptionVisitor {
+    extends SonarAcademicSubscriptionVisitor
+    with ComplexityAccessor {
   var complexityMap: Map[MethodTree, Int] = Map.empty
   var nestingMap: Map[MethodTree, Int] = Map.empty
 
@@ -105,18 +103,13 @@ class BrainMethodVisitor(inputFile: InputFile)
 
         classLinesOfCodeMap += classTree -> visitor.linesOfCode(classTree)
 
-        classVariables += classTree -> classTree.members.asScala
-          .filter(_.is(Kind.VARIABLE))
-          .map(_.asInstanceOf[VariableTree])
+        classVariables += classTree -> classTree.variables
           .map(_.simpleName.toString)
           .toSet
     }
 
     super.visitNode(tree)
   }
-
-  private def complexity(method: MethodTree): Int =
-    CognitiveComplexityVisitor.methodComplexity(method).complexity
 }
 
 class NestingVisitor extends SonarAcademicSubscriptionVisitor {
