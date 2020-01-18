@@ -143,9 +143,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[GodClass])
   }
 
+  it should "contain 'intensive coupling' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[IntensiveCoupling])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 24)
+    assert(rules.size == 25)
   }
 }
