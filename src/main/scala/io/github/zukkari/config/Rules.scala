@@ -35,7 +35,8 @@ object Rules {
     classOf[BrainMethod],
     classOf[InappropriateIntimacy],
     classOf[AlternativeClassesWithDifferentInterfaces],
-    classOf[GodClass]
+    classOf[GodClass],
+    classOf[IntensiveCoupling]
   )
 
 }
