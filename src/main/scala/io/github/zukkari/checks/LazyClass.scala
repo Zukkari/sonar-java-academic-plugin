@@ -1,19 +1,18 @@
 package io.github.zukkari.checks
 
-import io.github.zukkari.base.JavaRule
+import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.implicits._
+import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.semantic.Type
-import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, VariableTree}
+import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 
 import scala.annotation.tailrec
-import scala.jdk.CollectionConverters._
 
 @Rule(key = "LazyClass")
-class LazyClass extends JavaRule {
+class LazyClass extends JavaRule with ComplexityAccessor {
   private var context: JavaFileScannerContext = _
 
   private val minNumberOfMethods = 0
@@ -29,7 +28,8 @@ class LazyClass extends JavaRule {
 
   override def scannerContext: JavaFileScannerContext = context
 
-  override def scanFile(javaFileScannerContext: JavaFileScannerContext): Unit = {
+  override def scanFile(
+      javaFileScannerContext: JavaFileScannerContext): Unit = {
     this.context = javaFileScannerContext
 
     scan(context.getTree)
@@ -39,19 +39,27 @@ class LazyClass extends JavaRule {
     knownClasses += tree.simpleName.name.toLowerCase
 
     // Case 1: detect classes with low number of methods
-    val methods: List[MethodTree] = tree.members.asScala.filter(_.isInstanceOf[MethodTree]).map(_.asInstanceOf[MethodTree]).toList
-    report(s"Lazy class: number of methods is lower or equal to: $minNumberOfMethods", tree, methods.size <= minNumberOfMethods)
+    val methods = tree.methods
+    report(
+      s"Lazy class: number of methods is lower or equal to: $minNumberOfMethods",
+      tree,
+      methods.size <= minNumberOfMethods)
 
     // Case 2: detect methods with low number of instructions
     // and low complexity ratio
-    val numOfInstructions = methods.foldRight(0)((method, acc) => acc + depth(method))
+    val numOfInstructions =
+      methods.foldRight(0)((method, acc) => acc + depth(method))
 
-    val methodComplexity = methods.foldRight(0)((method, acc) => acc + complexity(method))
+    val methodComplexity =
+      methods.foldRight(0)((method, acc) => acc + complexity(method))
     val methodComplexityRatio = safeOp(methodComplexity / methods.size)(0)
-    report(s"Lazy class: class contains low complexity methods", tree,
+    report(
+      s"Lazy class: class contains low complexity methods",
+      tree,
       methods.nonEmpty
         && numOfInstructions < mediumNumberOfInstructions
-        && methodComplexityRatio <= lowComplexityMethodRatio)
+        && methodComplexityRatio <= lowComplexityMethodRatio
+    )
 
     // Case 3: detect cases with low coupling and with high inheritance depth
 
@@ -66,7 +74,8 @@ class LazyClass extends JavaRule {
     val hierarchyDepthValue = hierarchyDepth(tree)
     classAssociations = if (hierarchyDepthValue >= depthOfInheritance) {
       associates(tree) match {
-        case associates if associates.nonEmpty => classAssociations.updated(tree, associates)
+        case associates if associates.nonEmpty =>
+          classAssociations.updated(tree, associates)
         case _ => classAssociations
       }
     } else {
@@ -81,34 +90,34 @@ class LazyClass extends JavaRule {
 
     classAssociations = right
 
-    left.filter { case (key, _) => !reported.contains(key.simpleName.name) }
+    left
+      .filter { case (key, _) => !reported.contains(key.simpleName.name) }
       .foreachEntry((key, _) => {
-        report(s"Lazy class: depth of hierarchy is greater than $depthOfInheritance and coupling is higher than $couplingBetweenObjects", key)
+        report(
+          s"Lazy class: depth of hierarchy is greater than $depthOfInheritance and coupling is higher than $couplingBetweenObjects",
+          key)
       })
     reported ++= left.keySet.map(_.simpleName.name)
 
     super.visitClass(tree)
   }
 
-  def depth(tree: MethodTree)(implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
-
-  def complexity(tree: MethodTree): Int = CognitiveComplexityVisitor.methodComplexity(tree).complexity
+  def depth(tree: MethodTree)(
+      implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
 
   def hierarchyDepth(c: ClassTree): Int = {
     @tailrec
     def _hierarchyDepth(c: Type, depth: Int): Int =
       c match {
         case t: Type => _hierarchyDepth(t.symbol.superClass, depth + 1)
-        case _ => depth
+        case _       => depth
       }
 
     _hierarchyDepth(c.symbol.superClass, 0)
   }
 
   def associates(tree: ClassTree): Set[String] =
-    tree.members.asScala
-      .filter(_.isInstanceOf[VariableTree])
-      .map(_.asInstanceOf[VariableTree])
+    tree.variables
       .map(_.symbol.name)
       .toSet
 

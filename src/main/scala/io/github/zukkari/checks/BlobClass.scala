@@ -2,12 +2,10 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.common.VariableUsageLocator
+import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
-import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, VariableTree}
-import org.sonar.plugins.java.api.tree.Tree.Kind
-
-import scala.jdk.CollectionConverters._
+import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 
 @Rule(key = "BlobClass")
 class BlobClass extends JavaRule {
@@ -18,7 +16,8 @@ class BlobClass extends JavaRule {
 
   private val lackOfCohesion = 40
 
-  override def scanFile(javaFileScannerContext: JavaFileScannerContext): Unit = {
+  override def scanFile(
+      javaFileScannerContext: JavaFileScannerContext): Unit = {
     this.context = javaFileScannerContext
 
     scan(context.getTree)
@@ -28,9 +27,7 @@ class BlobClass extends JavaRule {
 
   override def visitClass(tree: ClassTree): Unit = {
     // Find variables of the class
-    val variables = tree.members.asScala
-      .filter(_.is(Kind.VARIABLE))
-      .map(_.asInstanceOf[VariableTree])
+    val variables = tree.variables.toList
 
     if (variables.size < numberOfVariables) {
       // Number of variables lower than threshold
@@ -39,9 +36,7 @@ class BlobClass extends JavaRule {
     }
 
     // Find methods of the class
-    val methods = tree.members.asScala
-      .filter(_.is(Kind.METHOD))
-      .map(_.asInstanceOf[MethodTree])
+    val methods = tree.methods.toList
 
     if (methods.size < numberOfMethods) {
       // Number of methods is lower than threshold
@@ -55,21 +50,22 @@ class BlobClass extends JavaRule {
     val methodVariables = methods
       .map(methodToVariables)
       .map(_.filter(variableNames contains _))
-      .toList
 
     val cohesion = methodVariables
       .combinations(2)
       .map {
         case x :: y :: _ => if (x.intersect(y).isEmpty) -1 else 1
-        case _ => 0
+        case _           => 0
       }
       .sum
 
-    report(s"Blob class: cohesion is below threshold: $lackOfCohesion", tree, cohesion <= lackOfCohesion)
+    report(s"Blob class: cohesion is below threshold: $lackOfCohesion",
+           tree,
+           cohesion <= lackOfCohesion)
 
     super.visitClass(tree)
   }
 
-  private def methodToVariables(method: MethodTree): Set[String] = new VariableUsageLocator().variables(method)
+  private def methodToVariables(method: MethodTree): Set[String] =
+    new VariableUsageLocator().variables(method)
 }
-

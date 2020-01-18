@@ -1,18 +1,17 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
+import io.github.zukkari.checks.MethodSyntax._
+import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
+import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{
   ClassTree,
   MethodInvocationTree,
   MethodTree,
   ReturnStatementTree
 }
-import MethodSyntax._
-import org.sonar.plugins.java.api.tree.Tree.Kind
-
-import scala.jdk.CollectionConverters._
 
 @Rule(key = "MiddleMan")
 class MiddleMan extends JavaRule {
@@ -30,9 +29,7 @@ class MiddleMan extends JavaRule {
   }
 
   override def visitClass(tree: ClassTree): Unit = {
-    val methods = tree.members.asScala.toList
-      .filter(_.is(Kind.METHOD))
-      .map(_.asInstanceOf[MethodTree])
+    val methods = tree.methods
 
     val totalMethods = methods.size
     val delegateCount = methods.count(_.isDelegate)

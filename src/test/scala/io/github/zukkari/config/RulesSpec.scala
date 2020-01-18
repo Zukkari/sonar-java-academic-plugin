@@ -137,9 +137,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[AlternativeClassesWithDifferentInterfaces])
   }
 
+  it should "contain 'god class' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[GodClass])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 23)
+    assert(rules.size == 24)
   }
 }

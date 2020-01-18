@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
@@ -9,14 +10,7 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{
-  ClassTree,
-  PrimitiveTypeTree,
-  Tree,
-  VariableTree
-}
-
-import scala.jdk.CollectionConverters._
+import org.sonar.plugins.java.api.tree.{ClassTree, PrimitiveTypeTree, Tree}
 
 case class Declaration(f: InputFile, line: Int)
 
@@ -55,7 +49,7 @@ class DataClump extends JavaCheck with SensorRule {
               .intersect(secondVariables)
               .size >= commonVariableThreshold
             firstDeclaration <- declarationMap.get(first)
-            secondDecladation <- declarationMap.get(second)
+            secondDeclaration <- declarationMap.get(second)
           } yield
             IO {
               report(
@@ -68,7 +62,7 @@ class DataClump extends JavaCheck with SensorRule {
               report(
                 sensorContext,
                 s"Data clump: similar to class: '$first'",
-                secondDecladation,
+                secondDeclaration,
                 DataClump.key
               )
 
@@ -101,9 +95,7 @@ class DataClumpClassVisitor(val f: InputFile)
       case Some(className) =>
         declarationMap += className -> Declaration(f, classTree.firstToken.line)
 
-        val variables = classTree.members.asScala.toSet
-          .filter(_.is(Kind.VARIABLE))
-          .map(_.asInstanceOf[VariableTree])
+        val variables = classTree.variables
           .map(variable =>
             variable.`type`() match {
               case primitive: PrimitiveTypeTree =>
@@ -111,6 +103,7 @@ class DataClumpClassVisitor(val f: InputFile)
               case _ =>
                 Variable(variable.`type`.toString, variable.simpleName.name)
           })
+          .toSet
 
         classVariableMap += className -> variables
 

@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
@@ -9,16 +10,9 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{
-  ClassTree,
-  IdentifierTree,
-  Tree,
-  VariableTree
-}
+import org.sonar.plugins.java.api.tree.{ClassTree, IdentifierTree, Tree}
 import scalax.collection.GraphEdge.DiEdge
 import scalax.collection.immutable.Graph
-
-import scala.jdk.CollectionConverters._
 @Rule(key = "CyclicDependencies")
 class CyclicDependenciesRule extends JavaCheck with SensorRule {
   private val log = Log(this.getClass)
@@ -95,9 +89,7 @@ class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
         declarationMap += p -> classTree.firstToken.line
 
         // Get dependencies here
-        val deps = classTree.members.asScala.toSeq
-          .filter(_.is(Kind.VARIABLE))
-          .map(_.asInstanceOf[VariableTree])
+        val deps = classTree.variables
           .map(_.`type`)
           .filter(_.isInstanceOf[IdentifierTree])
           .map(_.asInstanceOf[IdentifierTree])

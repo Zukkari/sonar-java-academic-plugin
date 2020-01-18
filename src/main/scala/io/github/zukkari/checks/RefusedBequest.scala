@@ -1,16 +1,14 @@
 package io.github.zukkari.checks
 
-import io.github.zukkari.base.JavaRule
+import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.{MethodInvocationLocator, MethodLocator}
+import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.plugins.java.api.JavaFileScannerContext
-import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
-
-import scala.jdk.CollectionConverters._
+import org.sonar.plugins.java.api.tree.ClassTree
 
 @Rule(key = "RefusedBequest")
-class RefusedBequest extends JavaRule {
+class RefusedBequest extends JavaRule with ComplexityAccessor {
   private var context: JavaFileScannerContext = _
 
   private val numberOfProtectedMethods = 3
@@ -83,9 +81,6 @@ class RefusedBequest extends JavaRule {
       .methods(tree)
   }
 
-  def complexity(method: MethodTree): Int =
-    CognitiveComplexityVisitor.methodComplexity(method).complexity
-
   private def countComplexityAndReport(parentClassName: String,
                                        thisClassName: String): Unit = {
     val classInvocations =
@@ -103,15 +98,12 @@ class RefusedBequest extends JavaRule {
         invocations
           .intersect(parentMethods)
           .size / parentProtectedNumber.doubleValue)(0)
-      val Methods = classTree.members.asScala
-        .filter(_.isInstanceOf[MethodTree])
-        .map(_.asInstanceOf[MethodTree])
-        .toList
+      val methods = classTree.methods
       val baseClassOverrideRatio = safeOp(
         overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue)(
         0)
-      val weightedMethodCount = Methods.map(complexity).sum
-      val averageMethodWeight = weightedMethodCount / Methods.size.doubleValue
+      val weightedMethodCount = complexity(methods)
+      val averageMethodWeight = weightedMethodCount / methods.size.doubleValue
 
       report(
         "Refused bequest: class does not use parents protected members",
@@ -120,7 +112,7 @@ class RefusedBequest extends JavaRule {
           baseClassUsageRatio < this.baseClassUsageRatio ||
           baseClassOverrideRatio < this.baseClassOverrideRatio &&
             ((averageMethodWeight > this.averageMethodWeight || weightedMethodCount > this.weightedMethodCount)
-              && Methods.size > numberOfMethods)
+              && methods.size > numberOfMethods)
       )
     }
   }
