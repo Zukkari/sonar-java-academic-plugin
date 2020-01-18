@@ -21,6 +21,10 @@ public class GodClass { // Noncompliant {{God class: access to foreign data too 
             }
         }
     }
+
+    String exec() {
+        return "Hello, world!";
+    }
 }
 
 class ServiceA {
