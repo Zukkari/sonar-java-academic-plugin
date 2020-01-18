@@ -34,7 +34,8 @@ object Rules {
     classOf[PrimitiveObsession],
     classOf[BrainMethod],
     classOf[InappropriateIntimacy],
-    classOf[AlternativeClassesWithDifferentInterfaces]
+    classOf[AlternativeClassesWithDifferentInterfaces],
+    classOf[GodClass]
   )
 
 }
