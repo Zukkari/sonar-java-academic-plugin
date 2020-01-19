@@ -9,9 +9,7 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import io.github.zukkari.syntax.ClassSyntax._
 
 @Rule(key = "SwissArmyKnife")
-class SwissArmyKnife(
-    private val veryHighNumberOfMethods: Int
-) extends JavaRule {
+class SwissArmyKnife(val veryHighNumberOfMethods: Int) extends JavaRule {
 
   def this() = this(veryHighNumberOfMethods = 13)
 

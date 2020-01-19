@@ -10,4 +10,10 @@ class SwissArmyKnifeSpec extends RuleSpec {
   it should "detect interfaces which has too many methods" in {
     verifyRule(rule, "SwissArmyKnife")
   }
+
+  it should "have a default constructor for Sonar" in {
+    val default = new SwissArmyKnife
+
+    assert(default.veryHighNumberOfMethods == 13)
+  }
 }
