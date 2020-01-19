@@ -38,6 +38,7 @@ Current list of supported code smells:
 | Alternate classes with different interfaces | |
 | God class | |
 | Intensive coupling | |
+| Swiss Army Knife | |
 
 ## How does it work?
 
@@ -128,6 +129,8 @@ Detects all methods with more than `X` parameters
 ## Alternate classes with different interfaces
 
 ## Intensive coupling
+
+## Swiss Army Knife
 
 # To implement
 
