@@ -1,9 +1,11 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -18,10 +20,17 @@ import org.sonar.plugins.java.api.tree.{
 class InappropriateIntimacy extends JavaCheck with SensorRule {
   type InvocationMap = Map[String, Int]
 
-  private val maxNumberOfCalls = 4
+  private var maxNumberOfCalls: Int = _
 
   private var declarationMap: Map[String, Declaration] = Map.empty
   private var classToInvocationMap: Map[String, InvocationMap] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    maxNumberOfCalls = configuration
+      .getInt(
+        ConfigurationProperties.INAPPROPRIATE_INTIMACY_NUMBER_OF_CALLS.key)
+      .orElse(4)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new InappropriateIntimacyVisitor(inputFile)

@@ -1,6 +1,7 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
+import io.github.zukkari.config.ConfigurationProperties
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.{MethodInvocationTree, MethodTree}
@@ -50,7 +51,7 @@ object Method {
 
 @Rule(key = "ShotgunSurgery")
 class ShotgunSurgeryRule extends JavaRule {
-  private val issueThreshold = 3
+  private var invocationCount: Int = _
 
   private var context: JavaFileScannerContext = _
 
@@ -60,6 +61,10 @@ class ShotgunSurgeryRule extends JavaRule {
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    invocationCount = config
+      .getInt(ConfigurationProperties.SHOTGUN_SURGERY_INVOCATION_COUNT.key)
+      .orElse(3)
+
     this.context = javaFileScannerContext
 
     scan(javaFileScannerContext.getTree)
@@ -102,7 +107,7 @@ class ShotgunSurgeryRule extends JavaRule {
       case (method, count) =>
         contextMap.get(method) match {
           case Some(m) =>
-            report("Shotgun surgery detected", m, count >= issueThreshold)
+            report("Shotgun surgery detected", m, count >= invocationCount)
           case _ => ()
         }
     }

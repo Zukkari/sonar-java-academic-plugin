@@ -1,10 +1,12 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.{ComplexityAccessor, SensorRule}
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.java.ast.visitors.LinesOfCodeVisitor
 import org.sonar.plugins.java.api.JavaCheck
@@ -14,15 +16,12 @@ import org.sonar.plugins.java.api.tree._
 import scala.collection.mutable
 
 @Rule(key = "BrainMethod")
-class BrainMethod(
-    val highNumberOfLinesOfCode: Int,
-    val highCyclomaticComplexity: Int,
-    val maxNestingDepth: Int,
-    val manyAccessedVariables: Int
-) extends JavaCheck
-    with SensorRule {
+class BrainMethod extends JavaCheck with SensorRule {
 
-  def this() = this(130, 31, 3, 7)
+  private var highNumberOfLinesOfCode: Int = _
+  private var highCyclomaticComplexity: Int = _
+  private var maxNestingDepth: Int = _
+  private var manyAccessedVariables: Int = _
 
   var complexityMap: Map[MethodTree, Int] = Map.empty
   var nestingMap: Map[MethodTree, Int] = Map.empty
@@ -31,6 +30,25 @@ class BrainMethod(
   var classVariableMap: Map[ClassTree, Set[String]] = Map.empty
 
   var declarationMap: Map[MethodTree, Declaration] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    highNumberOfLinesOfCode = configuration
+      .getInt(ConfigurationProperties.BRAIN_METHOD_HIGH_NUMBER_OF_LOC.key)
+      .orElse(130)
+
+    highCyclomaticComplexity = configuration
+      .getInt(
+        ConfigurationProperties.BRAIN_METHOD_HIGH_CYCLOMATIC_COMPLEXITY.key)
+      .orElse(31)
+
+    maxNestingDepth = configuration
+      .getInt(ConfigurationProperties.BRAIN_METHOD_HIGH_NESTING_DEPTH.key)
+      .orElse(3)
+
+    manyAccessedVariables = configuration
+      .getInt(ConfigurationProperties.BRAIN_METHOD_MANY_ACCESSED_VARIABLES.key)
+      .orElse(7)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new BrainMethodVisitor(inputFile)

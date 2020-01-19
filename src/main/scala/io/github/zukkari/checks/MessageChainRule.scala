@@ -4,8 +4,8 @@ import cats.Monoid
 import cats.implicits._
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.checks.ChainSyntax._
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.implicits._
-import org.sonar.api.Property
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree._
@@ -17,12 +17,15 @@ case class Chain(depth: Int)
 @Rule(key = "MessageChainRule")
 class MessageChainRule extends JavaRule {
 
-  @Property(key = "sonar.academic.plugin.message.chain.length", name = "Maximum length of message chain", defaultValue = "2")
-  val chainLength: Int = 2
+  private var chainLength: Int = _
 
   private var context: JavaFileScannerContext = _
 
   override def scanFile(context: JavaFileScannerContext): Unit = {
+    chainLength = config
+      .getInt(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.key)
+      .orElse(3)
+
     this.context = context
 
     scan(context.getTree)
@@ -38,14 +41,17 @@ class MessageChainRule extends JavaRule {
     )
   }
 
-  def depth(tree: MethodInvocationTree)(implicit m: Monoid[Chain]): Chain = depth(tree, m.empty)
+  def depth(tree: MethodInvocationTree)(implicit m: Monoid[Chain]): Chain =
+    depth(tree, m.empty)
 
   def depth(tree: MethodInvocationTree, chain: Chain): Chain = {
     @tailrec
     def depth1(f: () => ExpressionTree, chain: Chain): Chain = {
       f() match {
-        case memberSelect: MemberSelectExpressionTree => depth1(memberSelect.expression, chain)
-        case methodInvocation: MethodInvocationTree => depth1(methodInvocation.methodSelect, chain.increment)
+        case memberSelect: MemberSelectExpressionTree =>
+          depth1(memberSelect.expression, chain)
+        case methodInvocation: MethodInvocationTree =>
+          depth1(methodInvocation.methodSelect, chain.increment)
         case _ => chain
       }
     }

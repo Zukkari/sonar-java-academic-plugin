@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.common.VariableUsageLocator
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
@@ -11,13 +12,25 @@ import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 class BlobClass extends JavaRule {
   private var context: JavaFileScannerContext = _
 
-  private val numberOfVariables = 13
-  private val numberOfMethods = 22
+  private var numberOfVariables: Int = _
+  private var numberOfMethods: Int = _
 
-  private val lackOfCohesion = 40
+  private var lackOfCohesion: Int = _
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    numberOfVariables = config
+      .getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.key)
+      .orElse(13)
+
+    numberOfMethods = config
+      .getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.key)
+      .orElse(22)
+
+    lackOfCohesion = config
+      .getInt(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.key)
+      .orElse(40)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

@@ -18,6 +18,8 @@ import org.sonar.plugins.java.api.tree.{
 }
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import cats.implicits._
+import io.github.zukkari.config.ConfigurationProperties
+import org.sonar.api.config.Configuration
 
 import scala.jdk.CollectionConverters._
 
@@ -25,11 +27,18 @@ import scala.jdk.CollectionConverters._
 class PrimitiveObsession extends JavaCheck with SensorRule {
   private val log = Log(classOf[PrimitiveObsession])
 
-  private val primitiveTimesUsed = 3
+  private var primitiveTimesUsed: Int = _
 
   var classDeclarations: Set[ClassTree] = Set.empty
 
   var declarationMap: Map[VariableTree, Declaration] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    primitiveTimesUsed = configuration
+      .getInt(
+        ConfigurationProperties.PRIMITIVE_OBSESSION_PRIMITIVE_TIMES_USED.key)
+      .orElse(3)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new PrimitiveObsessionVisitor(inputFile)

@@ -2,8 +2,8 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.common.InstructionCounter
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.implicits._
-import org.sonar.api.Property
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree._
@@ -11,12 +11,15 @@ import org.sonar.plugins.java.api.tree._
 @Rule(key = "LongMethodRule")
 class LongMethodRule extends JavaRule {
 
-  @Property(key = "sonar.academic.plugin.long.method.length", name = "Maximum number of statements / expressions in a method", defaultValue = "8")
-  var methodLength: Int = 26
+  private var methodLength: Int = _
 
   private var context: JavaFileScannerContext = _
 
   override def scanFile(context: JavaFileScannerContext): Unit = {
+    methodLength = config
+      .getInt(ConfigurationProperties.LONG_METHOD_METHOD_LENGTH.key)
+      .orElse(26)
+
     this.context = context
 
     scan(context.getTree)
@@ -34,5 +37,6 @@ class LongMethodRule extends JavaRule {
     )
   }
 
-  def count(tree: MethodTree)(implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
+  def count(tree: MethodTree)(
+      implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
 }

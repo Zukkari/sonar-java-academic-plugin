@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.{MethodInvocationLocator, MethodLocator}
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
@@ -11,12 +12,12 @@ import org.sonar.plugins.java.api.tree.ClassTree
 class RefusedBequest extends JavaRule with ComplexityAccessor {
   private var context: JavaFileScannerContext = _
 
-  private val numberOfProtectedMethods = 3
-  private val baseClassUsageRatio = 1.0 / 3.0
-  private val baseClassOverrideRatio = 1.0 / 3.0
-  private val averageMethodWeight = 2.0
-  private val weightedMethodCount = 14
-  private val numberOfMethods = 7
+  private var numberOfProtectedMethods: Int = _
+  private var baseClassUsageRatio: Double = _
+  private var baseClassOverrideRatio: Double = _
+  private var averageMethodWeight: Double = _
+  private var weightedMethodCount: Int = _
+  private var numberOfMethods: Int = _
 
   private var classMap = Map.empty[String, Set[Method]]
   private var pendingClasses = Map.empty[String, List[String]]
@@ -26,6 +27,35 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    numberOfProtectedMethods = config
+      .getInt(
+        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key)
+      .orElse(3)
+
+    baseClassUsageRatio = config
+      .getDouble(
+        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_USAGE_RATIO.key)
+      .orElse(1.0 / 3.0)
+
+    baseClassOverrideRatio = config
+      .getDouble(
+        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_OVERRIDE_RATIO.key)
+      .orElse(1.0 / 3.0)
+
+    averageMethodWeight = config
+      .getDouble(
+        ConfigurationProperties.REFUSED_BEQUEST_AVERAGE_METHOD_WEIGHT.key)
+      .orElse(2.0)
+
+    weightedMethodCount = config
+      .getInt(ConfigurationProperties.REFUSED_BEQUEST_WEIGHTED_METHOD_COUNT.key)
+      .orElse(14)
+
+    numberOfMethods = config
+      .getInt(
+        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key)
+      .orElse(7)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

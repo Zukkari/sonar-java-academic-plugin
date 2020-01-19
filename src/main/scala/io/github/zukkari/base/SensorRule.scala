@@ -4,6 +4,7 @@ import io.github.zukkari.checks.Declaration
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.api.rule.RuleKey
 import org.sonar.plugins.java.api.tree.Tree
 
@@ -30,4 +31,6 @@ trait SensorRule {
     newIssue.at(location)
     newIssue.save()
   }
+
+  def configure(configuration: Configuration): Unit = {}
 }

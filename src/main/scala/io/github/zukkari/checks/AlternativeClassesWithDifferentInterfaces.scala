@@ -1,9 +1,11 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, Tree}
@@ -19,11 +21,23 @@ case class ClassMethod(name: String, args: List[Argument])
 class AlternativeClassesWithDifferentInterfaces
     extends JavaCheck
     with SensorRule {
-  private val minParameterCount = 2
-  private val minNumberOfCommonMethods = 2
+
+  private var minParameterCount: Int = _
+  private var minNumberOfCommonMethods: Int = _
 
   private var declarationMap: Map[String, Declaration] = Map.empty
   private var classToMethodMap: Map[String, List[ClassMethod]] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    minParameterCount = configuration
+      .getInt(ConfigurationProperties.ALTERNATIVE_CLASSES_MIN_PARAM_COUNT.key)
+      .orElse(2)
+
+    minNumberOfCommonMethods = configuration
+      .getInt(
+        ConfigurationProperties.ALTERNATIVE_CLASSES_MIN_COMMON_METHODS.key)
+      .orElse(2)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new AlternativeClassVisitor(inputFile)

@@ -2,10 +2,12 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks.HierarchySyntax._
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -57,11 +59,23 @@ object ParallelInheritanceHierarchies {
 class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
   private val log = Log(classOf[ParallelInheritanceHierarchies])
 
-  private val prefixLength = 1
-  private val hierarchyDepth = 5
+  private var prefixLength: Int = _
+  private var hierarchyDepth: Int = _
 
   private var classToParentMap: Map[String, String] = Map.empty
   private var declarationMap: Map[String, Declaration] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    prefixLength = configuration
+      .getInt(
+        ConfigurationProperties.PARALLEL_INHERITANCE_HIERARCHIES_PREFIX_LENGTH.key)
+      .orElse(1)
+
+    hierarchyDepth = configuration
+      .getInt(
+        ConfigurationProperties.PARALLEL_INHERITANCE_HIERARCHIES_HIERARCHY_DEPTH.key)
+      .orElse(5)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new HierarchyVisitor(inputFile)

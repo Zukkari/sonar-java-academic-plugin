@@ -1,19 +1,25 @@
 package io.github.zukkari.checks
 
+import java.util.Optional
+
 import io.github.zukkari.RuleSpec
+import org.sonar.api.config.Configuration
+import org.mockito.MockitoSugar.when
 
 class SwissArmyKnifeSpec extends RuleSpec {
   override def dir: String = "swiss_army_knife"
 
-  private val rule = new SwissArmyKnife(veryHighNumberOfMethods = 5)
+  private val rule = new SwissArmyKnife
 
   it should "detect interfaces which has too many methods" in {
     verifyRule(rule, "SwissArmyKnife")
   }
 
-  it should "have a default constructor for Sonar" in {
-    val default = new SwissArmyKnife
+  override def config: Configuration = {
+    val config = mock[Configuration]
 
-    assert(default.veryHighNumberOfMethods == 13)
+    when(config.getInt(any)).thenAnswer(Optional.of[Integer](5))
+
+    config
   }
 }

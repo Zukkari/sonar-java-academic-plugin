@@ -1,6 +1,8 @@
 package io.github.zukkari.base
 
 import cats.effect.IO
+import io.github.zukkari.definition.SonarAcademicRulesDefinition
+import org.sonar.api.config.Configuration
 import org.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, MethodTree, Tree}
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
@@ -39,7 +41,8 @@ trait ContextReporter {
 trait JavaRule
     extends BaseTreeVisitor
     with JavaFileScanner
-    with ContextReporter {
+    with ContextReporter
+    with ConfigurationAccessor {
   override def check: JavaFileScanner = this
 
   def safeOp[A](op: => A)(recover: A): A = Try(op).getOrElse(recover)
@@ -51,4 +54,8 @@ trait ComplexityAccessor {
 
   def complexity(iterable: Iterable[MethodTree]): Int =
     iterable.map(complexity).sum
+}
+
+trait ConfigurationAccessor {
+  def config: Configuration = SonarAcademicRulesDefinition.configuration
 }

@@ -49,7 +49,10 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
   }
 
   override def execute(context: SensorContext): Unit = {
-    log.info("Executing cyclic dependencies check")
+    log.info(s"Configuring ${rules.size} rules using ${context.config()}")
+    rules.foreach(
+      _.configure(if (settings == null) context.config() else settings))
+    log.info("Finished rule configuration")
 
     val fs = context.fileSystem()
     val javaFiles = fs.inputFiles(fs.predicates().hasLanguage("java"))

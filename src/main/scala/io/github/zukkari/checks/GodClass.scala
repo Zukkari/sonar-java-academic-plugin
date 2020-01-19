@@ -7,20 +7,15 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 import cats.implicits._
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.util.Log
 
 @Rule(key = "GodClass")
-class GodClass(
-    private val accessToForeignData: Int,
-    private val tightClassCohesion: Double,
-    private val classComplexity: Double
-) extends JavaRule
-    with ComplexityAccessor {
+class GodClass extends JavaRule with ComplexityAccessor {
 
-  def this() =
-    this(accessToForeignData = 5,
-         tightClassCohesion = 0.33,
-         classComplexity = 47)
+  private var accessToForeignData: Int = _
+  private var tightClassCohesion: Double = _
+  private var classComplexity: Int = _
 
   private val log = Log(classOf[GodClass])
 
@@ -28,6 +23,18 @@ class GodClass(
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    accessToForeignData = config
+      .getInt(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.key)
+      .orElse(5)
+
+    tightClassCohesion = config
+      .getDouble(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.key)
+      .orElse(0.33)
+
+    classComplexity = config
+      .getInt(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key)
+      .orElse(47)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)
