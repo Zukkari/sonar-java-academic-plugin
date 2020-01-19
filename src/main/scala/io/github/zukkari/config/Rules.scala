@@ -36,7 +36,8 @@ object Rules {
     classOf[InappropriateIntimacy],
     classOf[AlternativeClassesWithDifferentInterfaces],
     classOf[GodClass],
-    classOf[IntensiveCoupling]
+    classOf[IntensiveCoupling],
+    classOf[SwissArmyKnife]
   )
 
 }
