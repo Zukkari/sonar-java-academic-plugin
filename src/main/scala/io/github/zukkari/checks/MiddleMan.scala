@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.checks.MethodSyntax._
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
@@ -17,12 +18,17 @@ import org.sonar.plugins.java.api.tree.{
 class MiddleMan extends JavaRule {
   private var context: JavaFileScannerContext = _
 
-  private val delegationRatio = 0.5
+  private var delegationRatio: Double = _
 
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+
+    delegationRatio = config
+      .getDouble(ConfigurationProperties.MIDDLE_MAN_DELEGATE_RATIO.key)
+      .orElse(0.5)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

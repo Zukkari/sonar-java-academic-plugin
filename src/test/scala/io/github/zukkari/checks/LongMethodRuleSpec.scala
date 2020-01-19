@@ -1,11 +1,14 @@
 package io.github.zukkari.checks
 
+import java.util.Optional
+
 import io.github.zukkari.RuleSpec
+import org.sonar.api.config.Configuration
+import org.mockito.MockitoSugar.when
 
 class LongMethodRuleSpec extends RuleSpec {
 
   val rule = new LongMethodRule
-  rule.methodLength = 2
 
   it should "detect method with maximum number of statements or expressions exceeded" in {
     verifyRule(rule, "Base")
@@ -33,6 +36,14 @@ class LongMethodRuleSpec extends RuleSpec {
 
   it should "detect exceeded limit in while loops" in {
     verifyRule(rule, "WhileLoop")
+  }
+
+  override def config: Configuration = {
+    val config = mock[Configuration]
+
+    when(config.getInt(any)).thenAnswer(Optional.of[Integer](2))
+
+    config
   }
 
   override def dir: String = "long_method"

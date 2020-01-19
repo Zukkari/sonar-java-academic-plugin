@@ -2,9 +2,11 @@ package io.github.zukkari.sensor
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
+import java.util.Optional
 
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks._
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.mockito.ArgumentMatchersSugar
 import org.scalatest.flatspec.AnyFlatSpec
@@ -23,6 +25,7 @@ import scala.jdk.CollectionConverters._
 import org.mockito.MockitoSugar._
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.rule.CheckFactory
+import org.sonar.api.config.Configuration
 import org.sonar.api.internal.SonarRuntimeImpl
 import org.sonar.api.utils.Version
 
@@ -34,9 +37,31 @@ class SonarAcademicSensorSpec
   private def create(sonarComponents: SonarComponents,
                      rules: List[SensorRule]): SonarAcademicSensor = {
     val sensor =
-      new SonarAcademicSensor(sonarComponents, null, null, null, null)
+      new SonarAcademicSensor(sonarComponents, null, null, configuration, null)
     sensor.rules = rules
     sensor
+  }
+
+  def configuration: Configuration = {
+    val config = mock[Configuration]
+    when(
+      config.getInt(
+        eqTo(ConfigurationProperties.BRAIN_METHOD_HIGH_NUMBER_OF_LOC.key)))
+      .thenAnswer(Optional.of[Integer](5))
+    when(
+      config.getInt(eqTo(
+        ConfigurationProperties.BRAIN_METHOD_HIGH_CYCLOMATIC_COMPLEXITY.key)))
+      .thenAnswer(Optional.of[Integer](5))
+    when(
+      config.getInt(
+        eqTo(ConfigurationProperties.BRAIN_METHOD_HIGH_NESTING_DEPTH.key)))
+      .thenAnswer(Optional.of[Integer](2))
+    when(
+      config.getInt(
+        eqTo(ConfigurationProperties.BRAIN_METHOD_MANY_ACCESSED_VARIABLES.key)))
+      .thenAnswer(Optional.of[Integer](2))
+
+    config
   }
 
   it should "contain proper sensor description" in {
@@ -294,7 +319,7 @@ class SonarAcademicSensorSpec
       .build()
 
     val sensor =
-      create(createSensorComponents(context), List(new BrainMethod(5, 5, 2, 2)))
+      create(createSensorComponents(context), List(new BrainMethod))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)

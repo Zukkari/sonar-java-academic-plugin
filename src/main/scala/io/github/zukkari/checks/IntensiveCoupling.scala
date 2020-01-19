@@ -1,6 +1,7 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
@@ -8,26 +9,40 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{MethodInvocationTree, MethodTree, Tree}
 
 @Rule(key = "IntensiveCoupling")
-class IntensiveCoupling(
-    private val calledMethodCount: Int,
-    private val halfCouplingDispersion: Double,
-    private val quarterCouplingDispersion: Double,
-    private val couplingIntensity: Int,
-    private val nestingDepth: Int
-) extends JavaRule {
-
-  def this() = this(
-    calledMethodCount = 7,
-    halfCouplingDispersion = 0.5,
-    quarterCouplingDispersion = 0.25,
-    couplingIntensity = 2,
-    nestingDepth = 1
-  )
+class IntensiveCoupling extends JavaRule {
+  private var calledMethodCount: Int = _
+  private var halfCouplingDispersion: Double = _
+  private var quarterCouplingDispersion: Double = _
+  private var couplingIntensity: Int = _
+  private var nestingDepth: Int = _
 
   private var context: JavaFileScannerContext = _
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    calledMethodCount = config
+      .getInt(
+        ConfigurationProperties.INTENSIVE_COUPLING_CALLED_METHOD_COUNT.key)
+      .orElse(7)
+
+    halfCouplingDispersion = config
+      .getDouble(
+        ConfigurationProperties.INTENSIVE_COUPLING_HALF_COUPLING_DISPERSION.key)
+      .orElse(0.5)
+
+    quarterCouplingDispersion = config
+      .getDouble(
+        ConfigurationProperties.INTENSIVE_COUPLING_QUARTER_COUPLING_DISPERSION.key)
+      .orElse(0.25)
+
+    couplingIntensity = config
+      .getInt(ConfigurationProperties.INTENSIVE_COUPLING_COUPLING_INTENSITY.key)
+      .orElse(2)
+
+    nestingDepth = config
+      .getInt(ConfigurationProperties.INTENSIVE_COUPLING_NESTING_DEPTH.key)
+      .orElse(1)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

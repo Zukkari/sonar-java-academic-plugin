@@ -2,6 +2,7 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.InstructionCounter
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.implicits._
 import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
@@ -15,12 +16,12 @@ import scala.annotation.tailrec
 class LazyClass extends JavaRule with ComplexityAccessor {
   private var context: JavaFileScannerContext = _
 
-  private val minNumberOfMethods = 0
-  private val mediumNumberOfInstructions = 50
-  private val lowComplexityMethodRatio = 2
+  private var minNumberOfMethods: Int = _
+  private var mediumNumberOfInstructions: Int = _
+  private var lowComplexityMethodRatio: Double = _
 
-  private val depthOfInheritance = 2
-  private val couplingBetweenObjects = 3
+  private var depthOfInheritance: Int = _
+  private var couplingBetweenObjects: Int = _
 
   private var knownClasses = Set.empty[String]
   private var classAssociations = Map.empty[ClassTree, Set[String]]
@@ -30,6 +31,28 @@ class LazyClass extends JavaRule with ComplexityAccessor {
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    minNumberOfMethods = config
+      .getInt(ConfigurationProperties.LAZY_CLASS_MIN_NUMBER_OF_METHODS.key)
+      .orElse(0)
+
+    mediumNumberOfInstructions = config
+      .getInt(
+        ConfigurationProperties.LAZY_CLASS_MEDIUM_NUMBER_OF_INSTRUCTIONS.key)
+      .orElse(50)
+
+    lowComplexityMethodRatio = config
+      .getDouble(
+        ConfigurationProperties.LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO.key)
+      .orElse(2.0)
+
+    depthOfInheritance = config
+      .getInt(ConfigurationProperties.LAZY_CLASS_DEPTH_OF_INHERITANCE.key)
+      .orElse(2)
+
+    couplingBetweenObjects = config
+      .getInt(ConfigurationProperties.LAZY_CLASS_COUPLING_BETWEEN_OBJECTS.key)
+      .orElse(3)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

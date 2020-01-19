@@ -1,6 +1,7 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.JavaRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.check.Rule
@@ -16,12 +17,26 @@ class FeatureEnvy extends JavaRule {
 
   private var context: JavaFileScannerContext = _
 
-  private val localityThreshold = 0.33
-  private val accessToForeignClasses = 2
-  private val accessToForeignVariables = 2
+  private var localityThreshold: Double = _
+  private var accessToForeignClasses: Int = _
+  private var accessToForeignVariables: Int = _
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
+    localityThreshold = config
+      .getDouble(ConfigurationProperties.FEATURE_ENVY_LOCALITY_THRESHOLD.key)
+      .orElse(0.33)
+
+    accessToForeignClasses = config
+      .getInt(
+        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_CLASSES.key)
+      .orElse(2)
+
+    accessToForeignVariables = config
+      .getInt(
+        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_VARIABLES.key)
+      .orElse(2)
+
     this.context = javaFileScannerContext
 
     scan(context.getTree)

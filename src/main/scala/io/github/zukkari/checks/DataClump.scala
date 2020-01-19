@@ -2,11 +2,13 @@ package io.github.zukkari.checks
 
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -24,10 +26,16 @@ object DataClump {
 class DataClump extends JavaCheck with SensorRule {
   private val log = Log(classOf[DataClump])
 
-  private val commonVariableThreshold = 3
+  private var commonVariableThreshold: Int = _
 
   private var classMap: Map[String, Set[Variable]] = Map.empty
   private var declarationMap: Map[String, Declaration] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    commonVariableThreshold = configuration
+      .getInt(ConfigurationProperties.DATA_CLUMP_COMMON_VARIABLES.key)
+      .orElse(3)
+  }
 
   override def scan(t: Tree): Unit = {
     val visitor = new DataClumpClassVisitor(inputFile)

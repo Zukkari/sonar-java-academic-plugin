@@ -13,10 +13,12 @@ class SonarAcademicRulesDefinitionSpec extends BaseSpec {
   val context: RulesDefinition.Context = spy(mock[RulesDefinition.Context])
   implicit val repo: NewRepository = mock[NewRepository]
 
-  val definition = new SonarAcademicRulesDefinition
+  val definition = new SonarAcademicRulesDefinition(config)
 
   it should "call create repository for context" in {
-    when(context.createRepository(SonarAcademicRulesDefinition.repoKey, Java.key)).thenAnswer(repo)
+    when(
+      context.createRepository(SonarAcademicRulesDefinition.repoKey, Java.key))
+      .thenAnswer(repo)
     when(repo.setName(any)).thenAnswer(repo)
 
     val mockRule = mock[NewRule]
@@ -33,7 +35,8 @@ class SonarAcademicRulesDefinitionSpec extends BaseSpec {
 
     definition.define(context)
 
-    verify(context, atLeastOnce).createRepository(SonarAcademicRulesDefinition.repoKey, Java.key)
+    verify(context, atLeastOnce)
+      .createRepository(SonarAcademicRulesDefinition.repoKey, Java.key)
   }
 
   it should "create annotated rules successfully" in {
@@ -43,7 +46,8 @@ class SonarAcademicRulesDefinitionSpec extends BaseSpec {
   }
 
   it should "not find annotation if it is not present" in {
-    val check: JavaCheckClass = classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
+    val check: JavaCheckClass =
+      classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
     assert(definition.getRuleAnnotation(check).isLeft)
   }
 
@@ -53,7 +57,8 @@ class SonarAcademicRulesDefinitionSpec extends BaseSpec {
   }
 
   it should "not find key if it is not present in annotation" in {
-    val check: JavaCheckClass = classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
+    val check: JavaCheckClass =
+      classOf[NoAnnotationCheck].asInstanceOf[JavaCheckClass]
     assert(definition.getRuleAnnotation(check).isLeft)
   }
 

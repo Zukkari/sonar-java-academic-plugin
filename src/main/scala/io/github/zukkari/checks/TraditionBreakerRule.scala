@@ -2,10 +2,12 @@ package io.github.zukkari.checks
 
 import cats.effect.IO
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -14,13 +16,25 @@ import org.sonar.plugins.java.api.tree._
 import scala.jdk.CollectionConverters._
 @Rule(key = "TraditionBreakerRule")
 class TraditionBreakerRule extends JavaCheck with SensorRule {
-  private val highNumberOfMembers = 20
-  private val lowNumberOfMembers = 5
+  private var highNumberOfMembers: Int = _
+  private var lowNumberOfMembers: Int = _
 
   private var classToParentContext: Map[String, String] = Map.empty
   private var classToFileContext: Map[String, InputFile] = Map.empty
   private var classToLineContext: Map[String, Int] = Map.empty
   private var classToMembersContext: Map[String, Int] = Map.empty
+
+  override def configure(configuration: Configuration): Unit = {
+    highNumberOfMembers = configuration
+      .getInt(
+        ConfigurationProperties.TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS.key)
+      .orElse(20)
+
+    lowNumberOfMembers = configuration
+      .getInt(
+        ConfigurationProperties.TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS.key)
+      .orElse(5)
+  }
 
   private def hasSubclasses(parent: String): Boolean =
     classToParentContext.exists { case (_, p) => p == parent }
