@@ -433,6 +433,46 @@ class SonarAcademicSensorSpec
     }
   }
 
+  it should "detect missing template methods" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val lines = 56
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/missing_template_method/MissingTemplateMethod.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor =
+      create(createSensorComponents(context), List(new MissingTemplateMethod))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 26)
+        assert(
+          first.primaryLocation.message == "Missing template method: similar to method(s): B#template")
+
+        assert(second.primaryLocation.textRange.start.line == 42)
+        assert(
+          second.primaryLocation.message == "Missing template method: similar to method(s): A#template")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
+  }
+
   private def createSensorComponents(context: SensorContextTester) = {
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))

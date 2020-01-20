@@ -37,7 +37,8 @@ object Rules {
     classOf[AlternativeClassesWithDifferentInterfaces],
     classOf[GodClass],
     classOf[IntensiveCoupling],
-    classOf[SwissArmyKnife]
+    classOf[SwissArmyKnife],
+    classOf[MissingTemplateMethod]
   )
 
 }
