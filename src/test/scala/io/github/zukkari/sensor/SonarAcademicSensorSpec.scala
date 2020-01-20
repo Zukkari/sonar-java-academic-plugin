@@ -435,7 +435,7 @@ class SonarAcademicSensorSpec
 
   it should "detect missing template methods" in {
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
-    val lines = 49
+    val lines = 56
     val inputFile = TestInputFileBuilder
       .create(
         "",
@@ -454,6 +454,23 @@ class SonarAcademicSensorSpec
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 26)
+        assert(
+          first.primaryLocation.message == "Missing template method: similar to method(s): B#template")
+
+        assert(second.primaryLocation.textRange.start.line == 42)
+        assert(
+          second.primaryLocation.message == "Missing template method: similar to method(s): A#template")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
   }
 
   private def createSensorComponents(context: SensorContextTester) = {

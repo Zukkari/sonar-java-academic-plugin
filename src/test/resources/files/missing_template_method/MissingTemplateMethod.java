@@ -23,7 +23,7 @@ class ServiceA {
 class A {
     private ServiceA serviceA = new ServiceA();
 
-    public void template() { // Noncompliant: {{Missing template method: similar to method B#template}}
+    public void template() { // Noncompliant: {{Missing template method: similar to method(s): B#template}}
         String a = serviceA.a;
         String b = serviceA.b;
 
@@ -39,16 +39,16 @@ class A {
 
 class B {
 
-    public void template() { // Noncompliant: {{Missing template method: similar to method A#template}}
-        ServiceA serviceA = new ServiceA();
+    public void template() { // Noncompliant: {{Missing template method: similar to method(s): A#template}}
+        ServiceA otherServiceName = new ServiceA();
 
-        String a = serviceA.a;
-        String b = serviceA.b;
+        String a = otherServiceName.a;
+        String b = otherServiceName.b;
 
-        int x = serviceA.getX();
-        int y = serviceA.getY();
+        int x = otherServiceName.getX();
+        int y = otherServiceName.getY();
 
-        String m2 = serviceA.m2();
+        String m2 = otherServiceName.m2();
 
         System.out.println(a + b + x + y + m2);
     }
