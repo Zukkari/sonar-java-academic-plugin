@@ -358,6 +358,22 @@ object ConfigurationProperties {
       "5"
     )
 
+  val MISSING_TEMPLATE_METHOD_COMMON_MEMBERS: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.missing.template.method.common.members",
+      "Number of common variables and methods to consider when reporting an issue",
+      "Missing template method: number of common variables and method invocations",
+      "5"
+    )
+
+  val MISSING_TEMPLATE_METHOD_COMMON_METHODS: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.missing.template.method.common.methods",
+      "Number of methods that should have common variable and method invocations",
+      "Missing template method: number of methods",
+      "2"
+    )
+
   val properties = List(
     ALTERNATIVE_CLASSES_MIN_PARAM_COUNT,
     ALTERNATIVE_CLASSES_MIN_COMMON_METHODS,
@@ -403,6 +419,8 @@ object ConfigurationProperties {
     SHOTGUN_SURGERY_INVOCATION_COUNT,
     SWISS_ARMY_KNIFE_HIGH_NUMBER_OF_METHODS,
     TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS,
-    TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS
+    TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS,
+    MISSING_TEMPLATE_METHOD_COMMON_MEMBERS,
+    MISSING_TEMPLATE_METHOD_COMMON_METHODS
   )
 }

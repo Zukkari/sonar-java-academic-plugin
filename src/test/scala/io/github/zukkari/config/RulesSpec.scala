@@ -155,9 +155,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[SwissArmyKnife])
   }
 
+  it should "contain 'missing template method' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[MissingTemplateMethod])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 26)
+    assert(rules.size == 27)
   }
 }
