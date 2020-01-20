@@ -39,6 +39,7 @@ Current list of supported code smells:
 | God class | |
 | Intensive coupling | |
 | Swiss Army Knife | |
+| Missing template method | |
 
 ## How does it work?
 
@@ -132,10 +133,10 @@ Detects all methods with more than `X` parameters
 
 ## Swiss Army Knife
 
+## Missing template method
+
 # To implement
 
 ## SAPBreakers
 
 ## Unstable dependencies
-
-## Missing template method
