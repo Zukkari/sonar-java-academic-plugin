@@ -38,7 +38,8 @@ object Rules {
     classOf[GodClass],
     classOf[IntensiveCoupling],
     classOf[SwissArmyKnife],
-    classOf[MissingTemplateMethod]
+    classOf[MissingTemplateMethod],
+    classOf[UnstableDependencies]
   )
 
 }
