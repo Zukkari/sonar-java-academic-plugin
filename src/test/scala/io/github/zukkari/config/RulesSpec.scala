@@ -161,9 +161,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[MissingTemplateMethod])
   }
 
+  it should "contain 'unstable dependencies' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[UnstableDependencies])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 27)
+    assert(rules.size == 28)
   }
 }

@@ -38,7 +38,8 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
     new PrimitiveObsession,
     new BrainMethod,
     new InappropriateIntimacy,
-    new AlternativeClassesWithDifferentInterfaces
+    new AlternativeClassesWithDifferentInterfaces,
+    new UnstableDependencies
   )
 
   override def describe(descriptor: SensorDescriptor): Unit = {
