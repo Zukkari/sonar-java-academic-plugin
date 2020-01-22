@@ -40,6 +40,7 @@ Current list of supported code smells:
 | Intensive coupling | |
 | Swiss Army Knife | |
 | Missing template method | |
+| Unstable dependencies | |
 
 ## How does it work?
 
@@ -135,8 +136,8 @@ Detects all methods with more than `X` parameters
 
 ## Missing template method
 
+## Unstable dependencies
+
 # To implement
 
 ## SAPBreakers
-
-## Unstable dependencies
