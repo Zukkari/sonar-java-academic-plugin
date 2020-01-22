@@ -473,6 +473,46 @@ class SonarAcademicSensorSpec
     }
   }
 
+  it should "detect unstable dependencies" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val lines = 56
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/unstable_dependencies/UnstableDependencies.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val sensor =
+      create(createSensorComponents(context), List(new UnstableDependencies))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(2) {
+      issues.size
+    }
+
+    issues match {
+      case first :: second :: _ =>
+        assert(first.primaryLocation.textRange.start.line == 3)
+        assert(
+          first.primaryLocation.message == "Unstable dependencies: the following dependencies are less stable than the class 'com.example.test.UnstableDependencies (instability 0.5)': com.example.test.ServiceB (instability 0.67)")
+
+        assert(second.primaryLocation.textRange.start.line == 13)
+        assert(
+          second.primaryLocation.message == "Unstable dependencies: the following dependencies are less stable than the class 'com.example.test.ServiceA (instability 0.33)': com.example.test.UnstableDependencies (instability 0.5)")
+      case _ =>
+        fail("Hello, Mr Compiler!")
+    }
+  }
+
   private def createSensorComponents(context: SensorContextTester) = {
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))
