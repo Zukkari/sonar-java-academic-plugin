@@ -1,7 +1,7 @@
 package io.github.zukkari.checks
 
 import cats.implicits._
-import io.github.zukkari.base.SensorRule
+import io.github.zukkari.base.{Formatter, SensorRule}
 import io.github.zukkari.syntax.SymbolSyntax._
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
@@ -18,8 +18,10 @@ import org.sonar.plugins.java.api.tree.{
 }
 
 @Rule(key = "UnstableDependencies")
-class UnstableDependencies extends JavaCheck with SensorRule {
-  private var declarationMap: Map[String, Declaration] = Map.empty
+class UnstableDependencies extends JavaCheck with SensorRule with Formatter {
+  var declarationMap: Map[String, Declaration] = Map.empty
+  var classToInstabilityMap: Map[String, Double] = Map.empty
+
   private var classToDependenciesMap: Map[String, Set[String]] = Map.empty
 
   override def scan(t: Tree): Unit = {
@@ -38,7 +40,7 @@ class UnstableDependencies extends JavaCheck with SensorRule {
         (className, dependencies.intersect(declaredClasses))
     }
 
-    val classToInstabilityMap = classToDependenciesMap.map {
+    classToInstabilityMap = classToDependenciesMap.map {
       case (className, dependencies) =>
         val afferentCoupling =
           classToDependenciesMap.values.count(_.contains(className)).toDouble
@@ -85,9 +87,6 @@ class UnstableDependencies extends JavaCheck with SensorRule {
         }
     }
   }
-
-  private def format(double: Double): Double =
-    BigDecimal(double).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
 }
 
 class UnstableDependenciesClassVisitor(val inputFile: InputFile)

@@ -39,7 +39,8 @@ object Rules {
     classOf[IntensiveCoupling],
     classOf[SwissArmyKnife],
     classOf[MissingTemplateMethod],
-    classOf[UnstableDependencies]
+    classOf[UnstableDependencies],
+    classOf[StableAbstractionBreaker]
   )
 
 }

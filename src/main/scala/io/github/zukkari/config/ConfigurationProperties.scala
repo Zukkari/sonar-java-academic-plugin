@@ -374,6 +374,15 @@ object ConfigurationProperties {
       "2"
     )
 
+  val STABLE_ABSTRACTION_BREAKER_ALLOWED_DISTANCE_FROM_MAIN
+    : ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.stable.abstraction.breaker.allowed.distance",
+      "Distance allowed in calculation for stable abstraction breaker",
+      "Stable abstraction breaker: distance",
+      "0.5"
+    )
+
   val properties = List(
     ALTERNATIVE_CLASSES_MIN_PARAM_COUNT,
     ALTERNATIVE_CLASSES_MIN_COMMON_METHODS,

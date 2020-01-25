@@ -34,3 +34,8 @@ trait SensorRule {
 
   def configure(configuration: Configuration): Unit = {}
 }
+
+trait Formatter {
+  def format(double: Double): Double =
+    BigDecimal(double).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+}
