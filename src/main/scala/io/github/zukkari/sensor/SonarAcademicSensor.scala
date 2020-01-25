@@ -29,6 +29,9 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
     extends Sensor {
   private val log = Log(this.getClass)
 
+  private val unstableDependencies: UnstableDependencies =
+    new UnstableDependencies
+
   var rules: List[SensorRule] = List(
     new CyclicDependenciesRule,
     new TraditionBreakerRule,
@@ -39,7 +42,8 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
     new BrainMethod,
     new InappropriateIntimacy,
     new AlternativeClassesWithDifferentInterfaces,
-    new UnstableDependencies
+    unstableDependencies,
+    new StableAbstractionBreaker(unstableDependencies)
   )
 
   override def describe(descriptor: SensorDescriptor): Unit = {
