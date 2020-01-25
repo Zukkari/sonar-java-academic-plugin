@@ -513,6 +513,41 @@ class SonarAcademicSensorSpec
     }
   }
 
+  it should "detect stable abstraction breakers" in {
+    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
+    val lines = 56
+    val inputFile = TestInputFileBuilder
+      .create(
+        "",
+        "./src/test/resources/files/stable_abstraction_breaker/StableAbstractionBreaker.java")
+      .setLines(lines)
+      .setOriginalLineEndOffsets(Array.fill(lines)(0))
+      .setOriginalLineStartOffsets(Array.fill(lines)(0))
+      .setCharset(StandardCharsets.UTF_8)
+      .setLanguage("java")
+      .build()
+
+    val unstableDependencies = new UnstableDependencies
+    val sensor =
+      create(createSensorComponents(context),
+             List(unstableDependencies,
+                  new StableAbstractionBreaker(unstableDependencies)))
+
+    context.fileSystem().add(inputFile)
+    sensor.execute(context)
+
+    val issues = context.allIssues().asScala.toList
+
+    assertResult(1) {
+      issues.size
+    }
+
+    val issue = issues.head
+    assert(issue.primaryLocation.textRange.start.line == 4)
+    assert(
+      issue.primaryLocation.message == "Stable abstraction breaker: distance from main is 0.75 which is greater than 0.5 configured")
+  }
+
   private def createSensorComponents(context: SensorContextTester) = {
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))
