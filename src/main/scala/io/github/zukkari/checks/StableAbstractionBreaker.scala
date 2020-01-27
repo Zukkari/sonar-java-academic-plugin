@@ -16,10 +16,12 @@ import org.sonar.api.config.Configuration
 import scala.math.pow
 
 @Rule(key = "StableAbstractionBreaker")
-class StableAbstractionBreaker(val unstableDependencies: UnstableDependencies)
+class StableAbstractionBreaker
     extends JavaCheck
     with SensorRule
     with Formatter {
+
+  var unstableDependencies: UnstableDependencies = _
 
   private var classToAbstractionMap: Map[String, Double] = Map.empty
 

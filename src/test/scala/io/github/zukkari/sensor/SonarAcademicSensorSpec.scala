@@ -531,7 +531,11 @@ class SonarAcademicSensorSpec
     val sensor =
       create(createSensorComponents(context),
              List(unstableDependencies,
-                  new StableAbstractionBreaker(unstableDependencies)))
+                  {
+                    val stableAbstractionBreaker = new StableAbstractionBreaker
+                    stableAbstractionBreaker.unstableDependencies = unstableDependencies
+                    stableAbstractionBreaker
+                  }))
 
     context.fileSystem().add(inputFile)
     sensor.execute(context)

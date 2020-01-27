@@ -1,0 +1,44 @@
+Introduction
+	Help software development organisations to improve their code
+		Develop a tool, enchance existing tool (why sonar? 
+		Benefits: devs - improve code
+			 project managers - see project overview
+			data scientiests - enchanced the number of code smells that can be handled by sonarqube
+
+	Extend body of knowledge about the occurence of code smells in Android applications
+		Extend the number of code smells developed previously
+		Provide analysis results
+		Compare the results with my tools with published resulsts
+		Additional results for code smells that are not yet avaialble in the ltierature
+Related work
+	- Code smells
+	- Code smell analysis tools
+KKethod (Critical)
+	- describe tool and describe functionality of both tools
+	- How is the tool implemented?
+	- Describe datasets, why we chose the projects and how (also describe why some projects could not be analyzed)
+	- What sort of analysis I will perform and how will I perform the analysis?
+Analysis results (Critical)
+	Orgnaize by goals and present examples for each subgoal (Screenshots, whatever) for each role
+	Target groups, and how can they use the tool.
+	
+	Performed analysis on Androdi applications and now compare with already existing literatue
+	
+Conclussion
+
+
+
+Also need to mention that I've only made claim that my tool works but I dont know if it actually helps.
+
+Maybe there are some limitations with the dataset etc
+
+
+By the end of January:
+	All hadlines
+		- Sub headlie
+	
+Finished all the practical work before March, be done by the end of Februrary
+	
+**IDEA**
+
+Perform tool evaluation on someone (small empirical study)

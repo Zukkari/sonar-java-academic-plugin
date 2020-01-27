@@ -43,7 +43,11 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
     new InappropriateIntimacy,
     new AlternativeClassesWithDifferentInterfaces,
     unstableDependencies,
-    new StableAbstractionBreaker(unstableDependencies)
+    {
+      val stableAbstractionBreaker = new StableAbstractionBreaker
+      stableAbstractionBreaker.unstableDependencies = unstableDependencies
+      stableAbstractionBreaker
+    }
   )
 
   override def describe(descriptor: SensorDescriptor): Unit = {
