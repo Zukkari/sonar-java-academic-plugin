@@ -26,35 +26,67 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     numberOfProtectedMethods = config
-      .getInt(
-        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key)
-      .orElse(3)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.defaultValue.toInt
+      )
 
     baseClassUsageRatio = config
-      .getDouble(
-        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_USAGE_RATIO.key)
-      .orElse(1.0 / 3.0)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_USAGE_RATIO.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_USAGE_RATIO.defaultValue.toDouble
+      )
 
     baseClassOverrideRatio = config
-      .getDouble(
-        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_OVERRIDE_RATIO.key)
-      .orElse(1.0 / 3.0)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_OVERRIDE_RATIO.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_BASE_CLASS_OVERRIDE_RATIO.defaultValue.toDouble
+      )
 
     averageMethodWeight = config
-      .getDouble(
-        ConfigurationProperties.REFUSED_BEQUEST_AVERAGE_METHOD_WEIGHT.key)
-      .orElse(2.0)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.REFUSED_BEQUEST_AVERAGE_METHOD_WEIGHT.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_AVERAGE_METHOD_WEIGHT.defaultValue.toDouble
+      )
 
     weightedMethodCount = config
-      .getInt(ConfigurationProperties.REFUSED_BEQUEST_WEIGHTED_METHOD_COUNT.key)
-      .orElse(14)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.REFUSED_BEQUEST_WEIGHTED_METHOD_COUNT.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_WEIGHTED_METHOD_COUNT.defaultValue.toInt
+      )
 
     numberOfMethods = config
-      .getInt(
-        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key)
-      .orElse(7)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 
@@ -127,11 +159,12 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
       val baseClassUsageRatio = safeOp(
         invocations
           .intersect(parentMethods)
-          .size / parentProtectedNumber.doubleValue)(0)
+          .size / parentProtectedNumber.doubleValue
+      )(0)
       val methods = classTree.methods
       val baseClassOverrideRatio = safeOp(
-        overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue)(
-        0)
+        overriddenProtectedMembers(classTree).size / parentMethods.size.doubleValue
+      )(0)
       val weightedMethodCount = complexity(methods)
       val averageMethodWeight = weightedMethodCount / methods.size.doubleValue
 

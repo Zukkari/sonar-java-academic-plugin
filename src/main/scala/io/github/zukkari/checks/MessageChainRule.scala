@@ -23,8 +23,8 @@ class MessageChainRule extends JavaRule {
 
   override def scanFile(context: JavaFileScannerContext): Unit = {
     chainLength = config
-      .getInt(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.key)
-      .orElse(3)
+      .flatMap(_.getInt(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.key))
+      .orElse(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.defaultValue.toInt)
 
     this.context = context
 

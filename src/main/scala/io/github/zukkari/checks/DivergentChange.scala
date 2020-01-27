@@ -20,8 +20,8 @@ class DivergentChange extends JavaRule {
       javaFileScannerContext: JavaFileScannerContext): Unit = {
 
     methodCallThreshold = config
-      .getInt(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.key)
-      .orElse(20)
+      .flatMap(_.getInt(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.key))
+      .orElse(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.defaultValue.toInt)
 
     this.context = javaFileScannerContext
 

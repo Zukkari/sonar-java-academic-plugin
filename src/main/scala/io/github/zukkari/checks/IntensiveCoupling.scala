@@ -19,29 +19,55 @@ class IntensiveCoupling extends JavaRule {
   private var context: JavaFileScannerContext = _
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     calledMethodCount = config
-      .getInt(
-        ConfigurationProperties.INTENSIVE_COUPLING_CALLED_METHOD_COUNT.key)
-      .orElse(7)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.INTENSIVE_COUPLING_CALLED_METHOD_COUNT.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.INTENSIVE_COUPLING_CALLED_METHOD_COUNT.defaultValue.toInt
+      )
 
     halfCouplingDispersion = config
-      .getDouble(
-        ConfigurationProperties.INTENSIVE_COUPLING_HALF_COUPLING_DISPERSION.key)
-      .orElse(0.5)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.INTENSIVE_COUPLING_HALF_COUPLING_DISPERSION.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.INTENSIVE_COUPLING_HALF_COUPLING_DISPERSION.defaultValue.toDouble
+      )
 
     quarterCouplingDispersion = config
-      .getDouble(
-        ConfigurationProperties.INTENSIVE_COUPLING_QUARTER_COUPLING_DISPERSION.key)
-      .orElse(0.25)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.INTENSIVE_COUPLING_QUARTER_COUPLING_DISPERSION.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.INTENSIVE_COUPLING_QUARTER_COUPLING_DISPERSION.defaultValue.toDouble
+      )
 
     couplingIntensity = config
-      .getInt(ConfigurationProperties.INTENSIVE_COUPLING_COUPLING_INTENSITY.key)
-      .orElse(2)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.INTENSIVE_COUPLING_COUPLING_INTENSITY.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.INTENSIVE_COUPLING_COUPLING_INTENSITY.defaultValue.toInt
+      )
 
     nestingDepth = config
-      .getInt(ConfigurationProperties.INTENSIVE_COUPLING_NESTING_DEPTH.key)
-      .orElse(1)
+      .flatMap(
+        _.getInt(ConfigurationProperties.INTENSIVE_COUPLING_NESTING_DEPTH.key)
+      )
+      .orElse(
+        ConfigurationProperties.INTENSIVE_COUPLING_NESTING_DEPTH.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 

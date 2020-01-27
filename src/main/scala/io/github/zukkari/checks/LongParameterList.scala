@@ -14,10 +14,17 @@ class LongParameterList extends JavaRule {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     parameterCount = config
-      .getInt(ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.key)
-      .orElse(9)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 

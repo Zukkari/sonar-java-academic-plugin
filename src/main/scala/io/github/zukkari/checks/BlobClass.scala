@@ -20,16 +20,16 @@ class BlobClass extends JavaRule {
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
     numberOfVariables = config
-      .getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.key)
-      .orElse(13)
+        .flatMap(_.getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.key))
+        .orElse(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.defaultValue.toInt)
 
     numberOfMethods = config
-      .getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.key)
-      .orElse(22)
+      .flatMap(_.getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.key))
+      .orElse(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.defaultValue.toInt)
 
     lackOfCohesion = config
-      .getInt(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.key)
-      .orElse(40)
+      .flatMap(_.getInt(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.key))
+      .orElse(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.defaultValue.toInt)
 
     this.context = javaFileScannerContext
 

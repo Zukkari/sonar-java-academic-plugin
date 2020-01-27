@@ -1,31 +1,20 @@
 package io.github.zukkari.sensor
 
-import java.io.File
-import java.util
-
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks._
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import io.github.zukkari.util.Log
-import org.sonar.api.batch.fs.FileSystem
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
-import org.sonar.api.config.Configuration
-import org.sonar.api.issue.NoSonarFilter
 import org.sonar.api.utils.log.Loggers
-import org.sonar.java.SonarComponents
 import org.sonar.java.ast.parser.JavaParser
 import org.sonar.java.model.{JavaVersionImpl, VisitorsBridge}
 import org.sonar.java.se.SymbolicExecutionMode
-import org.sonar.plugins.java.api.{JavaCheck, JavaResourceLocator}
+import org.sonar.plugins.java.api.JavaCheck
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Try}
 
-class SonarAcademicSensor(val sonarComponents: SonarComponents,
-                          val fs: FileSystem,
-                          val javaResourceLocator: JavaResourceLocator,
-                          val settings: Configuration,
-                          val noSonarFilter: NoSonarFilter)
+class SonarAcademicSensor
     extends Sensor {
   private val log = Log(this.getClass)
 
@@ -60,22 +49,23 @@ class SonarAcademicSensor(val sonarComponents: SonarComponents,
   override def execute(context: SensorContext): Unit = {
     log.info(s"Configuring ${rules.size} rules using ${context.config()}")
     rules.foreach(
-      _.configure(if (settings == null) context.config() else settings))
+      _.configure(context.config()))
     log.info("Finished rule configuration")
+
+    val javaClassPath = new SonarJavaClasspath(context.config(), context.fileSystem())
+    javaClassPath.init()
 
     val fs = context.fileSystem()
     val javaFiles = fs.inputFiles(fs.predicates().hasLanguage("java"))
 
     val parser = JavaParser.createParser()
 
-    val classPath = Option(sonarComponents)
-      .map(_.getJavaClasspath)
-      .getOrElse(new util.ArrayList[File]())
+    val classPath = javaClassPath.getElements
 
     val visitor = new VisitorsBridge(
       rules.map(_.asInstanceOf[JavaCheck]).asJavaCollection,
       classPath,
-      sonarComponents,
+      null,
       SymbolicExecutionMode.DISABLED)
 
     visitor.setJavaVersion(JavaVersionImpl.fromString("8"))

@@ -23,11 +23,16 @@ class MiddleMan extends JavaRule {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
 
     delegationRatio = config
-      .getDouble(ConfigurationProperties.MIDDLE_MAN_DELEGATE_RATIO.key)
-      .orElse(0.5)
+      .flatMap(
+        _.getDouble(ConfigurationProperties.MIDDLE_MAN_DELEGATE_RATIO.key)
+      )
+      .orElse(
+        ConfigurationProperties.MIDDLE_MAN_DELEGATE_RATIO.defaultValue.toDouble
+      )
 
     this.context = javaFileScannerContext
 

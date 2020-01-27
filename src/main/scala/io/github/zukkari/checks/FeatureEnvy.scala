@@ -24,18 +24,18 @@ class FeatureEnvy extends JavaRule {
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
     localityThreshold = config
-      .getDouble(ConfigurationProperties.FEATURE_ENVY_LOCALITY_THRESHOLD.key)
-      .orElse(0.33)
+      .flatMap(_.getDouble(ConfigurationProperties.FEATURE_ENVY_LOCALITY_THRESHOLD.key))
+      .orElse(ConfigurationProperties.FEATURE_ENVY_LOCALITY_THRESHOLD.defaultValue.toDouble)
 
     accessToForeignClasses = config
-      .getInt(
-        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_CLASSES.key)
-      .orElse(2)
+      .flatMap(_.getInt(
+        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_CLASSES.key))
+      .orElse( ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_CLASSES.defaultValue.toInt)
 
     accessToForeignVariables = config
-      .getInt(
-        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_VARIABLES.key)
-      .orElse(2)
+      .flatMap(_.getInt(
+        ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_VARIABLES.key))
+      .orElse(ConfigurationProperties.FEATURE_ENVY_ACCESS_TO_FOREIGN_VARIABLES.defaultValue.toInt)
 
     this.context = javaFileScannerContext
 

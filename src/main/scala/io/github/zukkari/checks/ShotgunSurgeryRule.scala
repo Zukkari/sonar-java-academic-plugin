@@ -17,8 +17,9 @@ object Method {
     Method(
       tree.symbol.name,
       Option(tree.symbolType).map(_.symbol).map(_.name).getOrElse(""),
-      tree.arguments.asScala.toList.map(arg =>
-        Option(arg.symbolType).map(_.fullyQualifiedName).getOrElse(""))
+      tree.arguments.asScala.toList.map(
+        arg => Option(arg.symbolType).map(_.fullyQualifiedName).getOrElse("")
+      )
     )
   }
 
@@ -33,7 +34,8 @@ object Method {
           Option(varTree.`type`)
             .map(_.symbolType)
             .map(_.fullyQualifiedName)
-            .getOrElse(""))
+            .getOrElse("")
+      )
     )
   }
 }
@@ -60,10 +62,15 @@ class ShotgunSurgeryRule extends JavaRule {
   private var delayedInvocation: List[Method] = Nil
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     invocationCount = config
-      .getInt(ConfigurationProperties.SHOTGUN_SURGERY_INVOCATION_COUNT.key)
-      .orElse(3)
+      .flatMap(
+        _.getInt(ConfigurationProperties.SHOTGUN_SURGERY_INVOCATION_COUNT.key)
+      )
+      .orElse(
+        ConfigurationProperties.SHOTGUN_SURGERY_INVOCATION_COUNT.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 
@@ -80,8 +87,9 @@ class ShotgunSurgeryRule extends JavaRule {
 
     // After first round check all previous invocations
     val (added, existing) = delayedInvocation.partition(methodMap.contains)
-    methodMap = added.foldRight(methodMap)((invocation, map) =>
-      map.updatedWith(invocation)(_.map(_ + 1)))
+    methodMap = added.foldRight(methodMap)(
+      (invocation, map) => map.updatedWith(invocation)(_.map(_ + 1))
+    )
     delayedInvocation = existing
 
     // Check for issues after incrementing the counters

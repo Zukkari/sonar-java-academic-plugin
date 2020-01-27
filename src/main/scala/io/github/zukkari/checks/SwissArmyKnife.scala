@@ -18,11 +18,17 @@ class SwissArmyKnife extends JavaRule {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     veryHighNumberOfMethods = config
-      .getInt(
-        ConfigurationProperties.SWISS_ARMY_KNIFE_HIGH_NUMBER_OF_METHODS.key)
-      .orElse(13)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.SWISS_ARMY_KNIFE_HIGH_NUMBER_OF_METHODS.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.SWISS_ARMY_KNIFE_HIGH_NUMBER_OF_METHODS.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 
