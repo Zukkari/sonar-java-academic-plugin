@@ -1,5 +1,7 @@
 package io.github.zukkari.base
 
+import java.util.Optional
+
 import cats.effect.IO
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.sonar.api.config.Configuration
@@ -57,5 +59,5 @@ trait ComplexityAccessor {
 }
 
 trait ConfigurationAccessor {
-  def config: Configuration = SonarAcademicRulesDefinition.configuration
+  def config: Optional[Configuration] = Optional.ofNullable(SonarAcademicRulesDefinition.configuration)
 }

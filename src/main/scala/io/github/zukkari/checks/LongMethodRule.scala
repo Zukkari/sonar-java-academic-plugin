@@ -17,8 +17,8 @@ class LongMethodRule extends JavaRule {
 
   override def scanFile(context: JavaFileScannerContext): Unit = {
     methodLength = config
-      .getInt(ConfigurationProperties.LONG_METHOD_METHOD_LENGTH.key)
-      .orElse(26)
+      .flatMap(_.getInt(ConfigurationProperties.LONG_METHOD_METHOD_LENGTH.key))
+      .orElse(ConfigurationProperties.LONG_METHOD_METHOD_LENGTH.defaultValue.toInt)
 
     this.context = context
 

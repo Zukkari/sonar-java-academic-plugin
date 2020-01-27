@@ -24,16 +24,16 @@ class GodClass extends JavaRule with ComplexityAccessor {
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
     accessToForeignData = config
-      .getInt(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.key)
-      .orElse(5)
+      .flatMap(_.getInt(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.key))
+      .orElse(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.defaultValue.toInt)
 
     tightClassCohesion = config
-      .getDouble(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.key)
-      .orElse(0.33)
+      .flatMap(_.getDouble(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.key))
+      .orElse(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.defaultValue.toDouble)
 
     classComplexity = config
-      .getInt(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key)
-      .orElse(47)
+      .flatMap(_.getInt(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key))
+      .orElse(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.defaultValue.toInt)
 
     this.context = javaFileScannerContext
 

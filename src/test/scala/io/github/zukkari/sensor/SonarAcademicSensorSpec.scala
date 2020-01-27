@@ -2,32 +2,28 @@ package io.github.zukkari.sensor
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
-import java.util.Optional
 
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks._
 import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
 import org.mockito.ArgumentMatchersSugar
+import org.mockito.MockitoSugar._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.mockito.MockitoSugar
+import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
-import org.sonar.api.batch.sensor.internal.{
-  DefaultSensorDescriptor,
-  SensorContextTester
-}
+import org.sonar.api.batch.rule.CheckFactory
+import org.sonar.api.batch.sensor.internal.{DefaultSensorDescriptor, SensorContextTester}
 import org.sonar.api.batch.sensor.issue.Issue
+import org.sonar.api.config.internal.MapSettings
+import org.sonar.api.internal.SonarRuntimeImpl
 import org.sonar.api.measures.{FileLinesContext, FileLinesContextFactory}
+import org.sonar.api.utils.Version
 import org.sonar.java.{JavaClasspath, JavaTestClasspath, SonarComponents}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
-import org.mockito.MockitoSugar._
-import org.sonar.api.batch.fs.InputFile
-import org.sonar.api.batch.rule.CheckFactory
-import org.sonar.api.config.Configuration
-import org.sonar.api.internal.SonarRuntimeImpl
-import org.sonar.api.utils.Version
 
 class SonarAcademicSensorSpec
     extends AnyFlatSpec
@@ -37,29 +33,29 @@ class SonarAcademicSensorSpec
   private def create(sonarComponents: SonarComponents,
                      rules: List[SensorRule]): SonarAcademicSensor = {
     val sensor =
-      new SonarAcademicSensor(sonarComponents, null, null, configuration, null)
+      new SonarAcademicSensor
     sensor.rules = rules
     sensor
   }
 
-  def configuration: Configuration = {
-    val config = mock[Configuration]
+  def settings: MapSettings = {
+    val config = mock[MapSettings]
     when(
-      config.getInt(
+      config.getString(
         eqTo(ConfigurationProperties.BRAIN_METHOD_HIGH_NUMBER_OF_LOC.key)))
-      .thenAnswer(Optional.of[Integer](5))
+      .thenAnswer("5")
     when(
-      config.getInt(eqTo(
+      config.getString(eqTo(
         ConfigurationProperties.BRAIN_METHOD_HIGH_CYCLOMATIC_COMPLEXITY.key)))
-      .thenAnswer(Optional.of[Integer](5))
+      .thenAnswer("5")
     when(
-      config.getInt(
+      config.getString(
         eqTo(ConfigurationProperties.BRAIN_METHOD_HIGH_NESTING_DEPTH.key)))
-      .thenAnswer(Optional.of[Integer](2))
+      .thenAnswer("2")
     when(
-      config.getInt(
+      config.getString(
         eqTo(ConfigurationProperties.BRAIN_METHOD_MANY_ACCESSED_VARIABLES.key)))
-      .thenAnswer(Optional.of[Integer](2))
+      .thenAnswer("2")
 
     config
   }
@@ -112,6 +108,8 @@ class SonarAcademicSensorSpec
       .build()
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -141,6 +139,7 @@ class SonarAcademicSensorSpec
       create(createSensorComponents(context), List(new TraditionBreakerRule))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -170,6 +169,8 @@ class SonarAcademicSensorSpec
     val sensor = create(createSensorComponents(context), List(new DataClump))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -211,6 +212,8 @@ class SonarAcademicSensorSpec
              List(new ParallelInheritanceHierarchies))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -252,6 +255,8 @@ class SonarAcademicSensorSpec
              List(new SpeculativeGeneralityInterfaces))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -292,6 +297,8 @@ class SonarAcademicSensorSpec
       create(createSensorComponents(context), List(new PrimitiveObsession))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -322,6 +329,8 @@ class SonarAcademicSensorSpec
       create(createSensorComponents(context), List(new BrainMethod))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -368,6 +377,8 @@ class SonarAcademicSensorSpec
       create(sensorComponents, List(new InappropriateIntimacy))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -411,6 +422,8 @@ class SonarAcademicSensorSpec
              List(new AlternativeClassesWithDifferentInterfaces))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -451,6 +464,8 @@ class SonarAcademicSensorSpec
       create(createSensorComponents(context), List(new MissingTemplateMethod))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -491,6 +506,8 @@ class SonarAcademicSensorSpec
       create(createSensorComponents(context), List(new UnstableDependencies))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList
@@ -538,6 +555,8 @@ class SonarAcademicSensorSpec
                   }))
 
     context.fileSystem().add(inputFile)
+    context.setSettings(settings)
+
     sensor.execute(context)
 
     val issues = context.allIssues().asScala.toList

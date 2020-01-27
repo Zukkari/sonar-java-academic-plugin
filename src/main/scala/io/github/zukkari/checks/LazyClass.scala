@@ -30,28 +30,53 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext): Unit = {
+    javaFileScannerContext: JavaFileScannerContext
+  ): Unit = {
     minNumberOfMethods = config
-      .getInt(ConfigurationProperties.LAZY_CLASS_MIN_NUMBER_OF_METHODS.key)
-      .orElse(0)
+      .flatMap(
+        _.getInt(ConfigurationProperties.LAZY_CLASS_MIN_NUMBER_OF_METHODS.key)
+      )
+      .orElse(
+        ConfigurationProperties.LAZY_CLASS_MIN_NUMBER_OF_METHODS.defaultValue.toInt
+      )
 
     mediumNumberOfInstructions = config
-      .getInt(
-        ConfigurationProperties.LAZY_CLASS_MEDIUM_NUMBER_OF_INSTRUCTIONS.key)
-      .orElse(50)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.LAZY_CLASS_MEDIUM_NUMBER_OF_INSTRUCTIONS.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.LAZY_CLASS_MEDIUM_NUMBER_OF_INSTRUCTIONS.defaultValue.toInt
+      )
 
     lowComplexityMethodRatio = config
-      .getDouble(
-        ConfigurationProperties.LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO.key)
-      .orElse(2.0)
+      .flatMap(
+        _.getDouble(
+          ConfigurationProperties.LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO.defaultValue.toDouble
+      )
 
     depthOfInheritance = config
-      .getInt(ConfigurationProperties.LAZY_CLASS_DEPTH_OF_INHERITANCE.key)
-      .orElse(2)
+      .flatMap(
+        _.getInt(ConfigurationProperties.LAZY_CLASS_DEPTH_OF_INHERITANCE.key)
+      )
+      .orElse(
+        ConfigurationProperties.LAZY_CLASS_DEPTH_OF_INHERITANCE.defaultValue.toInt
+      )
 
     couplingBetweenObjects = config
-      .getInt(ConfigurationProperties.LAZY_CLASS_COUPLING_BETWEEN_OBJECTS.key)
-      .orElse(3)
+      .flatMap(
+        _.getInt(
+          ConfigurationProperties.LAZY_CLASS_COUPLING_BETWEEN_OBJECTS.key
+        )
+      )
+      .orElse(
+        ConfigurationProperties.LAZY_CLASS_COUPLING_BETWEEN_OBJECTS.defaultValue.toInt
+      )
 
     this.context = javaFileScannerContext
 
@@ -66,7 +91,8 @@ class LazyClass extends JavaRule with ComplexityAccessor {
     report(
       s"Lazy class: number of methods is lower or equal to: $minNumberOfMethods",
       tree,
-      methods.size <= minNumberOfMethods)
+      methods.size <= minNumberOfMethods
+    )
 
     // Case 2: detect methods with low number of instructions
     // and low complexity ratio
@@ -118,7 +144,8 @@ class LazyClass extends JavaRule with ComplexityAccessor {
       .foreachEntry((key, _) => {
         report(
           s"Lazy class: depth of hierarchy is greater than $depthOfInheritance and coupling is higher than $couplingBetweenObjects",
-          key)
+          key
+        )
       })
     reported ++= left.keySet.map(_.simpleName.name)
 
@@ -126,7 +153,8 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   }
 
   def depth(tree: MethodTree)(
-      implicit ic: InstructionCounter[MethodTree]): Int = ic.count(tree)
+    implicit ic: InstructionCounter[MethodTree]
+  ): Int = ic.count(tree)
 
   def hierarchyDepth(c: ClassTree): Int = {
     @tailrec
