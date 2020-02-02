@@ -26,7 +26,7 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-    javaFileScannerContext: JavaFileScannerContext
+      javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
     numberOfProtectedMethods = config
       .flatMap(
@@ -95,7 +95,7 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
 
   override def visitClass(tree: ClassTree): Unit = {
     // Find protected members of this class
-    val className = tree.simpleName.name
+    val className = Option(tree.simpleName).map(_.name).getOrElse("")
     classMap += (className -> methods(tree))
     classToTreeMap += (className -> tree)
 

@@ -23,7 +23,7 @@ class MiddleMan extends JavaRule {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-    javaFileScannerContext: JavaFileScannerContext
+      javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
 
     delegationRatio = config
@@ -45,7 +45,7 @@ class MiddleMan extends JavaRule {
     val totalMethods = methods.size
     val delegateCount = methods.count(_.isDelegate)
 
-    val ratio = delegateCount / totalMethods.toDouble
+    val ratio = delegateCount / totalMethods.max(1).toDouble
     report(
       s"Middle man: delegation ratio is ${BigDecimal(ratio).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble} with limit set to $delegationRatio",
       tree,

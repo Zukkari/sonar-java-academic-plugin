@@ -135,6 +135,7 @@ class NestingVisitor extends SonarAcademicSubscriptionVisitor {
     List(Kind.IF_STATEMENT,
          Kind.FOR_STATEMENT,
          Kind.WHILE_STATEMENT,
+         Kind.SWITCH_STATEMENT,
          Kind.SWITCH_EXPRESSION,
          Kind.TRY_STATEMENT)
 
@@ -167,6 +168,11 @@ class NestingVisitor extends SonarAcademicSubscriptionVisitor {
         visit(switchStatementTree)
         nestingLevel.dequeue()
 
+      case switchExpressionTree: SwitchExpressionTree =>
+        nestingLevel.enqueue(switchExpressionTree)
+        visit(switchExpressionTree)
+        nestingLevel.dequeue()
+
       case tryStatementTree: TryStatementTree =>
         nestingLevel.enqueue(tryStatementTree.block)
         visit(tryStatementTree.block)
@@ -174,6 +180,8 @@ class NestingVisitor extends SonarAcademicSubscriptionVisitor {
         visit(tryStatementTree.resourceList())
         tryStatementTree.catches.forEach(visit)
         visit(tryStatementTree.finallyBlock())
+
+      case _ =>
     }
   }
 }
