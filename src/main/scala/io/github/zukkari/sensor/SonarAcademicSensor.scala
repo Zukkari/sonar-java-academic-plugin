@@ -3,19 +3,18 @@ package io.github.zukkari.sensor
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.checks._
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
+import io.github.zukkari.sonar.java.ast.parser.JavaParser
+import io.github.zukkari.sonar.java.model.{JavaVersionImpl, VisitorsBridge}
+import io.github.zukkari.sonar.java.se.SymbolicExecutionMode
 import io.github.zukkari.util.Log
 import org.sonar.api.batch.sensor.{Sensor, SensorContext, SensorDescriptor}
 import org.sonar.api.utils.log.Loggers
-import org.sonar.java.ast.parser.JavaParser
-import org.sonar.java.model.{JavaVersionImpl, VisitorsBridge}
-import org.sonar.java.se.SymbolicExecutionMode
 import org.sonar.plugins.java.api.JavaCheck
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Try}
 
-class SonarAcademicSensor
-    extends Sensor {
+class SonarAcademicSensor extends Sensor {
   private val log = Log(this.getClass)
 
   private val unstableDependencies: UnstableDependencies =
@@ -31,8 +30,7 @@ class SonarAcademicSensor
     new BrainMethod,
     new InappropriateIntimacy,
     new AlternativeClassesWithDifferentInterfaces,
-    unstableDependencies,
-    {
+    unstableDependencies, {
       val stableAbstractionBreaker = new StableAbstractionBreaker
       stableAbstractionBreaker.unstableDependencies = unstableDependencies
       stableAbstractionBreaker
@@ -48,11 +46,11 @@ class SonarAcademicSensor
 
   override def execute(context: SensorContext): Unit = {
     log.info(s"Configuring ${rules.size} rules using ${context.config()}")
-    rules.foreach(
-      _.configure(context.config()))
+    rules.foreach(_.configure(context.config()))
     log.info("Finished rule configuration")
 
-    val javaClassPath = new SonarJavaClasspath(context.config(), context.fileSystem())
+    val javaClassPath =
+      new SonarJavaClasspath(context.config(), context.fileSystem())
     javaClassPath.init()
 
     val fs = context.fileSystem()

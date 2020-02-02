@@ -2,13 +2,13 @@ package io.github.zukkari.checks
 
 import io.github.zukkari.base.{ComplexityAccessor, SensorRule}
 import io.github.zukkari.config.ConfigurationProperties
+import io.github.zukkari.sonar.java.ast.visitors.LinesOfCodeVisitor
 import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
-import org.sonar.java.ast.visitors.LinesOfCodeVisitor
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._

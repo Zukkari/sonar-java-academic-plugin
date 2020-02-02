@@ -4,8 +4,8 @@ import java.util.Optional
 
 import cats.effect.IO
 import io.github.zukkari.definition.SonarAcademicRulesDefinition
+import io.github.zukkari.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.api.config.Configuration
-import org.sonar.java.ast.visitors.CognitiveComplexityVisitor
 import org.sonar.plugins.java.api.tree.{BaseTreeVisitor, MethodTree, Tree}
 import org.sonar.plugins.java.api.{JavaFileScanner, JavaFileScannerContext}
 
@@ -59,5 +59,6 @@ trait ComplexityAccessor {
 }
 
 trait ConfigurationAccessor {
-  def config: Optional[Configuration] = Optional.ofNullable(SonarAcademicRulesDefinition.configuration)
+  def config: Optional[Configuration] =
+    Optional.ofNullable(SonarAcademicRulesDefinition.configuration)
 }

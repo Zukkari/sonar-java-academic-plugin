@@ -16,14 +16,17 @@ scalacOptions := Seq(
   "-language:higherKinds",
 )
 
+resolvers += "Sonar Java extracted" at "https://kodu.ut.ee/~stan96/maven_repo/"
+
 // Dependencies
 val sonarVersion = "7.9"
 libraryDependencies ++= List(
   "org.scala-lang" % "scala-library" % "2.13.0",
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
-  "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788",
+  "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
   "org.sonarsource.sslr" % "sslr-core" % "1.23",
+  "io.github.zukkari" % "sonar-java-plugin-extracted" % "1.0-SNAPSHOT",
   "org.typelevel" %% "cats-core" % "2.0.0",
   "org.typelevel" %% "cats-effect" % "2.0.0",
   "io.circe" %% "circe-parser" % "0.12.1",
