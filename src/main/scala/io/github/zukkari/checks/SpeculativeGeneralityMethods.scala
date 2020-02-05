@@ -21,6 +21,11 @@ class SpeculativeGeneralityMethods extends JavaRule {
   }
 
   override def visitMethod(tree: MethodTree): Unit = {
+    if (tree.symbol.isAbstract) {
+      super.visitMethod(tree)
+      return
+    }
+
     val args = tree.parameters.asScala
       .map { varTree =>
         Option(varTree.simpleName)

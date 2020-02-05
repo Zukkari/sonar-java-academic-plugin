@@ -7,3 +7,15 @@ public class SpeculativeGeneralityMethods {
         return p2;
     }
 }
+
+abstract class AbstractClass {
+    abstract void m1(String p1, int p2);
+}
+
+interface Interface {
+    default void interfaceDefaultMethod(String name) { // Noncompliant {{Speculative generality: unused method parameter: 'name'}}
+        System.out.println("Hello, world!");
+    }
+
+    void intefaceAbstractMethod(String p1, int p2);
+}
