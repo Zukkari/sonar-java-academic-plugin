@@ -30,7 +30,7 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-    javaFileScannerContext: JavaFileScannerContext
+      javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
     minNumberOfMethods = config
       .flatMap(
@@ -84,7 +84,10 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   }
 
   override def visitClass(tree: ClassTree): Unit = {
-    knownClasses += tree.simpleName.name.toLowerCase
+    knownClasses += Option(tree.simpleName)
+      .map(_.name)
+      .map(_.toLowerCase)
+      .getOrElse("")
 
     // Case 1: detect classes with low number of methods
     val methods = tree.methods
@@ -153,7 +156,7 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   }
 
   def depth(tree: MethodTree)(
-    implicit ic: InstructionCounter[MethodTree]
+      implicit ic: InstructionCounter[MethodTree]
   ): Int = ic.count(tree)
 
   def hierarchyDepth(c: ClassTree): Int = {

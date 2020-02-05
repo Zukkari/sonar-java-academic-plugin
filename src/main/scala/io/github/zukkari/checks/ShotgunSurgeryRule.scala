@@ -26,7 +26,8 @@ object Method {
   def apply(tree: MethodTree): Method = {
     Method(
       tree.simpleName.name,
-      Option(tree.returnType.symbolType)
+      Option(tree.returnType)
+        .map(_.symbolType)
         .map(_.fullyQualifiedName)
         .getOrElse(""),
       tree.parameters.asScala.toList.map(
@@ -62,7 +63,7 @@ class ShotgunSurgeryRule extends JavaRule {
   private var delayedInvocation: List[Method] = Nil
 
   override def scanFile(
-    javaFileScannerContext: JavaFileScannerContext
+      javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
     invocationCount = config
       .flatMap(
