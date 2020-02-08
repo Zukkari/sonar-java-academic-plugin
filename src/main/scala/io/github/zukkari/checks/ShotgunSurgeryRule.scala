@@ -62,6 +62,8 @@ class ShotgunSurgeryRule extends JavaRule {
   private var methodMap = Map.empty[Method, Int]
   private var delayedInvocation: List[Method] = Nil
 
+  private var reported: Set[Method] = Set.empty
+
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
@@ -116,7 +118,11 @@ class ShotgunSurgeryRule extends JavaRule {
       case (method, count) =>
         contextMap.get(method) match {
           case Some(m) =>
-            report("Shotgun surgery detected", m, count >= invocationCount)
+            report("Shotgun surgery detected",
+                   m,
+                   count >= invocationCount && (!reported.contains(method)))
+            reported =
+              if (count >= invocationCount) reported + method else reported
           case _ => ()
         }
     }
