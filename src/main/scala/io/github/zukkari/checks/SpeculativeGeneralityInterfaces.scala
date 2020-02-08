@@ -10,6 +10,8 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{ClassTree, Tree}
 
 import scala.jdk.CollectionConverters._
+import io.github.zukkari.syntax.SymbolSyntax._
+import cats.implicits._
 
 object SpeculativeGeneralityInterfaces {
   val key = "SpeculativeGeneralityInterfaces"
@@ -64,11 +66,12 @@ class InterfaceVisitor(val javaFile: InputFile)
     val classTree = tree.asInstanceOf[ClassTree]
 
     declarationMap = {
-      Option(classTree.simpleName)
-        .map(_.name) match {
+      classTree.symbol().fullyQualifiedName match {
         case Some(name) =>
-          declarationMap + (name -> Declaration(javaFile,
-                                                classTree.firstToken.line))
+          declarationMap + (name -> Declaration(
+            javaFile,
+            classTree.firstToken.line
+          ))
         case None => declarationMap
       }
     }
@@ -88,9 +91,22 @@ class InterfaceImplementationVisitor extends SonarAcademicSubscriptionVisitor {
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    implementationMap = (Option(classTree.simpleName).map(_.name),
-                         Option(classTree.superInterfaces).map(interfaces =>
-                           interfaces.asScala.toList.map(_.toString))) match {
+    implementationMap = (
+      classTree.symbol().fullyQualifiedName,
+      Option(classTree.superInterfaces)
+        .map(
+          interfaces =>
+            interfaces.asScala.toList
+              .map(
+                interface =>
+                  Option(interface.symbolType())
+                    .map(_.symbol())
+                    .flatMap(_.fullyQualifiedName)
+              )
+              .traverse(identity)
+              .getOrElse(Nil)
+        )
+    ) match {
       case (Some(name), Some(interfaces)) if interfaces.nonEmpty =>
         implementationMap + (name -> interfaces)
       case _ => implementationMap

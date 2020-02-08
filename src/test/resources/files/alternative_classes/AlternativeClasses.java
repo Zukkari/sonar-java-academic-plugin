@@ -1,3 +1,5 @@
+package com.example.test;
+
 import java.io.PrintStream;
 
 class A { // Noncompliant {{Alternative classes with different classes: similar class 'B'}}

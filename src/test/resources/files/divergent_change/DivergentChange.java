@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class DivergentChange {
     private Service service = new Service();
 

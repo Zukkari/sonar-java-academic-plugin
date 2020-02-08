@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class DoWhileLoop {
     public void doWhile() { // Noncompliant
         int x = 3;

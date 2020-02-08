@@ -15,7 +15,7 @@ import org.sonar.plugins.java.api.tree.{
   MethodInvocationTree,
   Tree
 }
-
+import io.github.zukkari.syntax.SymbolSyntax._
 @Rule(key = "InappropriateIntimacy")
 class InappropriateIntimacy extends JavaCheck with SensorRule {
   type InvocationMap = Map[String, Int]
@@ -94,13 +94,16 @@ class InappropriateIntimacyVisitor(inputFile: InputFile)
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    declarationMap += Option(classTree.simpleName.toString).getOrElse(
-      "Anonymous") -> Declaration(inputFile, classTree.firstToken.line)
+    declarationMap += classTree
+      .symbol()
+      .fullyQualifiedName
+      .getOrElse("Anonymous") -> Declaration(inputFile,
+                                             classTree.firstToken.line)
 
     val visitor = new MethodInvocationVisitor
     visitor.visit(tree)
 
-    classInvocationMap += Option(classTree.simpleName.toString)
+    classInvocationMap += classTree.symbol.fullyQualifiedName
       .getOrElse("Anonymous") -> visitor.classToInvocationCount
 
     super.visitNode(tree)
@@ -122,7 +125,8 @@ class MethodInvocationVisitor extends SonarAcademicSubscriptionVisitor {
       .map(_.expression)
       .map(_.symbolType)
       .filter(_ != null)
-      .map(_.toString) match {
+      .map(_.symbol)
+      .flatMap(_.fullyQualifiedName) match {
       case Some(ident) =>
         classToInvocationCount += ident -> (classToInvocationCount.getOrElse(
           ident,

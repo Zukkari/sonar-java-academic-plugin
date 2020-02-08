@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class TraditionBreaker extends UtilClass {
     public void newUtilMethod() {
         System.out.println(const1);

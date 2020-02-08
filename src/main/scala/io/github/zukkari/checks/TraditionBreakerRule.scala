@@ -14,6 +14,7 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
 
 import scala.jdk.CollectionConverters._
+import io.github.zukkari.syntax.SymbolSyntax._
 @Rule(key = "TraditionBreakerRule")
 class TraditionBreakerRule extends JavaCheck with SensorRule {
   private var highNumberOfMembers: Int = _
@@ -86,7 +87,7 @@ class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
-    Option(classTree.simpleName).map(_.name) match {
+    classTree.symbol().fullyQualifiedName match {
       case None            => super.visitNode(tree)
       case Some(className) =>
         // Add declaration so we can report an issue later if needed
@@ -102,8 +103,9 @@ class ParentAndMemberVisitor extends SonarAcademicSubscriptionVisitor {
         nameToMembers += className -> memberCount
 
         nameToParent = Option(classTree.superClass)
-          .filter(_.isInstanceOf[IdentifierTree])
-          .map(_.asInstanceOf[IdentifierTree].name) match {
+          .map(_.symbolType())
+          .map(_.symbol())
+          .flatMap(_.fullyQualifiedName) match {
           case Some(parent) => nameToParent + (className -> parent)
           case _            => nameToParent
         }

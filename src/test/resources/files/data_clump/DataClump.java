@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class DataClump { // Noncompliant {{Data clump: similar to class: 'Service'}}
     private String name;
     private int age;

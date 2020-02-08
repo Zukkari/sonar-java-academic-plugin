@@ -1,8 +1,11 @@
 package io.github.zukkari.checks
 
 import cats.effect.IO
+import cats.implicits._
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.syntax.ClassSyntax._
+import io.github.zukkari.syntax.SymbolSyntax._
+import io.github.zukkari.syntax.VariableSyntax._
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
@@ -10,9 +13,10 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{ClassTree, IdentifierTree, Tree}
+import org.sonar.plugins.java.api.tree.{ClassTree, Tree}
 import scalax.collection.GraphEdge.DiEdge
 import scalax.collection.immutable.Graph
+
 @Rule(key = "CyclicDependencies")
 class CyclicDependenciesRule extends JavaCheck with SensorRule {
   private val log = Log(this.getClass)
@@ -43,9 +47,11 @@ class CyclicDependenciesRule extends JavaCheck with SensorRule {
     val graph = Graph.from(nodes, edges)
 
     nodes.foreach { node =>
-      (graph.findCycleContaining(graph get node),
-       classDeclarationContext.get(node),
-       fileMapContext.get(node)) match {
+      (
+        graph.findCycleContaining(graph get node),
+        classDeclarationContext.get(node),
+        fileMapContext.get(node)
+      ) match {
         case (Some(cycle), Some(line), Some(javaFile)) =>
           IO {
             report(
@@ -79,7 +85,7 @@ class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    val parent = Option(classTree.simpleName).map(_.name)
+    val parent = classTree.symbol().fullyQualifiedName
     parent match {
       case None => super.visitNode(tree)
       case Some(p) =>
@@ -90,11 +96,11 @@ class ClassDependenciesVisitor extends SonarAcademicSubscriptionVisitor {
 
         // Get dependencies here
         val deps = classTree.variables
-          .map(_.`type`)
-          .filter(_.isInstanceOf[IdentifierTree])
-          .map(_.asInstanceOf[IdentifierTree])
-          .map(_.name)
-          .toSet
+          .map(_.variableType)
+          .toList
+          .traverse(identity)
+          .map(_.toSet)
+          .getOrElse(Set.empty)
 
         log.info(s"Class $p has following dependencies: $deps")
         dependencies += p -> deps

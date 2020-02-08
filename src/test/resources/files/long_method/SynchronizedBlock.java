@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class SynchronizedBlock {
     public void synchronizedBlock() { // Noncompliant
         synchronized (this) {

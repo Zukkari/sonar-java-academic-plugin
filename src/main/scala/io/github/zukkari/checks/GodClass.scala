@@ -1,15 +1,17 @@
 package io.github.zukkari.checks
 
+import java.util.UUID
+
+import cats.implicits._
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.VariableUsageLocator
+import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
+import io.github.zukkari.syntax.SymbolSyntax._
+import io.github.zukkari.util.Log
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
-import cats.implicits._
-import io.github.zukkari.config.ConfigurationProperties
-import io.github.zukkari.util.Log
-
 @Rule(key = "GodClass")
 class GodClass extends JavaRule with ComplexityAccessor {
 
@@ -24,16 +26,21 @@ class GodClass extends JavaRule with ComplexityAccessor {
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
     accessToForeignData = config
-      .flatMap(_.getInt(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.key))
-      .orElse(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.defaultValue.toInt)
+      .flatMap(
+        _.getInt(ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.key))
+      .orElse(
+        ConfigurationProperties.GOD_CLASS_ACCESS_TO_FOREIGN_DATA.defaultValue.toInt)
 
     tightClassCohesion = config
-      .flatMap(_.getDouble(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.key))
-      .orElse(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.defaultValue.toDouble)
+      .flatMap(
+        _.getDouble(ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.key))
+      .orElse(
+        ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.defaultValue.toDouble)
 
     classComplexity = config
       .flatMap(_.getInt(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key))
-      .orElse(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.defaultValue.toInt)
+      .orElse(
+        ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.defaultValue.toInt)
 
     this.context = javaFileScannerContext
 
@@ -43,7 +50,8 @@ class GodClass extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def visitClass(tree: ClassTree): Unit = {
-    val owner = Option(tree.simpleName).map(_.toString).getOrElse("")
+    val owner =
+      tree.symbol.fullyQualifiedName.getOrElse(UUID.randomUUID.toString)
     val visitor = new ForeignVariableUsageLocator(owner, Set())
     visitor.visit(tree)
     val accessToForeignData = visitor.foreignVariableUsage

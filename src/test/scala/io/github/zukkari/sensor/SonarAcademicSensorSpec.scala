@@ -14,7 +14,10 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder
 import org.sonar.api.batch.rule.CheckFactory
-import org.sonar.api.batch.sensor.internal.{DefaultSensorDescriptor, SensorContextTester}
+import org.sonar.api.batch.sensor.internal.{
+  DefaultSensorDescriptor,
+  SensorContextTester
+}
 import org.sonar.api.batch.sensor.issue.Issue
 import org.sonar.api.config.internal.MapSettings
 import org.sonar.api.internal.SonarRuntimeImpl
@@ -78,15 +81,15 @@ class SonarAcademicSensorSpec
       issues match {
         case x :: xs if acc == 0 =>
           val line = x.primaryLocation.textRange.start.line
-          assert(line == 1)
+          assert(line == 3)
           verifyRules(acc + 1, xs)
         case x :: xs if acc == 1 =>
           val line = x.primaryLocation.textRange.start.line
-          assert(line == 10)
+          assert(line == 12)
           verifyRules(acc + 1, xs)
         case x :: xs if acc == 2 =>
           val line = x.primaryLocation.textRange.start.line
-          assert(line == 18)
+          assert(line == 20)
           verifyRules(acc + 1, xs)
         case _ =>
       }
@@ -150,7 +153,7 @@ class SonarAcademicSensorSpec
 
     val issue = issues.head
 
-    assert(issue.primaryLocation.textRange.start.line == 1)
+    assert(issue.primaryLocation.textRange.start.line == 3)
     assert(issue.primaryLocation.message == "Tradition breaker")
   }
 
@@ -181,13 +184,13 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.textRange.start.line == 3)
         assert(
-          first.primaryLocation.message == "Data clump: similar to class: 'Service'")
+          first.primaryLocation.message == "Data clump: similar to class: 'com.example.test.Service'")
 
-        assert(second.primaryLocation.textRange.start.line == 7)
+        assert(second.primaryLocation.textRange.start.line == 9)
         assert(
-          second.primaryLocation.message == "Data clump: similar to class: 'DataClump'")
+          second.primaryLocation.message == "Data clump: similar to class: 'com.example.test.DataClump'")
       case _ =>
         fail("Hello Mr compiler")
     }
@@ -224,13 +227,13 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.textRange.start.line == 7)
         assert(
-          first.primaryLocation.message == "Parallel hierarchy with class: 'ParallelAlternative'")
+          first.primaryLocation.message == "Parallel hierarchy with class: 'com.example.test.ParallelHierarchy'")
 
-        assert(second.primaryLocation.textRange.start.line == 5)
+        assert(second.primaryLocation.textRange.start.line == 3)
         assert(
-          second.primaryLocation.message == "Parallel hierarchy with class: 'ParallelHierarchy'")
+          second.primaryLocation.message == "Parallel hierarchy with class: 'com.example.test.ParallelAlternative'")
       case _ =>
         fail("Hello Mr compiler")
     }
@@ -267,11 +270,11 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.textRange.start.line == 3)
         assert(
           first.primaryLocation.message == "Speculative generality: provide at least one implementation for this interface")
 
-        assert(second.primaryLocation.textRange.start.line == 17)
+        assert(second.primaryLocation.textRange.start.line == 19)
         assert(
           second.primaryLocation.message == "Speculative generality: provide at least one implementation for this interface")
       case _ =>
@@ -308,7 +311,7 @@ class SonarAcademicSensorSpec
     }
 
     val issue = issues.head
-    assert(issue.primaryLocation.textRange.start.line == 2)
+    assert(issue.primaryLocation.textRange.start.line == 4)
     assert(
       issue.primaryLocation.message == "Primitive obsession: externally declared class used 4 times with max allowed 3")
   }
@@ -341,16 +344,16 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: third :: fourth :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 7)
+        assert(first.primaryLocation.textRange.start.line == 9)
         assert(first.primaryLocation.message == "Brain method")
 
-        assert(second.primaryLocation.textRange.start.line == 19)
+        assert(second.primaryLocation.textRange.start.line == 21)
         assert(second.primaryLocation.message == "Brain method")
 
-        assert(third.primaryLocation.textRange.start.line == 29)
+        assert(third.primaryLocation.textRange.start.line == 31)
         assert(third.primaryLocation.message == "Brain method")
 
-        assert(fourth.primaryLocation.textRange.start.line == 41)
+        assert(fourth.primaryLocation.textRange.start.line == 43)
         assert(fourth.primaryLocation.message == "Brain method")
       case _ =>
         fail("Hello, Mr Compiler!")
@@ -389,13 +392,13 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 1)
+        assert(first.primaryLocation.textRange.start.line == 3)
         assert(
-          first.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class B is greater than configured 4")
+          first.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class com.example.test.B is greater than configured 4")
 
-        assert(second.primaryLocation.textRange.start.line == 18)
+        assert(second.primaryLocation.textRange.start.line == 20)
         assert(
-          second.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class A is greater than configured 4")
+          second.primaryLocation.message == "Inappropriate intimacy: number of method calls 5 with class com.example.test.A is greater than configured 4")
       case _ =>
         fail("Hello, Mr Compiler!")
     }
@@ -434,13 +437,13 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 3)
+        assert(first.primaryLocation.textRange.start.line == 5)
         assert(
-          first.primaryLocation.message == "Alternative classes with different classes: similar class 'B'")
+          first.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.B'")
 
-        assert(second.primaryLocation.textRange.start.line == 13)
+        assert(second.primaryLocation.textRange.start.line == 15)
         assert(
-          second.primaryLocation.message == "Alternative classes with different classes: similar class 'A'")
+          second.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.A'")
       case _ =>
         fail("Hello, Mr Compiler!")
     }
@@ -476,11 +479,11 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 26)
+        assert(first.primaryLocation.textRange.start.line == 28)
         assert(
           first.primaryLocation.message == "Missing template method: similar to method(s): B#template")
 
-        assert(second.primaryLocation.textRange.start.line == 42)
+        assert(second.primaryLocation.textRange.start.line == 44)
         assert(
           second.primaryLocation.message == "Missing template method: similar to method(s): A#template")
       case _ =>
@@ -546,13 +549,16 @@ class SonarAcademicSensorSpec
 
     val unstableDependencies = new UnstableDependencies
     val sensor =
-      create(createSensorComponents(context),
-             List(unstableDependencies,
-                  {
-                    val stableAbstractionBreaker = new StableAbstractionBreaker
-                    stableAbstractionBreaker.unstableDependencies = unstableDependencies
-                    stableAbstractionBreaker
-                  }))
+      create(
+        createSensorComponents(context),
+        List(
+          unstableDependencies, {
+            val stableAbstractionBreaker = new StableAbstractionBreaker
+            stableAbstractionBreaker.unstableDependencies = unstableDependencies
+            stableAbstractionBreaker
+          }
+        )
+      )
 
     context.fileSystem().add(inputFile)
     context.setSettings(settings)
@@ -566,7 +572,7 @@ class SonarAcademicSensorSpec
     }
 
     val issue = issues.head
-    assert(issue.primaryLocation.textRange.start.line == 4)
+    assert(issue.primaryLocation.textRange.start.line == 6)
     assert(
       issue.primaryLocation.message == "Stable abstraction breaker: distance from main is 0.75 which is greater than 0.5 configured")
   }

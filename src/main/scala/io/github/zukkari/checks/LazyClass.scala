@@ -1,14 +1,19 @@
 package io.github.zukkari.checks
 
+import java.util.UUID
+
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.implicits._
 import io.github.zukkari.syntax.ClassSyntax._
+import io.github.zukkari.syntax.SymbolSyntax._
+import io.github.zukkari.syntax.VariableSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.semantic.Type
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
+import cats.implicits._
 
 import scala.annotation.tailrec
 
@@ -84,10 +89,10 @@ class LazyClass extends JavaRule with ComplexityAccessor {
   }
 
   override def visitClass(tree: ClassTree): Unit = {
-    knownClasses += Option(tree.simpleName)
-      .map(_.name)
-      .map(_.toLowerCase)
-      .getOrElse("")
+    knownClasses += tree
+      .symbol()
+      .fullyQualifiedName
+      .getOrElse(UUID.randomUUID.toString)
 
     // Case 1: detect classes with low number of methods
     val methods = tree.methods
@@ -172,7 +177,10 @@ class LazyClass extends JavaRule with ComplexityAccessor {
 
   def associates(tree: ClassTree): Set[String] =
     tree.variables
-      .map(_.symbol.name)
-      .toSet
+      .map(_.variableType)
+      .toList
+      .traverse(identity)
+      .map(_.toSet)
+      .getOrElse(Set.empty)
 
 }

@@ -13,6 +13,7 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{ClassTree, PrimitiveTypeTree, Tree}
+import io.github.zukkari.syntax.SymbolSyntax._
 
 case class Declaration(f: InputFile, line: Int)
 
@@ -95,8 +96,7 @@ class DataClumpClassVisitor(val f: InputFile)
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    Option(classTree.simpleName)
-      .map(_.name) match {
+    classTree.symbol().fullyQualifiedName match {
       case None =>
         log.info(s"Failed to determine class name for $tree")
         super.visitNode(tree)

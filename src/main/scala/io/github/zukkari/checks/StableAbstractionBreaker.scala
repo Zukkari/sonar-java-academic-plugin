@@ -3,15 +3,15 @@ package io.github.zukkari.checks
 import cats.implicits._
 import cats.kernel.Monoid
 import io.github.zukkari.base.{Formatter, SensorRule}
-import io.github.zukkari.config.{ConfigurationProperties, ConfigurationProperty}
+import io.github.zukkari.config.ConfigurationProperties
+import io.github.zukkari.syntax.SymbolSyntax._
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
-import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, Tree}
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import io.github.zukkari.syntax.SymbolSyntax._
-import org.sonar.api.config.Configuration
+import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, Tree}
 
 import scala.math.pow
 

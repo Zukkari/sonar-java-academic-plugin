@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class WhileLoop {
     public void whileLoop() { // Noncompliant
         while (true) {

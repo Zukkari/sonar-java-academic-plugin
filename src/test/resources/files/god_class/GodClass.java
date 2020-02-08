@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class GodClass { // Noncompliant {{God class: access to foreign data too high and class cohesion is low and method complexity is low}}
     private ServiceA serviceA = new ServiceA();
 

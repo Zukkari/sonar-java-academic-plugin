@@ -1,3 +1,5 @@
+package com.example.test;
+
 interface A { // Noncompliant {{Speculative generality: provide at least one implementation for this interface}}
 
 }

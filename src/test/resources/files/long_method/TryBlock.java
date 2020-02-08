@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class TryBlock {
     public void tryBlock() { // Noncompliant
         try {

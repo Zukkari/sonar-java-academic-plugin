@@ -1,3 +1,5 @@
+package com.example.test;
+
 class BrainMethod {
     private boolean b1;
     private boolean b2;

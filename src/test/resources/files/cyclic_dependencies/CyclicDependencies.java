@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class CyclicDependecies {
     private A a = new A();
 

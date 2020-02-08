@@ -1,3 +1,5 @@
+package com.example.test;
+
 // Instability 0, since 0 dependencies
 // Abstraction 0.5
 // Distance is 0.75
