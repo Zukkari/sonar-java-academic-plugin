@@ -1,3 +1,5 @@
+package com.example.test;
+
 // Noncompliant@+12
 // Noncompliant@+16
 public class Comments {

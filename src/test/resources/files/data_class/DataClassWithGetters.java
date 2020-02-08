@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class DataClassWithGetters { // Noncompliant {{Refactor this class so it includes more than just data}}
     private String field1;
     private int field2;

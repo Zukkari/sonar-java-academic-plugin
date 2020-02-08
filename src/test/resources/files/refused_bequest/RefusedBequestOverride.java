@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class RefusedBequestOverride extends ParentClass { // Noncompliant
 
     @Override

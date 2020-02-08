@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class DataClassInner {
     public static class Inner { // Noncompliant {{Refactor this class so it includes more than just data}}
         private String f1;

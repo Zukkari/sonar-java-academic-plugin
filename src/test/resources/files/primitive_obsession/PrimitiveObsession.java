@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class PrimitiveObsession {
     private External external; // Noncompliant: {{Primitive obsession: externally declared class used 4 times with max allowed 3}}
 

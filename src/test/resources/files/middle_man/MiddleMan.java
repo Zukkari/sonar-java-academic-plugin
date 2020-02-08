@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class MiddleMan { // Noncompliant {{Middle man: delegation ratio is 0.67 with limit set to 0.5}}
     private Service service;
 

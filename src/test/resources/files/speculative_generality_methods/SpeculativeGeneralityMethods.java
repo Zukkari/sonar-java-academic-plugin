@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class SpeculativeGeneralityMethods {
     public void m1(String name) { // Noncompliant {{Speculative generality: unused method parameter: 'name'}}
         System.out.println("Hello, world!");

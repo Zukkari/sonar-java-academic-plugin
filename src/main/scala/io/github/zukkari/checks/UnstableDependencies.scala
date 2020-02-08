@@ -1,5 +1,7 @@
 package io.github.zukkari.checks
 
+import java.util.UUID
+
 import cats.implicits._
 import io.github.zukkari.base.{Formatter, SensorRule}
 import io.github.zukkari.syntax.SymbolSyntax._
@@ -98,7 +100,8 @@ class UnstableDependenciesClassVisitor(val inputFile: InputFile)
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
-    val symbolName = classTree.symbol.fullyQualifiedName.getOrElse("")
+    val symbolName =
+      classTree.symbol.fullyQualifiedName.getOrElse(UUID.randomUUID.toString)
 
     declarationMap += symbolName -> Declaration(inputFile, tree.firstToken.line)
 

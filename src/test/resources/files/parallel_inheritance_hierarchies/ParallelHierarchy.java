@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class ParallelHierarchy extends D1 { // Noncompliant {{Parallel hierarchy with class: 'ParallelAlternative'}}
 
 }

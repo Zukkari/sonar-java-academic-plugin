@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class FeatureEnvy {
     private byte myOwnVariable = 3;
 

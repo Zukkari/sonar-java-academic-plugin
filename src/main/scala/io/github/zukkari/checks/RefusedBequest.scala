@@ -1,5 +1,7 @@
 package io.github.zukkari.checks
 
+import java.util.UUID
+
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.{MethodInvocationLocator, MethodLocator}
 import io.github.zukkari.config.ConfigurationProperties
@@ -7,7 +9,7 @@ import io.github.zukkari.syntax.ClassSyntax._
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.ClassTree
-
+import io.github.zukkari.syntax.SymbolSyntax._
 @Rule(key = "RefusedBequest")
 class RefusedBequest extends JavaRule with ComplexityAccessor {
   private var context: JavaFileScannerContext = _
@@ -95,7 +97,8 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
 
   override def visitClass(tree: ClassTree): Unit = {
     // Find protected members of this class
-    val className = Option(tree.simpleName).map(_.name).getOrElse("")
+    val className =
+      tree.symbol().fullyQualifiedName.getOrElse(UUID.randomUUID.toString)
     classMap += (className -> methods(tree))
     classToTreeMap += (className -> tree)
 
@@ -114,7 +117,11 @@ class RefusedBequest extends JavaRule with ComplexityAccessor {
 
     // 2. we still dont know anything about parent class
     // we have to delay scanning until we find parent class
-    val parentClass = tree.symbol.superClass.name
+    val parentClass = Option(tree.symbol())
+      .map(_.superClass())
+      .map(_.symbol())
+      .flatMap(_.fullyQualifiedName)
+      .getOrElse(UUID.randomUUID().toString)
     if (classMap contains parentClass) {
       // We can check usage of the methods
       countComplexityAndReport(parentClass, className)

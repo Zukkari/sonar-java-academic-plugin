@@ -1,5 +1,7 @@
 package io.github.zukkari.checks
 
+import java.util.UUID
+
 import io.github.zukkari.base.SensorRule
 import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
@@ -10,6 +12,7 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree, Tree}
 import org.sonar.plugins.java.api.tree.Tree.Kind
+import io.github.zukkari.syntax.SymbolSyntax._
 
 import scala.jdk.CollectionConverters._
 
@@ -101,7 +104,8 @@ class AlternativeClassVisitor(val inputFile: InputFile)
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    val className = classTree.symbol.toString
+    val className = classTree.symbol.fullyQualifiedName
+      .getOrElse(UUID.randomUUID.toString)
     declarationMap += className -> Declaration(inputFile,
                                                classTree.firstToken.line)
 

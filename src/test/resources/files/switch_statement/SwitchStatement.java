@@ -1,3 +1,5 @@
+package com.example.test;
+
 class Switch {
     public void exec() {
         System.out.println("Hello!");

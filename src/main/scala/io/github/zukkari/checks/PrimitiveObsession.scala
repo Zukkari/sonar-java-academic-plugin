@@ -1,28 +1,21 @@
 package io.github.zukkari.checks
 
 import cats.Monoid
+import cats.implicits._
 import io.github.zukkari.base.SensorRule
+import io.github.zukkari.config.ConfigurationProperties
+import io.github.zukkari.syntax.SymbolSyntax._
 import io.github.zukkari.util.Log
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
+import org.sonar.api.config.Configuration
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
-import org.sonar.plugins.java.api.tree.{
-  ClassTree,
-  ExpressionTree,
-  IdentifierTree,
-  MemberSelectExpressionTree,
-  Tree,
-  VariableTree
-}
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import cats.implicits._
-import io.github.zukkari.config.ConfigurationProperties
-import org.sonar.api.config.Configuration
+import org.sonar.plugins.java.api.tree._
 
 import scala.jdk.CollectionConverters._
-
 @Rule(key = "PrimitiveObsession")
 class PrimitiveObsession extends JavaCheck with SensorRule {
   private val log = Log(classOf[PrimitiveObsession])
@@ -50,7 +43,7 @@ class PrimitiveObsession extends JavaCheck with SensorRule {
 
   override def afterAllScanned(sensorContext: SensorContext): Unit = {
     val declaredTypes = classDeclarations
-      .map(c => Option(c.simpleName).map(_.toString))
+      .map(c => c.symbol().fullyQualifiedName)
       .filter(_.nonEmpty)
       .map(_.get)
 

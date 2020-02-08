@@ -1,3 +1,5 @@
+package com.example.test;
+
 class ServiceA {
     public String a;
     public String b;

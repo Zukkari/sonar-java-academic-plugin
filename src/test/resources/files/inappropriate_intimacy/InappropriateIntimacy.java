@@ -1,3 +1,5 @@
+package com.example.test;
+
 class A { // Noncompliant {{Inappropriate intimacy: number of method calls 5 with class B is greater than configured 4}}
     private B b = new B();
 

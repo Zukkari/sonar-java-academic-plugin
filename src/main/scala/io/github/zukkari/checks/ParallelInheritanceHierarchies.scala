@@ -137,6 +137,7 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
     hierarchy(classToParentMap.get(className), Implementation(className))
   }
 }
+import io.github.zukkari.syntax.SymbolSyntax._
 
 class HierarchyVisitor(val javaFile: InputFile)
     extends SonarAcademicSubscriptionVisitor {
@@ -147,9 +148,11 @@ class HierarchyVisitor(val javaFile: InputFile)
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
-    (Option(classTree.simpleName)
-       .map(_.toString),
-     Option(classTree.superClass).map(_.toString)) match {
+    (classTree.symbol().fullyQualifiedName,
+     Option(classTree.superClass)
+       .map(_.symbolType())
+       .map(_.symbol())
+       .flatMap(_.fullyQualifiedName)) match {
       case (Some(name), Some(superClass)) =>
         classToParentMap += name -> superClass
         declarationMap += name -> Declaration(javaFile,

@@ -1,3 +1,5 @@
+package com.example.test;
+
 class IntensiveCoupling {
     private ServiceA serviceA = new ServiceA();
 
