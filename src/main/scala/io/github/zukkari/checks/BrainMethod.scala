@@ -164,13 +164,13 @@ class NestingVisitor extends SonarAcademicSubscriptionVisitor {
         nestingLevel.dequeue()
 
       case switchStatementTree: SwitchStatementTree =>
-        nestingLevel.enqueue(switchStatementTree)
-        visit(switchStatementTree)
+        nestingLevel.enqueue(switchStatementTree.expression)
+        visit(switchStatementTree.expression)
         nestingLevel.dequeue()
 
       case switchExpressionTree: SwitchExpressionTree =>
-        nestingLevel.enqueue(switchExpressionTree)
-        visit(switchExpressionTree)
+        nestingLevel.enqueue(switchExpressionTree.expression)
+        visit(switchExpressionTree.expression)
         nestingLevel.dequeue()
 
       case tryStatementTree: TryStatementTree =>
