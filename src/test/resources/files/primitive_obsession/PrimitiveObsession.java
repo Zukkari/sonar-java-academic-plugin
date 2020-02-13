@@ -1,21 +1,25 @@
 package com.example.test;
 
-public class PrimitiveObsession {
-    private External external; // Noncompliant: {{Primitive obsession: externally declared class used 4 times with max allowed 3}}
+import org.apache.tools.ant.util.optional.JavaxScriptRunner;
 
-    public void m1(String name) {
-        external.print(name);
+import javax.swing.*;
+
+public class PrimitiveObsession {
+    private JavaxScriptRunner external; // Noncompliant: {{Primitive obsession: externally declared class used 4 times with max allowed 3}}
+
+    public void m1(String name) throws Exception {
+        external.evaluateScript("Hello, world!");
     }
 
-    public void m2(External2 e2) {
-        external.print(e2);
+    public void m2(TransferHandler e2) throws Exception {
+        external.getManagerName();
     }
 
     void m3() {
         System.out.println(external.toString());
     }
 
-    External m4() {
+    JavaxScriptRunner m4() {
         return external;
     }
 }

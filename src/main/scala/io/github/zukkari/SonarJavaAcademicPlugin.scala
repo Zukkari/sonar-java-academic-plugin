@@ -27,12 +27,17 @@ final class SonarJavaAcademicPlugin extends Plugin {
     // Property definitions
     ConfigurationProperties.properties
       .map {
-        case ConfigurationProperty(key, description, name, defaultValue) =>
+        case ConfigurationProperty(key,
+                                   description,
+                                   name,
+                                   defaultValue,
+                                   array) =>
           PropertyDefinition
             .builder(key)
             .name(name)
             .description(description)
             .defaultValue(defaultValue)
+            .multiValues(array)
             .build()
       }
       .foreach(context.addExtension)

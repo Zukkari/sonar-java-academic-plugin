@@ -60,6 +60,12 @@ class SonarAcademicSensorSpec
         eqTo(ConfigurationProperties.BRAIN_METHOD_MANY_ACCESSED_VARIABLES.key)))
       .thenAnswer("2")
 
+    when(
+      config.getStringArray(
+        eqTo(ConfigurationProperties.PRIMITIVE_OBSESSION_IGNORED_PACKAGES.key)
+      )
+    ).thenAnswer(new Array[String](0))
+
     config
   }
 
@@ -284,7 +290,7 @@ class SonarAcademicSensorSpec
 
   it should "detect primitive obsession" in {
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
-    val lines = 20
+    val lines = 26
     val inputFile = TestInputFileBuilder
       .create(
         "",
@@ -311,7 +317,7 @@ class SonarAcademicSensorSpec
     }
 
     val issue = issues.head
-    assert(issue.primaryLocation.textRange.start.line == 4)
+    assert(issue.primaryLocation.textRange.start.line == 8)
     assert(
       issue.primaryLocation.message == "Primitive obsession: externally declared class used 4 times with max allowed 3")
   }

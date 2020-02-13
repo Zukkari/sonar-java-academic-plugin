@@ -16,11 +16,13 @@ import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree._
 
 import scala.jdk.CollectionConverters._
+
 @Rule(key = "PrimitiveObsession")
 class PrimitiveObsession extends JavaCheck with SensorRule {
   private val log = Log(classOf[PrimitiveObsession])
 
   private var primitiveTimesUsed: Int = _
+  private var packagesToIgnore: List[String] = Nil
 
   var classDeclarations: Set[ClassTree] = Set.empty
 
@@ -31,6 +33,13 @@ class PrimitiveObsession extends JavaCheck with SensorRule {
       .getInt(
         ConfigurationProperties.PRIMITIVE_OBSESSION_PRIMITIVE_TIMES_USED.key)
       .orElse(3)
+
+    packagesToIgnore = configuration
+      .getStringArray(
+        ConfigurationProperties.PRIMITIVE_OBSESSION_IGNORED_PACKAGES.key)
+      .toList
+
+    packagesToIgnore = ConfigurationProperties.PRIMITIVE_OBSESSION_IGNORED_PACKAGES.defaultValue :: packagesToIgnore
   }
 
   override def scan(t: Tree): Unit = {
@@ -55,9 +64,21 @@ class PrimitiveObsession extends JavaCheck with SensorRule {
         .map(_.asInstanceOf[VariableTree])
         .filter { variable =>
           // Check that this type was not declared during our search
-          !(declaredTypes contains Option(variable.`type`)
-            .map(_.toString)
+          val maybeFullClassName = Option(variable.`type`)
+            .map(_.symbolType())
+
+          val notDeclared = !(declaredTypes contains maybeFullClassName
+            .map(_.fullyQualifiedName())
             .getOrElse(""))
+
+          val shouldIgnore = maybeFullClassName match {
+            case Some(symbol) if !symbol.isPrimitive() =>
+              packagesToIgnore.exists(symbol.fullyQualifiedName().startsWith(_))
+            case Some(_) => true
+            case _       => false
+          }
+
+          notDeclared && !shouldIgnore
         }
         .map {
           // Check that this variable is used by multiple methods

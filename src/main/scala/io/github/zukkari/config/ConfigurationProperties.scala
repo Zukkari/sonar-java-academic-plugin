@@ -4,7 +4,8 @@ case class ConfigurationProperty(
     key: String,
     description: String,
     name: String,
-    defaultValue: String
+    defaultValue: String,
+    array: Boolean = false
 )
 
 object ConfigurationProperties {
@@ -278,6 +279,15 @@ object ConfigurationProperties {
       "3"
     )
 
+  val PRIMITIVE_OBSESSION_IGNORED_PACKAGES: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.primitive.obsession.ignored.packages",
+      "Packages to ingore when performing primitive obsession check",
+      "Primitive obsession: packages to ignore",
+      "java.",
+      array = true
+    )
+
   val REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS: ConfigurationProperty =
     ConfigurationProperty(
       "sonar.academic.plugin.refused.bequest.number.protected.methods",
@@ -419,6 +429,7 @@ object ConfigurationProperties {
     PARALLEL_INHERITANCE_HIERARCHIES_PREFIX_LENGTH,
     PARALLEL_INHERITANCE_HIERARCHIES_HIERARCHY_DEPTH,
     PRIMITIVE_OBSESSION_PRIMITIVE_TIMES_USED,
+    PRIMITIVE_OBSESSION_IGNORED_PACKAGES,
     REFUSED_BEQUEST_NUMBER_OF_PROTECTED_METHODS,
     REFUSED_BEQUEST_BASE_CLASS_USAGE_RATIO,
     REFUSED_BEQUEST_BASE_CLASS_OVERRIDE_RATIO,
