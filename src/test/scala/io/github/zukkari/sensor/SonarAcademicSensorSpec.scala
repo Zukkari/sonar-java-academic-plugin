@@ -407,7 +407,7 @@ class SonarAcademicSensorSpec
   it should "detect alternative classes with different interfaces" in {
     val context = SensorContextTester.create(Paths.get("./src/test/resources"))
 
-    val lines = 32
+    val lines = 78
     val inputFile = TestInputFileBuilder
       .create(
         "",
@@ -437,13 +437,13 @@ class SonarAcademicSensorSpec
 
     issues match {
       case first :: second :: _ =>
-        assert(first.primaryLocation.textRange.start.line == 5)
+        assert(first.primaryLocation.textRange.start.line == 16)
         assert(
-          first.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.B'")
+          first.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.A'")
 
-        assert(second.primaryLocation.textRange.start.line == 15)
+        assert(second.primaryLocation.textRange.start.line == 6)
         assert(
-          second.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.A'")
+          second.primaryLocation.message == "Alternative classes with different classes: similar class 'com.example.test.B'")
       case _ =>
         fail("Hello, Mr Compiler!")
     }
