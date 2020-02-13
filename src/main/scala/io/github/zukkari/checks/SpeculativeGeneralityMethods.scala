@@ -21,7 +21,7 @@ class SpeculativeGeneralityMethods extends JavaRule {
   }
 
   override def visitMethod(tree: MethodTree): Unit = {
-    if (tree.symbol.isAbstract) {
+    if (tree.symbol.isAbstract || tree.isOverriding) {
       super.visitMethod(tree)
       return
     }

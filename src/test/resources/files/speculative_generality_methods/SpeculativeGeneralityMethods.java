@@ -21,3 +21,10 @@ interface Interface {
 
     void intefaceAbstractMethod(String p1, int p2);
 }
+
+class Overriden extends SpeculativeGeneralityMethods {
+    @Override
+    public void m1(String name) {
+        System.out.println("Hello, world!");
+    }
+}

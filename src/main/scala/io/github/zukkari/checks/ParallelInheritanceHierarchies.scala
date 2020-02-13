@@ -1,9 +1,9 @@
 package io.github.zukkari.checks
 
 import io.github.zukkari.base.SensorRule
-import io.github.zukkari.checks.HierarchySyntax._
 import io.github.zukkari.config.ConfigurationProperties
-import io.github.zukkari.util.Log
+import io.github.zukkari.syntax.HierarchySyntax._
+import io.github.zukkari.util.{HierarchyBuilder, Log}
 import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.sensor.SensorContext
@@ -12,44 +12,6 @@ import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
 import org.sonar.plugins.java.api.tree.{ClassTree, Tree}
-
-import scala.annotation.tailrec
-
-sealed abstract class Hierarchy
-
-case class Implementation(className: String) extends Hierarchy
-
-case class Parent(className: String, childElement: Hierarchy) extends Hierarchy
-
-object HierarchySyntax {
-
-  implicit class HierarchyOps(hierarchy: Hierarchy) {
-    def length: Int = {
-      @tailrec
-      def _len(hierarchy: Hierarchy, acc: Int): Int = {
-        hierarchy match {
-          case Implementation(_) => acc + 1
-          case Parent(_, child)  => _len(child, acc + 1)
-        }
-      }
-
-      _len(hierarchy, 0)
-    }
-
-    def implementation: String = {
-      @tailrec
-      def _impl(hierarchy: Hierarchy): String = {
-        hierarchy match {
-          case Implementation(impl) => impl
-          case Parent(_, child)     => _impl(child)
-        }
-      }
-
-      _impl(hierarchy)
-    }
-  }
-
-}
 
 object ParallelInheritanceHierarchies {
   val key = "ParallelInheritanceHierarchies"
@@ -86,7 +48,7 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
   }
 
   override def afterAllScanned(sensorContext: SensorContext): Unit = {
-    val hierarchyMap = mkHierarchyMap
+    val hierarchyMap = new HierarchyBuilder().build(classToParentMap)
 
     hierarchyMap
       .filter {
@@ -115,26 +77,6 @@ class ParallelInheritanceHierarchies extends JavaCheck with SensorRule {
             case _ =>
           }
       }
-  }
-
-  private def mkHierarchyMap: Map[String, Hierarchy] = {
-    classToParentMap.map {
-      case (clazz, _) =>
-        clazz -> mkHierarchy(clazz)
-    }
-  }
-
-  private def mkHierarchy(className: String): Hierarchy = {
-    @tailrec
-    def hierarchy(clazz: Option[String], acc: Hierarchy): Hierarchy = {
-      clazz match {
-        case Some(name) =>
-          hierarchy(classToParentMap.get(name), Parent(name, acc))
-        case None => acc
-      }
-    }
-
-    hierarchy(classToParentMap.get(className), Implementation(className))
   }
 }
 import io.github.zukkari.syntax.SymbolSyntax._
