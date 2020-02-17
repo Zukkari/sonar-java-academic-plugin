@@ -1,5 +1,7 @@
 package io.github.zukkari.checks
 
+import java.util
+
 import io.github.zukkari.base.JavaRule
 import io.github.zukkari.checks.DataClassSyntax._
 import io.github.zukkari.syntax.ClassSyntax._
@@ -81,7 +83,7 @@ object DataClassSyntax {
   implicit class DataClassOps(methods: List[MethodTree]) {
     def getters(implicit classVarNames: List[String]): List[ExpressionTree] =
       methods
-        .map(_.block.body)
+        .map(method => Option(method.block).map(_.body).getOrElse(new util.ArrayList[StatementTree]()))
         .filter(body =>
           body.size == 1 && body.get(0).isInstanceOf[ReturnStatementTree])
         .map(_.get(0).asInstanceOf[ReturnStatementTree].expression)
@@ -93,8 +95,8 @@ object DataClassSyntax {
     def setters(implicit classVarNames: List[String]): List[ExpressionTree] = {
       val assignmentExpression = methods
         .filter(method =>
-          method.block.body.size == 1
-            && method.block.body.get(0).isInstanceOf[ExpressionStatementTree])
+          Option(method.block).map(_.body).exists(body => body.size == 1
+            && body.get(0).isInstanceOf[ExpressionStatementTree]))
         .map(
           _.block.body.get(0).asInstanceOf[ExpressionStatementTree].expression)
         .filter(_.isInstanceOf[AssignmentExpressionTree])
