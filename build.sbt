@@ -26,7 +26,7 @@ libraryDependencies ++= List(
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
   "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
   "org.sonarsource.sslr" % "sslr-core" % "1.23",
-  "io.github.zukkari" % "sonar-java-plugin-extracted" % "1.4",
+  "io.github.zukkari" % "sonar-java-plugin-extracted" % "1.5",
   "org.typelevel" %% "cats-core" % "2.0.0",
   "org.typelevel" %% "cats-effect" % "2.0.0",
   "io.circe" %% "circe-parser" % "0.12.1",
