@@ -26,7 +26,7 @@ class SpeculativeGeneralityInterfaces extends JavaCheck with SensorRule {
   private var implementationMap: Map[Class, Interfaces] = Map.empty
 
   override def scan(t: Tree): Unit = {
-    val interfaceVisitor = new InterfaceVisitor(inputFile)
+    val interfaceVisitor = new SpeculativeGeneralityInterfaceVisitor(inputFile)
     interfaceVisitor.scanTree(tree = t)
 
     interfaceMap ++= interfaceVisitor.declarationMap
@@ -56,7 +56,7 @@ class SpeculativeGeneralityInterfaces extends JavaCheck with SensorRule {
 
 }
 
-class InterfaceVisitor(val javaFile: InputFile)
+class SpeculativeGeneralityInterfaceVisitor(val javaFile: InputFile)
     extends SonarAcademicSubscriptionVisitor {
   override def nodesToVisit: List[Tree.Kind] = List(Kind.INTERFACE)
 
