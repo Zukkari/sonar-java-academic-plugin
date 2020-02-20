@@ -34,7 +34,8 @@ class SonarAcademicSensor extends Sensor {
       val stableAbstractionBreaker = new StableAbstractionBreaker
       stableAbstractionBreaker.unstableDependencies = unstableDependencies
       stableAbstractionBreaker
-    }
+    },
+    new StatisticsRule
   )
 
   override def describe(descriptor: SensorDescriptor): Unit = {
