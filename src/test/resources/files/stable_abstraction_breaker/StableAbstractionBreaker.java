@@ -4,7 +4,6 @@ package com.example.test;
 // Abstraction 0.5
 // Distance is 0.75
 public abstract class StableAbstractionBreaker { // Noncompliant {{Stable abstraction breaker: distance from main is 0.75 which is greater than 0.5 configured}}
-
     public abstract void abstactMethod();
 
     public void concreteMethod1() {
@@ -13,4 +12,8 @@ public abstract class StableAbstractionBreaker { // Noncompliant {{Stable abstra
     public String concreteMethod2() {
         return "Hello, world!";
     }
+}
+
+class B {
+    private StableAbstractionBreaker stableAbstractionBreaker;
 }

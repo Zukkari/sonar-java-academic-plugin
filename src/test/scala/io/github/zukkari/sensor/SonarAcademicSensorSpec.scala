@@ -531,7 +531,7 @@ class SonarAcademicSensorSpec
         assert(
           first.primaryLocation.message == "Unstable dependencies: the following dependencies are less stable than the class 'com.example.test.UnstableDependencies (instability 0.5)': com.example.test.ServiceB (instability 0.67)")
 
-        assert(second.primaryLocation.textRange.start.line == 13)
+        assert(second.primaryLocation.textRange.start.line == 14)
         assert(
           second.primaryLocation.message == "Unstable dependencies: the following dependencies are less stable than the class 'com.example.test.ServiceA (instability 0.33)': com.example.test.UnstableDependencies (instability 0.5)")
       case _ =>
