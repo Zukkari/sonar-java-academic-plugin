@@ -2,11 +2,12 @@ package com.example.test;
 
 class UnstableDependencies { // Noncompliant {{Unstable dependencies: the following dependencies are less stable than the class 'com.example.test.UnstableDependencies (instability 0.5)': com.example.test.ServiceB (instability 0.67)}}
     private ServiceA serviceA;
+    private ServiceC serviceC;
+    private ServiceB serviceB;
 
     public String m1()  {
-        ServiceC serviceC = new ServiceC();
         serviceA.m1();
-        return new ServiceB().m2();
+        return serviceB.m2();
     }
 }
 
@@ -20,15 +21,17 @@ class ServiceA { // Noncompliant: {{Unstable dependencies: the following depende
 
 class ServiceB {
     public ServiceA serviceA;
+    private UnstableDependencies unstableDependencies;
 
     UnstableDependencies m2() {
-        return new UnstableDependencies();
+        return unstableDependencies;
     }
 }
 
 class ServiceC {
+    private UnstableDependencies unstableDependencies;
+
     void m4() {
-        UnstableDependencies unstableDependencies = new UnstableDependencies();
         System.out.println(unstableDependencies.toString());
     }
 }

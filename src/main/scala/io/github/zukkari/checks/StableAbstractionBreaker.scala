@@ -50,7 +50,7 @@ class StableAbstractionBreaker
         for {
           instability <- unstableDependencies.classToInstabilityMap.get(
             className)
-          distance = 1.0 - pow(abstraction - instability, 2)
+          distance = 1.0 - pow(abstraction + instability, 2)
           if distance < -allowedDistance || distance > allowedDistance
           declaration <- declarations.get(className)
         } yield {
@@ -73,6 +73,7 @@ class StableAbstractionBreakerVisitor extends SonarAcademicSubscriptionVisitor {
 
   override def visitNode(tree: Tree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
+
     val symbolName =
       classTree.symbol.fullyQualifiedName.getOrElse(Monoid[String].empty)
 

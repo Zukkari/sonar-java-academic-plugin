@@ -11,13 +11,9 @@ import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 import org.sonar.plugins.java.api.tree.Tree.Kind
-import org.sonar.plugins.java.api.tree.{
-  ClassTree,
-  MethodInvocationTree,
-  NewClassTree,
-  Tree,
-  VariableTree
-}
+import org.sonar.plugins.java.api.tree.{ClassTree, Tree, VariableTree}
+
+import scala.jdk.CollectionConverters._
 
 @Rule(key = "UnstableDependencies")
 class UnstableDependencies extends JavaCheck with SensorRule with Formatter {
@@ -105,44 +101,15 @@ class UnstableDependenciesClassVisitor(val inputFile: InputFile)
 
     declarationMap += symbolName -> Declaration(inputFile, tree.firstToken.line)
 
-    val visitor = new UnstableDependenciesMemberVisitor
-    visitor.visit(classTree)
-
-    dependencies += symbolName -> visitor.dependencies
-
-    super.visitNode(tree)
-  }
-}
-
-class UnstableDependenciesMemberVisitor
-    extends SonarAcademicSubscriptionVisitor {
-  override def nodesToVisit: List[Kind] =
-    List(Kind.VARIABLE, Kind.METHOD_INVOCATION, Kind.NEW_CLASS)
-
-  var dependencies: Set[String] = Set.empty
-
-  override def visitNode(tree: Tree): Unit = {
-    val maybeDependency = tree match {
-      case variable: VariableTree =>
-        Option(variable.`type`)
-          .map(_.symbolType)
-          .map(_.symbol)
-          .flatMap(_.fullyQualifiedName)
-      case methodInvocation: MethodInvocationTree =>
-        Option(methodInvocation.symbol)
-          .map(_.owner)
-          .flatMap(_.fullyQualifiedName)
-      case newClass: NewClassTree =>
-        newClass.symbolType.some
-          .map(_.symbol)
-          .flatMap(_.fullyQualifiedName)
-      case _ => none
-    }
-
-    dependencies = maybeDependency match {
-      case Some(dependency) => dependencies + dependency
-      case _                => dependencies
-    }
+    dependencies += symbolName -> classTree.members.asScala
+      .filter(_.is(Kind.VARIABLE))
+      .map(_.asInstanceOf[VariableTree])
+      .map(_.symbol)
+      .map(_.`type`)
+      .map(_.symbol.fullyQualifiedName)
+      .filter(_.nonEmpty)
+      .map(_.get)
+      .toSet
 
     super.visitNode(tree)
   }
