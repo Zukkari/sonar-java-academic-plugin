@@ -179,9 +179,21 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[StatisticsRule])
   }
 
+  it should "contain 'class statistics' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[ClassStatsCollector])
+  }
+
+  it should "contain 'interface statistics' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[InterfaceStatsCollector])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 30)
+    assert(rules.size == 32)
   }
 }

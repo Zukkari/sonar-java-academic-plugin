@@ -41,7 +41,9 @@ object Rules {
     classOf[MissingTemplateMethod],
     classOf[UnstableDependencies],
     classOf[StableAbstractionBreaker],
-    classOf[StatisticsRule]
+    classOf[StatisticsRule],
+    classOf[ClassStatsCollector],
+    classOf[InterfaceStatsCollector]
   )
 
 }
