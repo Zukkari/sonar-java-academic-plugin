@@ -32,13 +32,27 @@ class MessageChainRule extends JavaRule {
   }
 
   override def visitMethodInvocation(tree: MethodInvocationTree): Unit = {
-    val methodDepth = depth(tree).depth
+    val methodDepth = new MessageChainCalculator().calculate(tree).depth
 
     report(
       s"Message chain length is $methodDepth. Reduce chain length to at least: $chainLength",
       tree,
       methodDepth > chainLength
     )
+  }
+
+  override def scannerContext: JavaFileScannerContext = context
+}
+
+object ChainSyntax {
+  implicit class ChainOps(chain: Chain) {
+    def increment: Chain = Monoid[Chain].empty |+| chain
+  }
+}
+
+class MessageChainCalculator {
+  def calculate(methodInvocationTree: MethodInvocationTree): Chain = {
+    depth(methodInvocationTree)
   }
 
   def depth(tree: MethodInvocationTree)(implicit m: Monoid[Chain]): Chain =
@@ -57,13 +71,5 @@ class MessageChainRule extends JavaRule {
     }
 
     depth1(tree.methodSelect, chain)
-  }
-
-  override def scannerContext: JavaFileScannerContext = context
-}
-
-object ChainSyntax {
-  implicit class ChainOps(chain: Chain) {
-    def increment: Chain = Monoid[Chain].empty |+| chain
   }
 }
