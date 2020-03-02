@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class BlobClass { // Noncompliant {{Blob class: cohesion is below threshold: 40}}
     private final String v1 = "hello!";
     private final String v2 = "hello!";

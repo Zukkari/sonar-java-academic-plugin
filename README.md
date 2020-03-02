@@ -25,6 +25,23 @@ Current list of supported code smells:
 | Comments | |
 | Cyclic dependencies | |
 | Tradition breaker | |
+| Divergent change | |
+| Feature envy | |
+| Data clumps | |
+| Parallel inheritance hierarchies | |
+| Speculative generality (interfaces) | |
+| Speculative generality (methods) | |
+| Middle man | |
+| Primitive obsession | |
+| Brain method | |
+| Inappropriate intimacy | |
+| Alternate classes with different interfaces | |
+| God class | |
+| Intensive coupling | |
+| Swiss Army Knife | |
+| Missing template method | |
+| Unstable dependencies | |
+| SAPBreakers | |
 
 ## How does it work?
 
@@ -90,42 +107,36 @@ Detects all methods with more than `X` parameters
 
 ## Tradition breaker
 
-# To implement
-
-~Distorted hierarchy~
-
 ## Divergent change
 
 ## Feature envy
 
 ## Data clumps
 
-## Primitive obsession
-
 ## Parallel inheritance hierarchies
 
-## Speculative generality
+## Speculative generality (interfaces)
 
-## Temporary field
+## Speculative generality (methods)
 
 ## Middle man
 
-## Inappropriate intimacy
-
-## Alternate classes with different interfaces
-
-## Incomplete library class
-
-## Refused bequest
+## Primitive obsession
 
 ## Brain method
 
+## Inappropriate intimacy
+
 ## God class
+
+## Alternate classes with different interfaces
 
 ## Intensive coupling
 
-## SAPBreakers
+## Swiss Army Knife
 
-## Distorted Hierarchy
+## Missing template method
 
 ## Unstable dependencies
+
+## SAPBreakers

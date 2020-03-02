@@ -1,15 +1,16 @@
 package io.github.zukkari.common
 
-import java.util
-import java.util.Collections
-
-import org.sonar.java.ast.visitors.SubscriptionVisitor
-import org.sonar.plugins.java.api.tree.{IdentifierTree, MemberSelectExpressionTree, Tree}
+import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
 import org.sonar.plugins.java.api.tree.Tree.Kind
+import org.sonar.plugins.java.api.tree.{
+  IdentifierTree,
+  MemberSelectExpressionTree,
+  Tree
+}
 
-class VariableUsageLocator extends SubscriptionVisitor {
+class VariableUsageLocator extends SonarAcademicSubscriptionVisitor {
 
-  override def nodesToVisit(): util.List[Tree.Kind] = Collections.singletonList(Kind.MEMBER_SELECT)
+  override def nodesToVisit: List[Tree.Kind] = List(Kind.MEMBER_SELECT)
 
   private var variableState = Set.empty[String]
 
@@ -18,10 +19,9 @@ class VariableUsageLocator extends SubscriptionVisitor {
 
     variableState = Option(memberSelect.expression)
       .filter(_.isInstanceOf[IdentifierTree])
-      .map(_.asInstanceOf[IdentifierTree])
-      .map(_.name) match {
+      .map(_.toString) match {
       case Some(variable) => variableState + variable
-      case None => variableState
+      case None           => variableState
     }
 
     super.visitNode(tree)

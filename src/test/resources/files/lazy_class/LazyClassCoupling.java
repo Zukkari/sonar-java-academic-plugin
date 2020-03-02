@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class LazyClassCoupling extends A { // Noncompliant: {{Lazy class: depth of hierarchy is greater than 2 and coupling is higher than 3}}
     private D d = new D();
     private C c = new C();

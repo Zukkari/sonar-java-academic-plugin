@@ -1,3 +1,5 @@
+package com.example.test;
+
 class ShotgunSurgery {
     public static void utilMethod() { // Noncompliant
         System.out.println("Hello, world!");

@@ -1,6 +1,10 @@
 package io.github.zukkari
 
-import io.github.zukkari.definition.{SonarAcademicRulesDefinition, SonarAcademicRulesRegistrar}
+import io.github.zukkari.config.{ConfigurationProperties, ConfigurationProperty}
+import io.github.zukkari.definition.{
+  SonarAcademicRulesDefinition,
+  SonarAcademicRulesRegistrar
+}
 import io.github.zukkari.sensor.SonarAcademicSensor
 import io.github.zukkari.util.Log
 import org.sonar.api.Plugin
@@ -21,11 +25,22 @@ final class SonarJavaAcademicPlugin extends Plugin {
     context.addExtension(classOf[SonarAcademicSensor])
 
     // Property definitions
-    PropertyDefinition.builder("sonar.academic.plugin.message.chain.length")
-      .name("Message chain length")
-      .description("Maximum length of message chain")
-      .defaultValue("2")
-      .build()
+    ConfigurationProperties.properties
+      .map {
+        case ConfigurationProperty(key,
+                                   description,
+                                   name,
+                                   defaultValue,
+                                   array) =>
+          PropertyDefinition
+            .builder(key)
+            .name(name)
+            .description(description)
+            .defaultValue(defaultValue)
+            .multiValues(array)
+            .build()
+      }
+      .foreach(context.addExtension)
 
     log.info(s"Finished $this plugin initialization")
   }

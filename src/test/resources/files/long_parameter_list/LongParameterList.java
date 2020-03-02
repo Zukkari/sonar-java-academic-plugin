@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class LongParamterList {
     public void m0( // Noncompliant
             int p0,

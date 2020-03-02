@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class RefusedBequest extends ParentClass { // Noncompliant
     public int exec() {
         return 1 + 1;

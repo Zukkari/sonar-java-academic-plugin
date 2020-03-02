@@ -1,3 +1,5 @@
+package com.example.test;
+
 public class LazyClassInstructions { // Noncompliant: {{Lazy class: class contains low complexity methods}}
     public void m1() {
         System.out.println("Hello, world!");

@@ -9,6 +9,10 @@ import scala.jdk.CollectionConverters._
 
 @SonarLintSide
 class SonarAcademicRulesRegistrar extends CheckRegistrar {
-  override def register(registrarContext: CheckRegistrar.RegistrarContext): Unit =
-    registrarContext.registerClassesForRepository(repoKey, Rules.get.asJava, Nil.asJava)
+
+  override def register(
+      registrarContext: CheckRegistrar.RegistrarContext): Unit =
+    registrarContext.registerClassesForRepository(repoKey,
+                                                  Rules.get.asJava,
+                                                  Nil.asJava)
 }

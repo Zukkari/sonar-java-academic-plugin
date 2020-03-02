@@ -8,7 +8,6 @@ import org.sonar.api.utils.AnnotationUtils
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaCheck
 
-
 object Rules {
   type JavaCheckClass = Class[_ <: JavaCheck]
 
@@ -24,7 +23,27 @@ object Rules {
     classOf[RefusedBequest],
     classOf[CommentDetectionRule],
     classOf[CyclicDependenciesRule],
-    classOf[TraditionBreakerRule]
+    classOf[TraditionBreakerRule],
+    classOf[DivergentChange],
+    classOf[FeatureEnvy],
+    classOf[DataClump],
+    classOf[ParallelInheritanceHierarchies],
+    classOf[SpeculativeGeneralityInterfaces],
+    classOf[SpeculativeGeneralityMethods],
+    classOf[MiddleMan],
+    classOf[PrimitiveObsession],
+    classOf[BrainMethod],
+    classOf[InappropriateIntimacy],
+    classOf[AlternativeClassesWithDifferentInterfaces],
+    classOf[GodClass],
+    classOf[IntensiveCoupling],
+    classOf[SwissArmyKnife],
+    classOf[MissingTemplateMethod],
+    classOf[UnstableDependencies],
+    classOf[StableAbstractionBreaker],
+    classOf[StatisticsRule],
+    classOf[ClassStatsCollector],
+    classOf[InterfaceStatsCollector]
   )
 
 }
@@ -32,11 +51,14 @@ object Rules {
 object RulesSyntax {
 
   implicit class RulesCreatorOps(check: JavaCheckClass) {
-    def makeRule(implicit repo: NewRepository, loader: RulesDefinitionAnnotationLoader): Unit = loader.load(repo, check)
+    def makeRule(implicit repo: NewRepository,
+                 loader: RulesDefinitionAnnotationLoader): Unit =
+      loader.load(repo, check)
   }
 
   implicit class AnnotationOps(checkClass: JavaCheckClass) {
-    def annotation: Rule = AnnotationUtils.getAnnotation(checkClass, classOf[Rule])
+    def annotation: Rule =
+      AnnotationUtils.getAnnotation(checkClass, classOf[Rule])
   }
 
 }

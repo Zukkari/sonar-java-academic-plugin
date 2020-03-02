@@ -16,6 +16,7 @@ scalacOptions := Seq(
   "-language:higherKinds",
 )
 
+resolvers += "Sonar Java extracted" at "https://kodu.ut.ee/~stan96/maven_repo/"
 
 // Dependencies
 val sonarVersion = "7.9"
@@ -23,11 +24,14 @@ libraryDependencies ++= List(
   "org.scala-lang" % "scala-library" % "2.13.0",
   "org.sonarsource.sonarqube" % "sonar-plugin-api" % sonarVersion % Provided,
   "org.slf4j" % "slf4j-api" % "1.7.28" % Provided,
-  "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788",
+  "org.sonarsource.java" % "sonar-java-plugin" % "5.14.0.18788" % Provided,
+  "org.sonarsource.sslr" % "sslr-core" % "1.23",
+  "io.github.zukkari" % "sonar-java-plugin-extracted" % "1.6",
   "org.typelevel" %% "cats-core" % "2.0.0",
   "org.typelevel" %% "cats-effect" % "2.0.0",
-  "io.circe" %% "circe-parser" % "0.12.1",
-  "io.circe" %% "circe-core" % "0.12.1",
+  "io.circe" %% "circe-parser" % "0.13.0",
+  "io.circe" %% "circe-core" % "0.13.0",
+  "io.circe" %% "circe-generic" % "0.13.0",
   "org.scala-graph" %% "graph-core" % "1.13.1",
   "org.scalatest" %% "scalatest" % "3.2.0-M1" % Test,
   "org.mockito" %% "mockito-scala" % "1.5.17" % Test,
@@ -55,6 +59,11 @@ packageOptions in(Compile, packageBin) += Package.ManifestAttributes(
   PluginManifest.USE_CHILD_FIRST_CLASSLOADER -> "false"
 )
 
+def isSignatureFile(f: String): Boolean = {
+  f.endsWith("DSA") ||
+    f.endsWith("SF") ||
+    f.endsWith("RSA")
+}
 
 // Assembly
 test in assembly := {}
@@ -63,9 +72,10 @@ assemblyMergeStrategy in assembly := {
   case "log4j.properties" => MergeStrategy.first
   case "reference.conf" => MergeStrategy.concat
   case "application.conf" => MergeStrategy.concat
+  case signed if isSignatureFile(signed)=> MergeStrategy.discard
   case PathList("META-INF", xs@_*) =>
     xs match {
-      case ("MANIFEST.MF" :: Nil) => MergeStrategy.discard
+      case "MANIFEST.MF" :: Nil => MergeStrategy.discard
       case _ => MergeStrategy.first
     }
   case _ => MergeStrategy.first
@@ -75,3 +85,5 @@ artifact in(Compile, assembly) := {
   art.withClassifier(Some("assembly"))
 }
 addArtifact(artifact in(Compile, assembly), assembly)
+
+Test / parallelExecution := false

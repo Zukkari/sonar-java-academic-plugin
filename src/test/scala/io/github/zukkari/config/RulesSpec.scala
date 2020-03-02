@@ -71,9 +71,129 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[TraditionBreakerRule])
   }
 
+  it should "contain 'divergent change' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[DivergentChange])
+  }
+
+  it should "contain 'feature envy' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[FeatureEnvy])
+  }
+
+  it should "contain 'data clump' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[DataClump])
+  }
+
+  it should "contain 'parallel inheritance hierarchies' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[ParallelInheritanceHierarchies])
+  }
+
+  it should "contain 'speculative generality (interfaces)' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[SpeculativeGeneralityInterfaces])
+  }
+
+  it should "contain 'speculative generality (methods)' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[SpeculativeGeneralityMethods])
+  }
+
+  it should "contain 'middle man' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[MiddleMan])
+  }
+
+  it should "contain 'primitive obsession' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[PrimitiveObsession])
+  }
+
+  it should "contain 'brain method' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[BrainMethod])
+  }
+
+  it should "contain 'inappropriate intimacy' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[InappropriateIntimacy])
+  }
+
+  it should "contain 'alternative classes with different interfaces' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[AlternativeClassesWithDifferentInterfaces])
+  }
+
+  it should "contain 'god class' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[GodClass])
+  }
+
+  it should "contain 'intensive coupling' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[IntensiveCoupling])
+  }
+
+  it should "contain 'swiss army knife' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[SwissArmyKnife])
+  }
+
+  it should "contain 'missing template method' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[MissingTemplateMethod])
+  }
+
+  it should "contain 'unstable dependencies' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[UnstableDependencies])
+  }
+
+  it should "contain 'stable abstraction breaker' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[StableAbstractionBreaker])
+  }
+
+  it should "contain 'statistics' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[StatisticsRule])
+  }
+
+  it should "contain 'class statistics' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[ClassStatsCollector])
+  }
+
+  it should "contain 'interface statistics' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[InterfaceStatsCollector])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 12)
+    assert(rules.size == 32)
   }
 }
