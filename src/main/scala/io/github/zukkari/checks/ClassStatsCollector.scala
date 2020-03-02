@@ -20,17 +20,18 @@ import scala.jdk.CollectionConverters._
 
 case class InterfaceStatistic(numberOfMethods: Int)
 
-case class ClassStatistics(attributes: Int,
+case class ClassStatistics(issueType: String,
+                           attributes: Int,
                            methods: Int,
                            instructions: Int,
                            comments: Int,
                            complexity: Int,
                            complexityRatio: Double,
                            coupling: Int,
-                           cohesion: Int,
-                           methodList: List[MethodStatistics])
+                           cohesion: Int)
 
-case class MethodStatistics(complexity: Int,
+case class MethodStatistics(issueType: String,
+                            complexity: Int,
                             calls: Int,
                             instructions: Int,
                             parameters: Int,
@@ -88,6 +89,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
         }
 
         MethodStatistics(
+          "method",
           numComplexity,
           calls,
           instructions,
@@ -112,18 +114,22 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
 
     val coupling = 0
 
-    val stats = ClassStatistics(numberOfAttributes,
-                                numberOfMethods,
-                                numOfInstructions,
-                                numOfComments,
-                                totalComplexity,
-                                complexityRatio,
-                                coupling,
-                                cohesion,
-                                methodStatistics.toList).asJson
+    val stats = ClassStatistics(
+      "class",
+      numberOfAttributes,
+      numberOfMethods,
+      numOfInstructions,
+      numOfComments,
+      totalComplexity,
+      complexityRatio,
+      coupling,
+      cohesion
+    ).asJson
       .toString()
 
     report(stats, classTree)
+
+    methodStatistics.foreach(stat => report(stat.asJson.toString(), classTree))
   }
 }
 
