@@ -12,29 +12,30 @@ import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
 class BlobClass extends JavaRule {
   private var context: JavaFileScannerContext = _
 
-  private var numberOfVariables: Int = _
-  private var numberOfMethods: Int = _
+  private var numberOfVariables: Double = _
+  private var numberOfMethods: Double = _
 
-  private var lackOfCohesion: Int = _
+  private var lackOfCohesion: Double = _
 
   override def scanFile(
       javaFileScannerContext: JavaFileScannerContext): Unit = {
     numberOfVariables = config
       .flatMap(
-        _.getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.key))
+        _.getDouble(ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.key))
       .orElse(
-        ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.defaultValue.toInt)
+        ConfigurationProperties.BLOB_CLASS_NUM_OF_VARIABLES.defaultValue.toDouble)
 
     numberOfMethods = config
-      .flatMap(_.getInt(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.key))
+      .flatMap(
+        _.getDouble(ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.key))
       .orElse(
-        ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.defaultValue.toInt)
+        ConfigurationProperties.BLOB_CLASS_NUM_OF_METHODS.defaultValue.toDouble)
 
     lackOfCohesion = config
       .flatMap(
-        _.getInt(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.key))
+        _.getDouble(ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.key))
       .orElse(
-        ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.defaultValue.toInt)
+        ConfigurationProperties.BLOB_CLASS_LACK_OF_COHESION.defaultValue.toDouble)
 
     this.context = javaFileScannerContext
 

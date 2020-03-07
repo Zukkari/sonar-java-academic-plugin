@@ -114,7 +114,7 @@ class LazyClass extends JavaRule with ComplexityAccessor {
       s"Lazy class: class contains low complexity methods",
       tree,
       methods.nonEmpty
-        && numOfInstructions < mediumNumberOfInstructions
+        && numOfInstructions <= mediumNumberOfInstructions
         && methodComplexityRatio <= lowComplexityMethodRatio
     )
 

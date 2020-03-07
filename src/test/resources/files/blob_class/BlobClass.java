@@ -1,6 +1,6 @@
 package com.example.test;
 
-public class BlobClass { // Noncompliant {{Blob class: cohesion is below threshold: 40}}
+public class BlobClass { // Noncompliant {{Blob class: cohesion is below threshold: 1.5}}
     private final String v1 = "hello!";
     private final String v2 = "hello!";
     private final String v3 = "hello!";

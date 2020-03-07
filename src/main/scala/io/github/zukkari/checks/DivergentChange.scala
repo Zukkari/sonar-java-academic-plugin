@@ -12,7 +12,7 @@ import org.sonar.plugins.java.api.tree.MethodTree
 class DivergentChange extends JavaRule {
   private val log = Log(classOf[DivergentChange])
 
-  private var methodCallThreshold: Int = _
+  private var methodCallThreshold: Double = _
 
   private var context: JavaFileScannerContext = _
 
@@ -20,8 +20,10 @@ class DivergentChange extends JavaRule {
       javaFileScannerContext: JavaFileScannerContext): Unit = {
 
     methodCallThreshold = config
-      .flatMap(_.getInt(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.key))
-      .orElse(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.defaultValue.toInt)
+      .flatMap(
+        _.getDouble(ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.key))
+      .orElse(
+        ConfigurationProperties.DIVERGENT_CHANGE_METHOD_CALLS.defaultValue.toDouble)
 
     this.context = javaFileScannerContext
 

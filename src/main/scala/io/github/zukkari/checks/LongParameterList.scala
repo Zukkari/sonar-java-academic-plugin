@@ -7,23 +7,23 @@ import org.sonar.plugins.java.api.tree.MethodTree
 
 @Rule(key = "LongParameterList")
 class LongParameterList extends JavaRule {
-  private var parameterCount: Int = _
+  private var parameterCount: Double = _
 
   private var context: JavaFileScannerContext = _
 
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-    javaFileScannerContext: JavaFileScannerContext
+      javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
     parameterCount = config
       .flatMap(
-        _.getInt(
+        _.getDouble(
           ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.key
         )
       )
       .orElse(
-        ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.defaultValue.toInt
+        ConfigurationProperties.LONG_PARAMETER_LIST_PARAMETER_COUNT.defaultValue.toDouble
       )
 
     this.context = javaFileScannerContext
