@@ -17,8 +17,8 @@ import scala.jdk.CollectionConverters._
 import io.github.zukkari.syntax.SymbolSyntax._
 @Rule(key = "TraditionBreakerRule")
 class TraditionBreakerRule extends JavaCheck with SensorRule {
-  private var highNumberOfMembers: Int = _
-  private var lowNumberOfMembers: Int = _
+  private var highNumberOfMembers: Double = _
+  private var lowNumberOfMembers: Double = _
 
   private var classToParentContext: Map[String, String] = Map.empty
   private var classToFileContext: Map[String, InputFile] = Map.empty
@@ -27,14 +27,16 @@ class TraditionBreakerRule extends JavaCheck with SensorRule {
 
   override def configure(configuration: Configuration): Unit = {
     highNumberOfMembers = configuration
-      .getInt(
+      .getDouble(
         ConfigurationProperties.TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS.key)
-      .orElse(20)
+      .orElse(
+        ConfigurationProperties.TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS.defaultValue.toDouble)
 
     lowNumberOfMembers = configuration
-      .getInt(
+      .getDouble(
         ConfigurationProperties.TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS.key)
-      .orElse(5)
+      .orElse(
+        ConfigurationProperties.TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS.defaultValue.toDouble)
   }
 
   private def hasSubclasses(parent: String): Boolean =
