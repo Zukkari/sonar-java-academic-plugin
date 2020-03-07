@@ -5,10 +5,8 @@ class Record { // Noncompliant
             case 1:
                 System.out.println("hello, world!");
         }
-    }
 
-    void m1() {
-      "Hello".concat(",").concat("world!");
+        "Hello".concat(",").concat("world!");
     }
 }
 
