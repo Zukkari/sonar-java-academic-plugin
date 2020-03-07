@@ -57,6 +57,10 @@ class Record { // Noncompliant
         }
 
         public String toString() {
+            switch (1) {
+                case 1:
+                    System.out.println("OK");
+            }
             // This is a comment inside source code
             return "Record.RecordBuilder(a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d + ", e=" + this.e + ")";
         }

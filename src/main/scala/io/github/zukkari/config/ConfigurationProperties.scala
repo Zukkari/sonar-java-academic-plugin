@@ -30,7 +30,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.blob.class.variable.count",
       "Number of attributes to consider as high number of attributes",
       "Blob class: high number of variables",
-      "13"
+      "7.5"
     )
 
   val BLOB_CLASS_NUM_OF_METHODS: ConfigurationProperty =
@@ -38,14 +38,14 @@ object ConfigurationProperties {
       "sonar.academic.plugin.blob.class.method.count",
       "Number of methods to consider as high number of methods",
       "Blob class: high number of methods",
-      "22")
+      "8.5")
 
   val BLOB_CLASS_LACK_OF_COHESION: ConfigurationProperty =
     ConfigurationProperty(
       "sonar.academic.plugin.blob.class.lack.of.cohesion",
       "Cohesion number that will be considered as low cohesion value",
       "Blob class: lack of cohesion",
-      "40"
+      "1.5"
     )
 
   val BRAIN_METHOD_HIGH_NUMBER_OF_LOC: ConfigurationProperty =
@@ -53,7 +53,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.brain.method.high.loc",
       "Number of lines of code that will be considered as high number of LOC",
       "Brain method: high number of LOC",
-      "130"
+      "26"
     )
 
   val BRAIN_METHOD_HIGH_CYCLOMATIC_COMPLEXITY: ConfigurationProperty =
@@ -61,7 +61,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.brain.method.high.complexity",
       "Number that will be considered as high complexity for methods",
       "Brain method: high complexity number",
-      "31"
+      "5"
     )
 
   val BRAIN_METHOD_HIGH_NESTING_DEPTH: ConfigurationProperty =
@@ -93,7 +93,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.method.calls",
       "Number of methods calls to consider when report an issue",
       "Divergent change: high number of method calls",
-      "20")
+      "2.5")
 
   val FEATURE_ENVY_LOCALITY_THRESHOLD: ConfigurationProperty =
     ConfigurationProperty(
@@ -201,7 +201,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.lazy.class.number.of.instructions",
       "Medium number of instruction to consider when reporting an issue",
       "Lazy class: medium number of instructions",
-      "50"
+      "7"
     )
 
   val LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO: ConfigurationProperty =
@@ -239,7 +239,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.long.parameter.list.parameter.count",
       "High number of method parameters to consider when reporting an issue",
       "Long parameter list: high number of method parameters",
-      "9"
+      "2.5"
     )
 
   val MESSAGE_CHAIN_LENGTH: ConfigurationProperty =
@@ -247,7 +247,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.message.chain.length",
       "Message chain length to consider when reporting an issue",
       "Message chain: message chain length",
-      "3")
+      "1")
 
   val MIDDLE_MAN_DELEGATE_RATIO: ConfigurationProperty =
     ConfigurationProperty("sonar.academic.plugin.middle.man.delegate.ratio",
@@ -349,7 +349,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.swiss.army.knife.high.number.of.methods",
       "Number of methods to consider when reporting an issue",
       "Swiss army knife: number of methods",
-      "13"
+      "6"
     )
 
   val TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS: ConfigurationProperty =
@@ -357,7 +357,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.tradition.breaker.high.number.of.members",
       "High number of members to consider when reporting an issue",
       "Tradition breaker: high number of members",
-      "20"
+      "16"
     )
 
   val TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS: ConfigurationProperty =
@@ -365,7 +365,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.tradition.breaker.low.number.of.members",
       "Low number of members to consider when reporting an issue",
       "Tradition breaker: Low number of members",
-      "5"
+      "1.0"
     )
 
   val MISSING_TEMPLATE_METHOD_COMMON_MEMBERS: ConfigurationProperty =
