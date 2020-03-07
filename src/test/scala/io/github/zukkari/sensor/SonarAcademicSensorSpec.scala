@@ -583,43 +583,6 @@ class SonarAcademicSensorSpec
       issue.primaryLocation.message == "Stable abstraction breaker: distance from main is 0.75 which is greater than 0.5 configured")
   }
 
-  it should "collect statistics about class/methods/variable count/interfaces" in {
-    val context = SensorContextTester.create(Paths.get("./src/test/resources"))
-    val lines = 56
-    val inputFile = TestInputFileBuilder
-      .create("", "./src/test/resources/files/stats/Statistics.java")
-      .setLines(lines)
-      .setOriginalLineEndOffsets(Array.fill(lines)(0))
-      .setOriginalLineStartOffsets(Array.fill(lines)(0))
-      .setCharset(StandardCharsets.UTF_8)
-      .setLanguage("java")
-      .build()
-
-    val sensor =
-      create(
-        createSensorComponents(context),
-        List(
-          new StatisticsRule
-        )
-      )
-
-    context.fileSystem().add(inputFile)
-    context.setSettings(settings)
-
-    sensor.execute(context)
-
-    val issues = context.allIssues().asScala.toList
-
-    assertResult(1) {
-      issues.size
-    }
-
-    val issue = issues.head
-    assert(issue.primaryLocation.textRange.start.line == 3)
-    assert(
-      issue.primaryLocation.message == "Classes:2/Methods:6/Variables:3/Interfaces:3")
-  }
-
   private def createSensorComponents(context: SensorContextTester) = {
     // Set sonarLint runtime
     context.setRuntime(SonarRuntimeImpl.forSonarLint(Version.create(7, 9)))
