@@ -54,6 +54,10 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
   override def visitClass(tree: ClassTree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
+    if (classTree.simpleName == null) {
+      return
+    }
+
     if (!classTree.is(Kind.INTERFACE)) {
       runClass(classTree)
     }

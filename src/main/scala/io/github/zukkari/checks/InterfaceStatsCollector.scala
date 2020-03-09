@@ -25,6 +25,10 @@ class InterfaceStatsCollector extends JavaRule {
   }
 
   override def visitClass(tree: ClassTree): Unit = {
+    if (tree.simpleName == null) {
+      return
+    }
+
     if (tree.is(Kind.INTERFACE)) {
       val numOfMethods = tree.members().asScala.count(_.is(Kind.METHOD))
 
