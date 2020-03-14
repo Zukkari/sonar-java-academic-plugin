@@ -17,14 +17,15 @@ case class Chain(depth: Int)
 @Rule(key = "MessageChainRule")
 class MessageChainRule extends JavaRule {
 
-  private var chainLength: Int = _
+  private var chainLength: Double = _
 
   private var context: JavaFileScannerContext = _
 
   override def scanFile(context: JavaFileScannerContext): Unit = {
     chainLength = config
-      .flatMap(_.getInt(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.key))
-      .orElse(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.defaultValue.toInt)
+      .flatMap(_.getDouble(ConfigurationProperties.MESSAGE_CHAIN_LENGTH.key))
+      .orElse(
+        ConfigurationProperties.MESSAGE_CHAIN_LENGTH.defaultValue.toDouble)
 
     this.context = context
 

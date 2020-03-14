@@ -2,18 +2,18 @@ package io.github.zukkari.checks
 
 import java.util.UUID
 
+import cats.implicits._
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
 import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.config.ConfigurationProperties
-import io.github.zukkari.implicits._
 import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.syntax.SymbolSyntax._
 import io.github.zukkari.syntax.VariableSyntax._
+import io.github.zukkari.visitor.LinesOfCodeVisitor
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.semantic.Type
 import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
-import cats.implicits._
 
 import scala.annotation.tailrec
 
@@ -105,7 +105,8 @@ class LazyClass extends JavaRule with ComplexityAccessor {
     // Case 2: detect methods with low number of instructions
     // and low complexity ratio
     val numOfInstructions =
-      methods.foldRight(0)((method, acc) => acc + depth(method))
+      methods.foldRight(0)((method, acc) =>
+        acc + new LinesOfCodeVisitor().linesOfCode(method))
 
     val methodComplexity =
       methods.foldRight(0)((method, acc) => acc + complexity(method))
