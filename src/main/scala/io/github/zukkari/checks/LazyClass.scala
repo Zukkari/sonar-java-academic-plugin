@@ -4,7 +4,6 @@ import java.util.UUID
 
 import cats.implicits._
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
-import io.github.zukkari.common.InstructionCounter
 import io.github.zukkari.config.ConfigurationProperties
 import io.github.zukkari.syntax.ClassSyntax._
 import io.github.zukkari.syntax.SymbolSyntax._
@@ -13,7 +12,7 @@ import io.github.zukkari.visitor.LinesOfCodeVisitor
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.semantic.Type
-import org.sonar.plugins.java.api.tree.{ClassTree, MethodTree}
+import org.sonar.plugins.java.api.tree.ClassTree
 
 import scala.annotation.tailrec
 
@@ -160,10 +159,6 @@ class LazyClass extends JavaRule with ComplexityAccessor {
 
     super.visitClass(tree)
   }
-
-  def depth(tree: MethodTree)(
-      implicit ic: InstructionCounter[MethodTree]
-  ): Int = ic.count(tree)
 
   def hierarchyDepth(c: ClassTree): Int = {
     @tailrec
