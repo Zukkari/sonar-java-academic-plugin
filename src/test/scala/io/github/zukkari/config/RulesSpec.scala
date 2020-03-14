@@ -173,9 +173,15 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[StableAbstractionBreaker])
   }
 
+  it should "contain 'complex class' rule" in {
+    val rules = Rules.get
+
+    assert(rules contains classOf[ComplexClass])
+  }
+
   it should "have constant size so we dont forget this test when we add new rule" in {
     val rules = Rules.get
 
-    assert(rules.size == 29)
+    assert(rules.size == 30)
   }
 }

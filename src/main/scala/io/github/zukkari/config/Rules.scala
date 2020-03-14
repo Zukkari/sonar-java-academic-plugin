@@ -40,7 +40,8 @@ object Rules {
     classOf[SwissArmyKnife],
     classOf[MissingTemplateMethod],
     classOf[UnstableDependencies],
-    classOf[StableAbstractionBreaker]
+    classOf[StableAbstractionBreaker],
+    classOf[ComplexClass]
   )
 
 }
