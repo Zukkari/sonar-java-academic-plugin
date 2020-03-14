@@ -393,6 +393,14 @@ object ConfigurationProperties {
       "0.5"
     )
 
+  val COMPLEX_CLASS_VERY_HIGH_COMPLEXITY: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.complex.class.complexity",
+      "Very high complexity for complex class rule",
+      "Complex class: very high class complexity",
+      "31.25"
+    )
+
   val properties = List(
     ALTERNATIVE_CLASSES_MIN_PARAM_COUNT,
     ALTERNATIVE_CLASSES_MIN_COMMON_METHODS,
