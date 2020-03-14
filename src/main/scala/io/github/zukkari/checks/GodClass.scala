@@ -17,7 +17,7 @@ class GodClass extends JavaRule with ComplexityAccessor {
 
   private var accessToForeignData: Int = _
   private var tightClassCohesion: Double = _
-  private var classComplexity: Int = _
+  private var classComplexity: Double = _
 
   private val log = Log(classOf[GodClass])
 
@@ -38,9 +38,10 @@ class GodClass extends JavaRule with ComplexityAccessor {
         ConfigurationProperties.GOD_CLASS_TIGHT_COHESION.defaultValue.toDouble)
 
     classComplexity = config
-      .flatMap(_.getInt(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key))
+      .flatMap(
+        _.getDouble(ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.key))
       .orElse(
-        ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.defaultValue.toInt)
+        ConfigurationProperties.GOD_CLASS_CLASS_COMPLEXITY.defaultValue.toDouble)
 
     this.context = javaFileScannerContext
 

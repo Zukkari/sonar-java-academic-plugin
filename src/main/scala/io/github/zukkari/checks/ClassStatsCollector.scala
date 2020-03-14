@@ -3,9 +3,11 @@ package io.github.zukkari.checks
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.zukkari.base.{ComplexityAccessor, JavaRule}
-import io.github.zukkari.common.{CohesionCalculator, InstructionCounter}
-import io.github.zukkari.implicits._
-import io.github.zukkari.visitor.SonarAcademicSubscriptionVisitor
+import io.github.zukkari.common.CohesionCalculator
+import io.github.zukkari.visitor.{
+  LinesOfCodeVisitor,
+  SonarAcademicSubscriptionVisitor
+}
 import org.sonar.check.Rule
 import org.sonar.plugins.java.api.JavaFileScannerContext
 import org.sonar.plugins.java.api.tree.Tree.Kind
@@ -67,7 +69,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
 
   private def runClass(
       classTree: ClassTree
-  )(implicit counter: InstructionCounter[MethodTree]): Unit = {
+  ): Unit = {
     val numberOfAttributes =
       classTree.members().asScala.count(_.is(Kind.VARIABLE))
     val numberOfMethods = classTree.members().asScala.count(_.is(Kind.METHOD))
@@ -78,7 +80,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
       .map { tree =>
         val numComplexity = complexity(tree)
         val calls = 0
-        val instructions = counter.count(tree)
+        val instructions = new LinesOfCodeVisitor().linesOfCode(tree)
         val parameters = tree.symbol.parameterTypes().size()
         val switchStatements = {
           val visitor = new SwitchVisitor
