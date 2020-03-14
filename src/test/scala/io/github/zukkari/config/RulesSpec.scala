@@ -173,11 +173,11 @@ class RulesSpec extends BaseSpec {
     assert(rules contains classOf[StableAbstractionBreaker])
   }
 
-
   it should "contain 'complex class' rule" in {
     val rules = Rules.get
 
     assert(rules contains classOf[ComplexClass])
+  }
 
   it should "contain 'statistics' rule" in {
     val rules = Rules.get
