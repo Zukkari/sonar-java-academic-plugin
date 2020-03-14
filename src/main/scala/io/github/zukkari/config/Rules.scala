@@ -42,6 +42,9 @@ object Rules {
     classOf[UnstableDependencies],
     classOf[StableAbstractionBreaker],
     classOf[ComplexClass]
+    classOf[StatisticsRule],
+    classOf[ClassStatsCollector],
+    classOf[InterfaceStatsCollector]
   )
 
 }
