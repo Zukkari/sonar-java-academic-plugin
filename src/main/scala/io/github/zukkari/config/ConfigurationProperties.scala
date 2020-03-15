@@ -30,7 +30,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.blob.class.variable.count",
       "Number of attributes to consider as high number of attributes",
       "Blob class: high number of variables",
-      "7.5"
+      "11"
     )
 
   val BLOB_CLASS_NUM_OF_METHODS: ConfigurationProperty =
@@ -38,7 +38,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.blob.class.method.count",
       "Number of methods to consider as high number of methods",
       "Blob class: high number of methods",
-      "8.5")
+      "16")
 
   val BLOB_CLASS_LACK_OF_COHESION: ConfigurationProperty =
     ConfigurationProperty(
@@ -53,7 +53,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.brain.method.high.loc",
       "Number of lines of code that will be considered as high number of LOC",
       "Brain method: high number of LOC",
-      "26"
+      "45"
     )
 
   val BRAIN_METHOD_HIGH_CYCLOMATIC_COMPLEXITY: ConfigurationProperty =
@@ -61,7 +61,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.brain.method.high.complexity",
       "Number that will be considered as high complexity for methods",
       "Brain method: high complexity number",
-      "5"
+      "2"
     )
 
   val BRAIN_METHOD_HIGH_NESTING_DEPTH: ConfigurationProperty =
@@ -138,7 +138,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.class.complexity",
       "High class complexity to consider when reporting an issue",
       "God class: high class complexity",
-      "47")
+      "6.16844")
 
   val INAPPROPRIATE_INTIMACY_NUMBER_OF_CALLS: ConfigurationProperty =
     ConfigurationProperty(
@@ -201,7 +201,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.lazy.class.number.of.instructions",
       "Medium number of instruction to consider when reporting an issue",
       "Lazy class: medium number of instructions",
-      "7"
+      "16"
     )
 
   val LAZY_CLASS_LOW_COMPLEXITY_METHOD_RATIO: ConfigurationProperty =
@@ -232,7 +232,7 @@ object ConfigurationProperties {
     ConfigurationProperty("sonar.academic.plugin.long.method.length",
                           "Number of lines to consider when reporting an issue",
                           "Long method: number of lines",
-                          "26")
+                          "18.5")
 
   val LONG_PARAMETER_LIST_PARAMETER_COUNT: ConfigurationProperty =
     ConfigurationProperty(
@@ -247,7 +247,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.message.chain.length",
       "Message chain length to consider when reporting an issue",
       "Message chain: message chain length",
-      "1")
+      "4.5")
 
   val MIDDLE_MAN_DELEGATE_RATIO: ConfigurationProperty =
     ConfigurationProperty("sonar.academic.plugin.middle.man.delegate.ratio",
@@ -282,7 +282,7 @@ object ConfigurationProperties {
   val PRIMITIVE_OBSESSION_IGNORED_PACKAGES: ConfigurationProperty =
     ConfigurationProperty(
       "sonar.academic.plugin.primitive.obsession.ignored.packages",
-      "Packages to ingore when performing primitive obsession check",
+      "Packages to ignore when performing primitive obsession check",
       "Primitive obsession: packages to ignore",
       "java.",
       array = true
@@ -349,7 +349,7 @@ object ConfigurationProperties {
       "sonar.academic.plugin.swiss.army.knife.high.number.of.methods",
       "Number of methods to consider when reporting an issue",
       "Swiss army knife: number of methods",
-      "6"
+      "3.5"
     )
 
   val TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS: ConfigurationProperty =
@@ -391,6 +391,14 @@ object ConfigurationProperties {
       "Distance allowed in calculation for stable abstraction breaker",
       "Stable abstraction breaker: distance",
       "0.5"
+    )
+
+  val COMPLEX_CLASS_VERY_HIGH_COMPLEXITY: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.complex.class.complexity",
+      "Very high complexity for complex class rule",
+      "Complex class: very high class complexity",
+      "31.25"
     )
 
   val properties = List(
@@ -441,6 +449,7 @@ object ConfigurationProperties {
     TRADITION_BREAKER_HIGH_NUMBER_OF_MEMBERS,
     TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS,
     MISSING_TEMPLATE_METHOD_COMMON_MEMBERS,
-    MISSING_TEMPLATE_METHOD_COMMON_METHODS
+    MISSING_TEMPLATE_METHOD_COMMON_METHODS,
+    COMPLEX_CLASS_VERY_HIGH_COMPLEXITY
   )
 }

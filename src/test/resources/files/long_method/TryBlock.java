@@ -6,6 +6,21 @@ public class TryBlock {
             System.out.println("Hello, world!");
             System.out.println("Hello, world!");
             System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
         } catch (Exception e) {
             System.err.println("oopsie!");
         }
@@ -13,6 +28,24 @@ public class TryBlock {
 
     public void tryBlock1() { // Noncompliant
         try {
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
             System.out.println("Hello, world!");
         } catch (Exception e) {
             System.out.println("Hello, world!");
@@ -23,6 +56,24 @@ public class TryBlock {
 
     public void tryBlock2() { // Noncompliant
         try {
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
+            System.out.println("Hello, world!");
             System.out.println("Hello, world!");
         } catch (Exception e) {
             System.out.println("Hello, world!");

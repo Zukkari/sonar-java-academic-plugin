@@ -2,7 +2,7 @@ package com.example.test;
 
 public class MessageChain {
     public void exec() {
-        Record record = Record.builder() // Noncompliant {{Message chain length is 7. Reduce chain length to at least: 1}}
+        Record record = Record.builder() // Noncompliant {{Message chain length is 7. Reduce chain length to at least: 4.5}}
                 .a("a")
                 .b("b")
                 .c("c")

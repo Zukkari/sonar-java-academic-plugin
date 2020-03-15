@@ -2,15 +2,15 @@ package io.github.zukkari.visitor
 
 import java.util
 
-import org.sonar.plugins.java.api.tree.Tree
 import org.sonar.plugins.java.api.tree.Tree.Kind
+import org.sonar.plugins.java.api.tree.{SyntaxToken, SyntaxTrivia, Tree}
 
 import scala.jdk.CollectionConverters._
 
 trait SonarAcademicSubscriptionVisitor {
   private var _nodesToVisit: List[Tree.Kind] = Nil
   private var visitToken: Boolean = false
-  private var visitTrivia: Boolean = false
+  private var shouldVisitTrivia: Boolean = false
 
   def nodesToVisit: List[Tree.Kind]
 
@@ -18,13 +18,17 @@ trait SonarAcademicSubscriptionVisitor {
 
   def leaveNode(tree: Tree): Unit = {}
 
+  def visitToken(syntaxToken: SyntaxToken): Unit = {}
+
+  def visitTrivia(syntaxToken: SyntaxTrivia): Unit = {}
+
   final def scanTree(tree: Tree): Unit = {
     if (_nodesToVisit == Nil) {
       _nodesToVisit = nodesToVisit
     }
 
     visitToken = isVisitingTokens
-    visitTrivia = isVisitingTrivia
+    shouldVisitTrivia = isVisitingTrivia
     visit(tree)
   }
 
@@ -32,10 +36,22 @@ trait SonarAcademicSubscriptionVisitor {
     if (tree == null) return
 
     val subscribed = isSubscribed(tree)
-    val shouldVisitSyntaxToken = (visitToken || visitTrivia) && tree.is(
-      Kind.TOKEN)
+    val shouldVisitSyntaxToken = (visitToken || shouldVisitTrivia) && tree.is(
+      Kind.TOKEN
+    )
 
-    if (subscribed) {
+    if (shouldVisitSyntaxToken) {
+      if (visitToken) {
+        visitToken(tree.asInstanceOf[SyntaxToken])
+      }
+
+      if (shouldVisitTrivia) {
+        tree
+          .asInstanceOf[SyntaxToken]
+          .trivias()
+          .forEach(visitTrivia)
+      }
+    } else if (subscribed) {
       visitNode(tree)
     }
 
