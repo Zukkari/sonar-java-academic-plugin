@@ -20,17 +20,18 @@ import scala.jdk.CollectionConverters._
 
 case class InterfaceStatistic(numberOfMethods: Int)
 
-case class ClassStatistics(attributes: Int,
+case class ClassStatistics(issueType: String,
+                           attributes: Int,
                            methods: Int,
                            instructions: Int,
                            comments: Int,
                            complexity: Int,
                            complexityRatio: Double,
                            coupling: Int,
-                           cohesion: Int,
-                           methodList: List[MethodStatistics])
+                           cohesion: Int)
 
-case class MethodStatistics(complexity: Int,
+case class MethodStatistics(issueType: String,
+                            complexity: Int,
                             calls: Int,
                             instructions: Int,
                             parameters: Int,
@@ -44,7 +45,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
   override def scannerContext: JavaFileScannerContext = context
 
   override def scanFile(
-      javaFileScannerContext: JavaFileScannerContext
+    javaFileScannerContext: JavaFileScannerContext
   ): Unit = {
     this.context = javaFileScannerContext
 
@@ -54,11 +55,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
   override def visitClass(tree: ClassTree): Unit = {
     val classTree = tree.asInstanceOf[ClassTree]
 
-    if (classTree.simpleName == null) {
-      return
-    }
-
-    if (!classTree.is(Kind.INTERFACE)) {
+    if (!classTree.is(Kind.INTERFACE) && classTree.simpleName != null) {
       runClass(classTree)
     }
 
@@ -66,7 +63,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
   }
 
   private def runClass(
-      classTree: ClassTree
+    classTree: ClassTree
   )(implicit counter: InstructionCounter[MethodTree]): Unit = {
     val numberOfAttributes =
       classTree.members().asScala.count(_.is(Kind.VARIABLE))
@@ -92,6 +89,7 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
         }
 
         MethodStatistics(
+          "method",
           numComplexity,
           calls,
           instructions,
@@ -116,18 +114,24 @@ class ClassStatsCollector extends JavaRule with ComplexityAccessor {
 
     val coupling = 0
 
-    val stats = ClassStatistics(numberOfAttributes,
-                                numberOfMethods,
-                                numOfInstructions,
-                                numOfComments,
-                                totalComplexity,
-                                complexityRatio,
-                                coupling,
-                                cohesion,
-                                methodStatistics.toList).asJson
+    val stats = ClassStatistics(
+      "class",
+      numberOfAttributes,
+      numberOfMethods,
+      numOfInstructions,
+      numOfComments,
+      totalComplexity,
+      complexityRatio,
+      coupling,
+      cohesion
+    ).asJson
       .toString()
 
     report(stats, classTree)
+
+    methodStatistics.foreach(
+      issue => report(issue.asJson.toString(), classTree)
+    )
   }
 }
 
