@@ -401,6 +401,14 @@ object ConfigurationProperties {
       "31.25"
     )
 
+  val COMMENT_DETECTION_RULE: ConfigurationProperty =
+    ConfigurationProperty(
+      "sonar.academic.plugin.comment.detection.rule",
+      "Number of comments to consider",
+      "Comment detection rule: number of comments",
+      "29.5"
+    )
+
   val properties = List(
     ALTERNATIVE_CLASSES_MIN_PARAM_COUNT,
     ALTERNATIVE_CLASSES_MIN_COMMON_METHODS,
@@ -450,6 +458,7 @@ object ConfigurationProperties {
     TRADITION_BREAKER_LOW_NUMBER_OF_MEMBERS,
     MISSING_TEMPLATE_METHOD_COMMON_MEMBERS,
     MISSING_TEMPLATE_METHOD_COMMON_METHODS,
-    COMPLEX_CLASS_VERY_HIGH_COMPLEXITY
+    COMPLEX_CLASS_VERY_HIGH_COMPLEXITY,
+    COMMENT_DETECTION_RULE
   )
 }
