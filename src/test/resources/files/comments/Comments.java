@@ -1,8 +1,6 @@
 package com.example.test;
 
-// Noncompliant@+12
-// Noncompliant@+16
-public class Comments {
+public class Comments { // Noncompliant {{This class contains too many comments 34 versus configured 29.5}}
 
     /**
      * This is Javadoc.
@@ -19,5 +17,37 @@ public class Comments {
 
         // By the way now this is a line comment
         return "Hello, world!";
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
+        // Comment
     }
 }
