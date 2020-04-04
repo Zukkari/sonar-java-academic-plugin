@@ -1,9 +1,29 @@
-<p>This rule detects usage of data classes</p>
-<h2>Noncompliant Code Example</h2>
+<h2>Description</h2>
+
+<p>This rule detects data classes</p>
+
+<p>
+    By the definition of Martin Fowler in the book "Refactoring", data class is a class that includes only data.
+    This rules detects the classes that contain only data and do not have any business logic attached to them.
+</p>
+
+<h2>Non-compliant example</h2>
 <pre>
-TO DO
+class Point {
+    public int x;
+    public int y;
+}
 </pre>
-<h2>Compliant Solution</h2>
+
+<h2>Compliant example</h2>
+
 <pre>
-TO DO
+class Point {
+    public int x;
+    public int y;
+
+    public double distanceTo(Point other) {
+        return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
+    }
+}
 </pre>
